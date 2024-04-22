@@ -1,4 +1,4 @@
-export interface ParamTypes {
+export interface FilterParamTypes {
   stateId?: number
   orderId?: number
   userId?: number

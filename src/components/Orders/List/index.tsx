@@ -2,39 +2,32 @@
 'use client'
 
 import { ListCard } from '@/src/components/Orders/ListCard'
-import { List } from '@chakra-ui/react'
+import { type Order } from '@/src/types/order'
+import { Heading, List } from '@chakra-ui/react'
 
-export default function OrderList ({ orders }: any) {
+export default function OrderList ({ orders, selectedOrders, onSelectOrder }: { orders: Order[], selectedOrders: number[], onSelectOrder: (orderNumber: number) => void }) {
   return (
-    <List>
-      <ListCard
-        orderNumber={12340987983}
-        assignedTo="Martin Katz"
-        articlesCount={32}
-        deliveryStatus="24F"
-        preparationStatus="En preparación"
-       />
-       <ListCard
-        orderNumber={12340987983}
-        assignedTo="Todos"
-        articlesCount={32}
-        deliveryStatus="Sin asignar"
-        preparationStatus="Sin asignar"
-       />
-       <ListCard
-        orderNumber={12340987983}
-        assignedTo="Todos"
-        articlesCount={32}
-        deliveryStatus="Sin asignar"
-        preparationStatus="En preparación"
-       />
-       <ListCard
-        orderNumber={12340987983}
-        assignedTo="Todos"
-        articlesCount={32}
-        deliveryStatus="Sin asignar"
-        preparationStatus="En preparación"
-       />
+    <List overflowY='scroll' pb={24}>
+      {orders?.length > 0
+        ? <>
+          {orders?.map((order: Order) => {
+            return (
+            <ListCard
+              key={order.id}
+              orderNumber={order.id}
+              assignedTo={order.User?.name}
+              articlesCount={32}
+              deliveryStatus="24F"
+              preparationStatus={'En preparación'}
+              onSelect={() => { onSelectOrder(order.id) }}
+              isChecked={selectedOrders.includes(order.id)}
+            />
+            )
+          })}
+          <Heading fontSize={12}>Hola Padre, hasta aca llegaste!</Heading>
+        </>
+        : <Heading fontSize={14}>No hay pedidos en este momento</Heading>
+    }
     </List>
   )
 }

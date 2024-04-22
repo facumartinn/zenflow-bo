@@ -1,7 +1,6 @@
 export const styles: any = {
   primary: {
-    width: 128,
-    height: 51,
+    height: 43,
     padding: 16,
     borderRadius: '50px',
     backgroundColor: '#2D41FC',
@@ -13,6 +12,21 @@ export const styles: any = {
     }
   },
   secondary: {
-
+    height: 43,
+    padding: 16,
+    borderRadius: '50px',
+    border: '2px solid #2D41FC',
+    backgroundColor: '#FFFFFF',
+    color: '#2D41FC',
+    fontSize: 16,
+    fontWeight: 'bold',
+    onPress: {
+      backgroundColor: '#2D41FC',
+      color: '#FFFFFF'
+    },
+    onHover: {
+      backgroundColor: '#2D41FC',
+      color: '#FFFFFF'
+    }
   }
 }
