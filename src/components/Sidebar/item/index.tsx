@@ -8,7 +8,7 @@ export const SidebarItem = ({ button, index, isActive, onClick }: { button: any,
     <Link
     key={index}
     as={NextLink}
-    href={button.link}
+    href={button?.link}
     style={isActive}
     onClick={onClick}
     _hover={styles.button.hover}>

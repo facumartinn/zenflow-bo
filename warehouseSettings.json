@@ -1,0 +1,25 @@
+{
+    "automatic_picking": {
+        "status": true
+    },
+    "use_shifts": {
+        "status": true,
+        "shifts": [
+            {
+                "id": 1,
+                "name": "Mañana",
+                "start_time": "08:00",
+                "end_time": "16:00"
+            }
+        ]
+    },
+    "use_resources": {
+        "status": true,
+        "resources": [
+            {
+                "id": 1,
+                "name": "Recurso 1"
+            }
+        ]
+    }
+}

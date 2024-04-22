@@ -2,8 +2,26 @@
 import { Button } from '@chakra-ui/react'
 import { styles } from './styles'
 
-export const DefaultButton = ({ type = 'primary', label }: { type: string, label: string }) => {
+interface DefaultButtonProps {
+  type?: string
+  label: string
+  rightIcon?: JSX.Element
+  onClick?: () => void
+  isDisabled?: boolean
+  isLoading?: boolean
+}
+
+export const DefaultButton = ({ type = 'primary', label, rightIcon, onClick, isDisabled, isLoading }: DefaultButtonProps) => {
   return (
-    <Button style={styles[type]} _active={styles[type].onPress}>{label}</Button>
+    <Button
+      rightIcon={rightIcon}
+      style={styles[type]}
+      _active={styles[type].onPress}
+      _hover={styles[type].onHover}
+      isDisabled={isDisabled}
+      isLoading={isLoading}
+      onClick={onClick}>
+        {label}
+    </Button>
   )
 }

@@ -6,9 +6,10 @@ export const styles: Record<string, SystemStyleObject> = {
     borderWidth: '1px',
     borderRadius: 'lg',
     mb: 4,
-    mx: 4,
+    // mx: 4,
     gap: 4,
-    templateColumns: 'min-content 1fr min-content'
+    templateColumns: 'min-content 1fr min-content',
+    backgroundColor: 'white'
   },
   cardContent: {
     gap: 6,

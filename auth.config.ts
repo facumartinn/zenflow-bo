@@ -1,6 +1,6 @@
 import { type NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import { signInService } from './src/services/userService'
+import { signInService } from './src/services/authService'
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -12,10 +12,10 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize (credentials, req) {
         const res = await signInService(credentials?.email, credentials?.password)
-        const user = await res.json()
+        const user = await res.data
 
         // Si la autenticación es exitosa, retorna el objeto de usuario
-        if (res.ok && user) {
+        if (res.status === 200 && user) {
           return user.data
         }
 
@@ -28,6 +28,8 @@ export const authOptions: NextAuthOptions = {
     async session ({ session, token, user }: any) {
       session.accessToken = token.user.token
       session.user = token.user.user
+      session.tenant = token.user.user.Tenant
+      session.warehouseConfig = token.user.user.Warehouse.customAttributes
       return session
     },
     async jwt ({ token, user }) {

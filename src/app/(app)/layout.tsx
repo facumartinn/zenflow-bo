@@ -23,7 +23,7 @@ export default function RootLayout ({
     <html lang="en" className={inter.variable}>
       <body className='layout-structure'>
         <Providers>
-          <Grid h="100vh"
+          <Grid h="100vh" overflow={'hidden'}
             templateAreas={`"navbar navbar"
                             "sidebar main"
                             "sidebar main"`}
