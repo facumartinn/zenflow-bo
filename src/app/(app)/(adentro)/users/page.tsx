@@ -7,6 +7,7 @@ import { UserList } from '@/src/components/Users/List'
 import { UserModal } from '@/src/components/Users/Modal'
 import { type UserCardProps } from '@/src/components/Users/Card'
 import './common.css'
+import { useSystemPreferences } from '@/src/hooks/config/useConfig'
 
 const headerSubtitle = 'Podés dar de alta y de baja usuarios. También asociarlo a los dispositivos con lector'
 const users: UserCardProps[] = [
@@ -40,6 +41,7 @@ const users: UserCardProps[] = [
 ]
 
 export default function UsersPage () {
+  useSystemPreferences()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (

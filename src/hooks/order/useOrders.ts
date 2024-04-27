@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { orderStatesAtom } from '@/src/store/orderAtom'
-import { fetchFilteredOrders, fetchOrderStates } from '../../services/order'
+import { assignOrders, fetchFilteredOrders, fetchOrderStates } from '../../services/order'
 import { type FilterParamTypes } from '@/src/types'
-import { useQuery } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
 import { type State } from '@/src/types/order'
 import { useEffect } from 'react'
 import { useAtom } from 'jotai'
@@ -11,7 +11,17 @@ export const useOrders = (params: FilterParamTypes) => {
   const orders = useQuery(['orders', params], async () => await fetchFilteredOrders(params), {
     refetchOnWindowFocus: false
   })
-  return orders
+
+  const { mutate, isLoading, isSuccess } = useMutation(async (data: any) => await assignOrders(data), {
+    onSuccess: async (data) => {
+      await orders.refetch()
+    },
+    onError: (error) => {
+      console.error('Error al actualizar la configuración', error)
+    }
+  })
+
+  return { data: orders, assignOrders: mutate, isAssignSuccess: isSuccess, isAssignLoading: isLoading }
 }
 
 export const useOrderStates = () => {

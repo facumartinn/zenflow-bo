@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
+// UserCard.tsx
+import { Box, Flex, Avatar, HStack, Icon, Spacer, VStack, Button, Text } from '@chakra-ui/react'
 import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons'
-import { Flex, Box, Avatar, HStack, Icon, Spacer, VStack, Button, Text, useDisclosure } from '@chakra-ui/react'
 import { UserModal } from '../Modal'
+import { userCardStyles } from './styles'
 
 export interface UserCardProps {
   id: number
@@ -10,53 +12,41 @@ export interface UserCardProps {
   role: string
   device: string
   pickingSpeed: number
-  speedTrend: string
+  speedTrend: 'increasing' | 'decreasing'
 }
 
-export const UserCard = (user: { user: UserCardProps }) => {
-  const { user: userData } = user
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const SpeedTrendIcon = userData.speedTrend === 'increasing' ? TriangleUpIcon : TriangleDownIcon
-  const speedTrendColor = userData.speedTrend === 'increasing' ? 'green.500' : 'red.500'
+export const UserCard = ({ user }: { user: UserCardProps }) => {
+  const SpeedTrendIcon = user.speedTrend === 'increasing' ? TriangleUpIcon : TriangleDownIcon
+  const speedTrendColor = userCardStyles.speedIconColor(user.speedTrend)
+
   return (
-    <Box
-      p={4}
-      my={4}
-      bg="white"
-      boxShadow="sm"
-      borderRadius="lg"
-      border={'1px solid #E2E8F0'}
-      display="flex"
-      alignItems="center"
-      justifyContent="space-between"
-      onClick={onOpen}
-    >
+    <Box style={userCardStyles.container} onClick={() => { console.log('User Card clicked') }}>
       <Flex align="center">
-        <Avatar size={'sm'} name={userData.name} src="path-to-image" />
+        <Avatar size={userCardStyles.avatar.size} name={user.name} src="/path-to-image" />
         <HStack align="start" ml={4} spacing={8}>
           <Box>
-            <Text fontSize="sm" color="gray.500">Nombre y apellido</Text>
-            <Text fontSize="md" fontWeight="bold">{userData.name}</Text>
+            <Text style={userCardStyles.infoText}>Nombre y apellido</Text>
+            <Text style={userCardStyles.nameText}>{user.name}</Text>
           </Box>
 
           <Box>
-            <Text fontSize="sm" color="gray.500">Código</Text>
-            <Text fontSize="md" fontWeight="bold">{userData.code}</Text>
+            <Text style={userCardStyles.infoText}>Código</Text>
+            <Text style={userCardStyles.nameText}>{user.code}</Text>
           </Box>
 
           <Box>
-            <Text fontSize="sm" color="gray.500">Rol</Text>
-            <Text fontSize="md" fontWeight="bold">{userData.role}</Text>
+            <Text style={userCardStyles.infoText}>Rol</Text>
+            <Text style={userCardStyles.nameText}>{user.role}</Text>
           </Box>
           <Box>
-            <Text fontSize="sm" color="gray.500">Dispositivo</Text>
-            <Text fontSize="md" fontWeight="bold">{userData.device}</Text>
+            <Text style={userCardStyles.infoText}>Dispositivo</Text>
+            <Text style={userCardStyles.nameText}>{user.device}</Text>
           </Box>
           <Box>
-            <Text fontSize="sm" color="gray.500">Velocidad de picking</Text>
+            <Text style={userCardStyles.infoText}>Velocidad de picking</Text>
             <Flex align="center">
-              <Text fontSize="md" fontWeight="bold">{userData.pickingSpeed} min</Text>
-              <Icon as={SpeedTrendIcon} color={speedTrendColor} ml={1} />
+              <Text style={userCardStyles.speedIndicator}>{user.pickingSpeed} min</Text>
+              <Icon as={SpeedTrendIcon} color={speedTrendColor} style={userCardStyles.speedIcon} />
             </Flex>
           </Box>
         </HStack>
@@ -65,11 +55,11 @@ export const UserCard = (user: { user: UserCardProps }) => {
       <Spacer />
 
       <VStack align="end" ml={4} spacing={0}>
-        <Button size="md" variant="ghost" colorScheme="blue">
+        <Button size={userCardStyles.button.size} variant={userCardStyles.button.variant} colorScheme={userCardStyles.button.colorScheme}>
           Editar
         </Button>
       </VStack>
-      <UserModal isOpen={isOpen} onClose={onClose} userData={userData} isNewUser={false} />
+      <UserModal isOpen={false} onClose={() => { console.log('Modal closed') }} userData={user} isNewUser={false} />
     </Box>
   )
 }

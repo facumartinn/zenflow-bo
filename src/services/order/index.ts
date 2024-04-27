@@ -21,8 +21,8 @@ export const createOrders = async (data: Order[]) => {
   return await axiosInstance.post('/orders/create', data)
 }
 
-export const updateOrders = async (data: Order[]) => {
-  return await axiosInstance.put('/orders/update', data)
+export const assignOrders = async (data: any) => {
+  return await axiosInstance.put('/orders/assign', data)
 }
 
 export const deleteOrder = async (orderId: number) => {

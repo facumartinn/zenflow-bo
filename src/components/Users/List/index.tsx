@@ -1,15 +1,17 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
+// UserList.tsx
 import { Box, Flex, Heading, Select, Text } from '@chakra-ui/react'
 import { UserCard, type UserCardProps } from '../Card'
+import { userListStyles } from './styles'
 
-export const UserList = (users: { users: UserCardProps[] }) => {
+export const UserList = ({ users }: { users: UserCardProps[] }) => {
   return (
     <>
-      <Flex justify='space-between' align='center'>
-        <Heading as='h2' fontSize='2xl'>{users.users.length} Usuarios</Heading>
-        <Flex gap={2} align='center'>
-          <Text fontSize='sm' fontWeight='bold'>Ordenar por</Text>
-          <Select w="210px" placeholder='Nombre' bg='white'>
+      <Flex style={userListStyles.headerContainer}>
+        <Heading as='h2' style={userListStyles.heading}>{users.length} Usuarios</Heading>
+        <Flex style={userListStyles.sortContainer}>
+          <Text style={userListStyles.sortText}>Ordenar por</Text>
+          <Select style={userListStyles.select} placeholder='Nombre'>
             <option value='option1'>Rol</option>
             <option value='option2'>Codigo</option>
             <option value='option3'>Nombre</option>
@@ -17,7 +19,7 @@ export const UserList = (users: { users: UserCardProps[] }) => {
         </Flex>
       </Flex>
       <Box overflowY='scroll'>
-        {users.users.map((user, index) => <UserCard key={index} user={user} />)}
+        {users.map((user, index) => <UserCard key={index} user={user} />)}
       </Box>
     </>
   )

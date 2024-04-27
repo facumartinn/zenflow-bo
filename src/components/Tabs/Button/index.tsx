@@ -1,15 +1,19 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { Badge, Button } from '@chakra-ui/react'
 import { styles } from './style'
+import { type TabValue } from '..'
 
 interface TabButtonProps {
   label: string
+  value: TabValue
+  activeTab: TabValue
   counter: number
   isActive: boolean
   onClick?: () => void
 }
 
-export const TabButton = ({ label, counter, isActive, onClick }: TabButtonProps) => {
+export const TabButton = ({ label, value, activeTab, counter, isActive, onClick }: TabButtonProps) => {
+  const shouldShowCounterBadge = value === 'new' && counter > 0
   return (
     <Button
         sx={isActive ? styles.activeButton : styles.disabledButton}
@@ -19,7 +23,7 @@ export const TabButton = ({ label, counter, isActive, onClick }: TabButtonProps)
         onClick={onClick}
     >
       {label}
-      {isActive && counter > 0 && (
+      {shouldShowCounterBadge && (
         <Badge sx={styles.badge}>
           {counter}
         </Badge>

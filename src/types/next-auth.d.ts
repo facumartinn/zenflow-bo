@@ -20,8 +20,8 @@ declare module 'next-auth' {
       updatedAt: string
     }
     accessToken: string
-    tenant: Tenant
-    warehouse: Warehouse
+    tenants: Tenant
+    warehouses: Warehouse
     warehouseConfig: string
     /** The user's postal address. */
   }

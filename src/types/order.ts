@@ -35,7 +35,16 @@ export interface Order {
   warehouse_id: number
   createdAt?: Date | null
   updatedAt?: Date | null
-  User: User | null
+  Users: User | null
+}
+
+export enum OrderStateEnum {
+  NEW = 1,
+  READY_TO_PICK = 2,
+  PROGRAMMED = 3,
+  IN_PREPARATION = 4,
+  COMPLETED = 5,
+  DELETED = 6
 }
 
 // OrderDetail Model
@@ -130,7 +139,7 @@ export interface Warehouse {
   inventoryTypes?: string | null
   facilityConditions?: string | null
   emergencyContact?: string | null
-  customAttributes?: string | null
+  custom_attributes?: string | null
   createdAt?: Date | null
   updatedAt?: Date | null
   // OrderDetails, OrderPositions, Orders, Users, and Tenant are relations

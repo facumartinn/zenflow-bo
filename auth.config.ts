@@ -29,7 +29,7 @@ export const authOptions: NextAuthOptions = {
       session.accessToken = token.user.token
       session.user = token.user.user
       session.tenant = token.user.user.Tenant
-      session.warehouseConfig = token.user.user.Warehouse.customAttributes
+      session.warehouseConfig = token.user.user.Warehouse?.custom_attributes
       return session
     },
     async jwt ({ token, user }) {

@@ -1,25 +1,27 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { VStack, Divider, Flex, Text, Avatar, Button } from '@chakra-ui/react'
+// SubscriptionSettings.tsx
+import { VStack, Flex, Text, Avatar, Button, Divider } from '@chakra-ui/react'
+import { subscriptionSettingsStyles } from './styles' // Asegúrate que la ruta sea correcta
 
 export const SubscriptionSettings = () => {
   return (
-    <VStack divider={<Divider />} spacing={2} align={'start'} overflow='scroll'>
-      <Flex flexDirection='column'>
+    <VStack divider={<Divider />} sx={subscriptionSettingsStyles.container}>
+      <Flex sx={subscriptionSettingsStyles.section}>
         <Avatar />
-        <Button variant="link" color='#2D41FC' mt={4} fontWeight='normal'>Editar</Button>
+        <Button sx={subscriptionSettingsStyles.linkButton}>Editar</Button>
       </Flex>
-      <Flex flexDirection='column' alignItems='flex-start'>
-        <Text fontSize={18} fontWeight='bold'>Nombre empresa</Text>
+      <Flex sx={subscriptionSettingsStyles.section}>
+        <Text sx={subscriptionSettingsStyles.text}>Nombre empresa</Text>
         <Text my={2}>Unilever</Text>
-        <Button variant="link" color='#2D41FC' fontWeight='normal'>Cambiar nombre</Button>
+        <Button sx={subscriptionSettingsStyles.linkButton}>Cambiar nombre</Button>
       </Flex>
-      <Flex flexDirection='column' alignItems='flex-start'>
-        <Text my={2} fontSize={18} fontWeight='bold'>Email</Text>
+      <Flex sx={subscriptionSettingsStyles.section}>
+        <Text sx={subscriptionSettingsStyles.text}>Email</Text>
         <Text>hergoadmin@gmail.com</Text>
       </Flex>
-      <Flex flexDirection='column' alignItems='flex-start'>
-        <Text my={2} fontSize={18} fontWeight='bold'>Contraseña</Text>
-        <Button variant="link" color='#2D41FC' fontWeight='normal'>Cambiar contraseña</Button>
+      <Flex sx={subscriptionSettingsStyles.section}>
+        <Text sx={subscriptionSettingsStyles.text}>Contraseña</Text>
+        <Button sx={subscriptionSettingsStyles.linkButton}>Cambiar contraseña</Button>
       </Flex>
     </VStack>
   )
