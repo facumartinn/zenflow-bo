@@ -5,9 +5,9 @@
 
 import { useAtom } from 'jotai'
 import { filtersAtom, orderCounterAtom, selectedOrdersAtom } from '@/src/store/navigationAtom'
-import { useWarehouseConfig } from '@/src/hooks/warehouse/useWarehouseConfig'
-import { useOrders } from '@/src/hooks/order/useOrders'
-import { useSystemPreferences } from '@/src/hooks/config/useConfig'
+import { useWarehouseConfig } from '@/src/hooks/useWarehouseConfig'
+import { useOrders } from '@/src/hooks/useOrders'
+import { useSystemPreferences } from '@/src/hooks/useConfig'
 import './common.css'
 import { Filters } from '@/src/components/Filters'
 import { Header } from '@/src/components/Header'

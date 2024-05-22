@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { type UserCardProps } from '../../../Users/Card'
 import { DefaultButton } from '../../../Button'
 import { userModalStyles } from './styles' // Asegúrate que la ruta sea correcta
-import { useUsers } from '@/src/hooks/user/useUser'
+import { useUsers } from '@/src/hooks/useUser'
 import { UserRoleEnum } from '@/src/types/user'
 
 interface UserModalProps {

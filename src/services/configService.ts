@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
 import { type Config } from '@/src/types/warehouse'
-import axiosInstance from '../../utils/axiosInstance'
+import axiosInstance from '../utils/axiosInstance'
 
 export const fetchConfigByWarehouseId = async () => {
   return await axiosInstance.get('/warehouse/config')

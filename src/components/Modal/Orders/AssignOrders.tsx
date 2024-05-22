@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-confusing-void-expression */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { DefaultButton } from '@/src/components/Button'
-import { useUsers } from '@/src/hooks/user/useUser'
+import { useUsers } from '@/src/hooks/useUser'
 import { selectedOrdersAtom } from '@/src/store/navigationAtom'
 import { type User } from '@/src/types/user'
 import {

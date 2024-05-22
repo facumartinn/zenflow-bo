@@ -16,7 +16,7 @@ import {
   Badge,
   Flex
 } from '@chakra-ui/react'
-import { useOrderDetail } from '@/src/hooks/order/useOrderDetails'
+import { useOrderDetail } from '@/src/hooks/useOrderDetails'
 import { type OrderDetail } from '@/src/types/order'
 import ProductCard from './ProductCard'
 

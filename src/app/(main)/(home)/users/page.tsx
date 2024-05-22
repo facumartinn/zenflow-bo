@@ -3,8 +3,8 @@
 
 import { Grid, GridItem, useDisclosure } from '@chakra-ui/react'
 import { UserRoleEnum } from '@/src/types/user'
-import { useUsers } from '@/src/hooks/user/useUser'
-import { useSystemPreferences } from '@/src/hooks/config/useConfig'
+import { useUsers } from '@/src/hooks/useUser'
+import { useSystemPreferences } from '@/src/hooks/useConfig'
 import { Header } from '@/src/components/Header'
 import { UserList } from '@/src/components/Users/List'
 import { UserModal } from '@/src/components/Modal/Users/UserModal'

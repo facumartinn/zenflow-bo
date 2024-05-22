@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 // 'use client'
-import { fetchConfigByWarehouseId, updateConfigByWarehouseId } from '@/src/services/config'
+import { fetchConfigByWarehouseId, updateConfigByWarehouseId } from '@/src/services/configService'
 import { warehouseConfigAtom } from '@/src/store/configAtom'
 import { type Config } from '@/src/types/warehouse'
 import { useAtom } from 'jotai'

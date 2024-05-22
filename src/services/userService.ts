@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
-import axiosInstance from '../../utils/axiosInstance'
+import axiosInstance from '../utils/axiosInstance'
 
 export const fetchAllUsers = async () => {
   return await axiosInstance.get('/users/')

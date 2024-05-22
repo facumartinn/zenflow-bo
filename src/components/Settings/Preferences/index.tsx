@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { warehouseConfigAtom } from '@/src/store/configAtom'
 import { useAtom } from 'jotai'
 import { DefaultButton } from '../../Button'
-import { useSystemPreferences } from '@/src/hooks/config/useConfig'
+import { useSystemPreferences } from '@/src/hooks/useConfig'
 import { preferences } from './settings'
 import { ToastMessage } from '../../Toast'
 

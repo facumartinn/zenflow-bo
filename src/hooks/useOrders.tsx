@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { assignOrders, fetchFilteredOrders, fetchOrderStates, fetchOrderStats, updateOrderStatus } from '../../services/order'
+import { assignOrders, fetchFilteredOrders, fetchOrderStates, fetchOrderStats, updateOrderStatus } from '../services/orderService'
 import { type FilterParamTypes } from '@/src/types'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'

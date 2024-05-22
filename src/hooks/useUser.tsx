@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { ToastMessage } from '@/src/components/Toast'
-import { createUser, fetchUsersByRole, updateUser } from '../../services/user/userService'
+import { createUser, fetchUsersByRole, updateUser } from '../services/userService'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useToast } from '@chakra-ui/react'
 

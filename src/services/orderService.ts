@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
-import axiosInstance from '../../utils/axiosInstance'
-import type { FilterParamTypes } from '../../types/index'
-import { type Order } from '../../types/order'
-import { type QueryParams, objectToQueryString } from '../../utils/queryParams'
+import axiosInstance from '../utils/axiosInstance'
+import type { FilterParamTypes } from '../types/index'
+import { type Order } from '../types/order'
+import { type QueryParams, objectToQueryString } from '../utils/queryParams'
 
 export const fetchAllOrders = async () => {
   return await axiosInstance.get('/orders/')
