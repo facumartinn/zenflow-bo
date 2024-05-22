@@ -28,12 +28,13 @@ export default function OrderList ({ orders, warehouseConfig, isLoading, isHomeP
   const shouldPaginate = activeTab === 'pending' || activeTab === 'completed'
   const groupedOrders = () => {
     if (orders) {
-      if (activeTab === 'pending' && warehouseConfig.use_shifts.status) {
+      if (activeTab === 'pending' && warehouseConfig.use_shifts?.status) {
         return groupOrdersByShift(orders, warehouseConfig)
       }
       if (activeTab === 'doing') {
         return groupOrdersByAssignedUser(orders)
       }
+      return { default: orders }
     }
     return { default: orders }
   }
@@ -69,15 +70,10 @@ export default function OrderList ({ orders, warehouseConfig, isLoading, isHomeP
               <Flex flexDirection={activeTab === 'doing' ? 'row' : 'column'} flexWrap='wrap'>
                 {orders?.map((order: Order) => (
                   activeTab === 'doing'
-                    ? <SimpleOrderCard orderNumber={order.id} articlesCount={32} />
+                    ? <SimpleOrderCard order={order} />
                     : <ListCard
                     key={order.id}
-                    orderNumber={order.id}
-                    assignedTo={order.Users ? order.Users.name : 'Todos'}
-                    articlesCount={32}
-                    packingStatus="24F"
-                    orderStatus={order.state_id}
-                    pickingStatus={order.state_picking_id}
+                    order={order}
                     onSelect={() => { toggleOrderSelection(order.id) }}
                     isChecked={isChecked(order.id)}
                     showCheckbox={showCheckbox}

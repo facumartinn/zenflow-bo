@@ -80,7 +80,7 @@ export const PreferenceSettings = ({
             <Switch
               id={preference.label}
               colorScheme={'brand'}
-              defaultChecked={localConfig[preference.label as keyof Config].status}
+              defaultChecked={localConfig[preference.label as keyof Config]?.status}
               onChange={async e => { await handleChange(e.target.checked, preference.label as keyof Config) }}
             />
             </Flex>

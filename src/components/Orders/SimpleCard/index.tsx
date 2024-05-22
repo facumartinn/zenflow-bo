@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
+import { type Order } from '@/src/types/order'
 import { Text, Flex } from '@chakra-ui/react'
 
 interface OrderCardProps {
-  orderNumber: number
-  articlesCount: number
+  order: Order
 }
 
-export const SimpleOrderCard = ({ orderNumber, articlesCount }: OrderCardProps) => {
+export const SimpleOrderCard = ({ order }: OrderCardProps) => {
   return (
     <Flex
       borderWidth="1px"
@@ -22,11 +22,11 @@ export const SimpleOrderCard = ({ orderNumber, articlesCount }: OrderCardProps) 
     >
       <Flex flexDirection='column' justifyContent="start" mb={1}>
         <Text fontSize="sm" fontWeight={400} color="#808081">Número de pedido</Text>
-        <Text fontSize="md" fontWeight={600}>{orderNumber}9238498234</Text>
+        <Text fontSize="md" fontWeight={600}>{order.id}9238498234</Text>
       </Flex>
       <Flex flexDirection='column' justifyContent="start" ml={6}>
         <Text fontSize="sm" fontWeight={400} color="#808081">Artículos</Text>
-        <Text fontSize="md" fontWeight={600}>{articlesCount}</Text>
+        <Text fontSize="md" fontWeight={600}>{32}</Text>
       </Flex>
     </Flex>
   )

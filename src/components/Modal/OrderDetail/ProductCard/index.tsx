@@ -5,8 +5,8 @@ import {
   Image,
   Text,
   VStack,
-  HStack,
-  Tag
+  Tag,
+  Flex
 } from '@chakra-ui/react'
 
 interface ProductCardProps {
@@ -28,10 +28,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
   status,
   replacementCode
 }) => {
+  console.log(productName, productCode, quantity, imageSrc, additionalInfo, status, replacementCode)
   return (
     <Box
-      p={4}
-      bg="white"
+      p={6}
+      bg="#F6F6F6"
       boxShadow="sm"
       borderRadius="lg"
       display="flex"
@@ -40,7 +41,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
     >
       <VStack align="start" spacing={2}>
         <Text fontWeight="bold">{productName}</Text>
-        <Text fontSize="sm">Código {productCode}</Text>
+        <Flex alignItems='center'>
+          <Text fontSize="sm" color="#808081" mr={2}>Código</Text>
+          <Text fontSize="md">{productCode}</Text>
+        </Flex>
         {status === 'delivered' && (
           <Tag colorScheme="green" size="sm">
             Entregados {additionalInfo}
@@ -50,12 +54,32 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <Text fontSize="sm" color="gray.500">Reemplazado por {replacementCode}</Text>
         )}
       </VStack>
-      <HStack>
-        {imageSrc && <Image boxSize="50px" borderRadius="md" src={imageSrc} alt={productName} />}
-        <Badge colorScheme="blue" variant="subtle" borderRadius="full">
-          {quantity}
-        </Badge>
-      </HStack>
+      <Box position="relative" display="inline-block">
+      {imageSrc && (
+        <Image
+          boxSize="50px"
+          borderRadius="md"
+          src={imageSrc}
+          alt={productName}
+        />
+      )}
+      <Badge
+        // colorScheme="blue"
+        // variant="solid"
+        bg="#2D41FC"
+        color="white"
+        borderRadius="8px 0 8px 0"
+        px={2}
+        py={1}
+        // borderRadius="full"
+        position="absolute"
+        bottom="0"
+        right="0"
+        transform="translate(50%, 50%)"
+      >
+        {quantity}
+      </Badge>
+    </Box>
     </Box>
   )
 }

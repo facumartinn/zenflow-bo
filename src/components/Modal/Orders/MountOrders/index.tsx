@@ -69,7 +69,7 @@ export const MountOrdersModal = ({ warehouseConfig, assignOrders, isOpen, onClos
             value={preparationDate}
             onChange={(e) => { setPreparationDate(e.target.value) }}
             placeholder="Seleccionar fecha" mb={4} />
-          {warehouseConfig?.use_shifts.status && (
+          {warehouseConfig?.use_shifts?.status && (
             <>
               <Text mb='4px' fontSize={14} fontWeight={500}>Turno</Text>
               <Select

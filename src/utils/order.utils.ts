@@ -4,19 +4,19 @@ import { type Config, type Shifts } from '../types/warehouse'
 
 export const groupOrdersByShift = (orders: Order[], warehouseConfig: Config): Record<string, Order[]> => {
   // Si los turnos no están activados, retornar todos los pedidos en un grupo predeterminado
-  if (!warehouseConfig.use_shifts.status) {
+  if (!warehouseConfig.use_shifts?.status) {
     return { default: orders }
   }
 
   // Asegurar que haya turnos definidos antes de intentar agrupar por ellos
-  if (!warehouseConfig.use_shifts.shifts || warehouseConfig.use_shifts.shifts.length === 0) {
+  if (!warehouseConfig.use_shifts?.shifts || warehouseConfig.use_shifts?.shifts.length === 0) {
     return { default: orders } // Podrías decidir manejar esto de otra manera
   }
 
   // Reducir los pedidos a grupos basados en el turno asignado
   const shifts = orders.reduce<Record<string, Order[]>>((acc, order) => {
     // Buscar el turno correspondiente al horario de montaje del pedido
-    const shiftName = warehouseConfig.use_shifts.shifts.find((shift: Shifts) => order.assembly_schedule === shift.id)?.name || 'Sin turno'
+    const shiftName = warehouseConfig.use_shifts?.shifts.find((shift: Shifts) => order.assembly_schedule === shift.id)?.name || 'Sin turno'
 
     // Si no hay un grupo para este turno, inicializarlo
     if (!acc[shiftName]) {

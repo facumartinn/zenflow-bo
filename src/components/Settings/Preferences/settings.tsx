@@ -22,14 +22,14 @@ export const preferences: PreferenceProps[] = [
     title: 'Uso de turnos',
     label: 'use_shifts',
     description: 'Encienda esta opción para dividir los dias por turnos.',
-    isChecked: (config: Config) => config.use_shifts.status,
+    isChecked: (config: Config) => config.use_shifts?.status,
     children: (config: Config, handleShiftChange: any) => <ShiftsList shiftsConfig={config.use_shifts} onShiftsChange={handleShiftChange} />
   },
   {
-    title: 'Gestión de recursos',
+    title: 'Gestión de empaquetado',
     label: 'use_resources',
     description: 'Los recursos son aquellos elementos de packing, como pallets, cajas, bolsas, que ayudan a identificar el pedido entregado. Activá esta opción para crear los tuyos',
-    isChecked: (config: Config) => config.use_resources.status,
+    isChecked: (config: Config) => config.use_resources?.status,
     children: (config: Config, handleResourcesChange: any) => <ResourcesList resourcesConfig={config.use_resources} onResourcesChange={handleResourcesChange} />
   }
 ]

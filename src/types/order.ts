@@ -67,6 +67,7 @@ export interface OrderDetail {
   warehouse_id: number
   created_at?: Date
   updated_at?: Date | null
+  Orders: Order | null
   // Order, Tenant, and Warehouse are relations
 }
 
