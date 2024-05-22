@@ -1,10 +1,11 @@
 export const userCardStyles = {
   container: {
     padding: '16px', // 4*4px
-    margin: '16px', // 4*4px
+    marginTop: '16px', // 4*4px
+    marginBottom: '16px', // 4*4px
     background: 'white',
     boxShadow: 'sm',
-    borderRadius: 'lg',
+    borderRadius: 'md',
     border: '1px solid #E2E8F0',
     display: 'flex',
     alignItems: 'center',
@@ -36,7 +37,10 @@ export const userCardStyles = {
   },
   button: {
     size: 'md',
-    variant: 'ghost',
-    colorScheme: 'blue'
+    colorScheme: 'blue',
+    style: {
+      color: '#2D41FC',
+      fontWeight: 400
+    }
   }
 }

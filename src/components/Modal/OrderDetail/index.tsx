@@ -13,7 +13,8 @@ import {
   Box,
   Divider,
   Stack,
-  Badge
+  Badge,
+  Flex
 } from '@chakra-ui/react'
 import { useOrderDetail } from '@/src/hooks/order/useOrderDetails'
 import { type OrderDetail } from '@/src/types/order'
@@ -28,13 +29,18 @@ export const OrderDrawer = ({ isOpen, onClose, orderId }: { isOpen: boolean, onC
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
-          <DrawerHeader>Número de pedido {orderId}</DrawerHeader>
+          <DrawerHeader>
+            <Flex flexDirection='column'>
+              <Text color='#808081' fontSize={16}>Número de pedido</Text>
+              <Text fontSize={32}>{orderId}</Text>
+            </Flex>
+          </DrawerHeader>
 
           <DrawerBody>
             <VStack spacing={4} align="stretch">
               <Box>
                 <Text fontSize="sm" color="gray.600">Fecha de creación</Text>
-                <Text fontSize="md">11/01 - 17:10 hs</Text>
+                <Text fontSize="md">{orderDetail?.[0]?.created_at?.toString()}</Text>
               </Box>
 
               <Box>

@@ -1,35 +1,37 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
+// 'use client'
 import { fetchConfigByWarehouseId, updateConfigByWarehouseId } from '@/src/services/config'
 import { warehouseConfigAtom } from '@/src/store/configAtom'
 import { type Config } from '@/src/types/warehouse'
 import { useAtom } from 'jotai'
 import { useEffect } from 'react'
-import { useMutation, useQuery } from 'react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 
 export const useSystemPreferences = () => {
-  // const queryClient = useQueryClient()
   const [, setWarehouseConfig] = useAtom(warehouseConfigAtom)
-  const query = useQuery(['config'], async () => await fetchConfigByWarehouseId(), {
-    refetchOnWindowFocus: true
+  const { data } = useQuery({
+    queryKey: ['config'],
+    queryFn: async () => await fetchConfigByWarehouseId()
   })
 
   useEffect(() => {
-    if (query.data?.data) {
-      setWarehouseConfig(query.data?.data as Config)
+    if (data?.data) {
+      setWarehouseConfig(data?.data as Config)
     }
-  }, [query])
+  }, [data])
 
-  const mutation = useMutation(async ({
-    config
-  }: { tenantId: number, warehouseId: number, config: Config }) => await updateConfigByWarehouseId(config), {
-    onSuccess: (config) => {
-      setWarehouseConfig(JSON.parse(config.data as string) as Config)
+  const mutation = useMutation({
+    mutationFn: async ({ config }: { tenantId: number, warehouseId: number, config: Config }) => {
+      const response = await updateConfigByWarehouseId(config)
+      return response.data
     },
-    onError: (error) => {
-      // Manejo de error
+    onSuccess: (updatedConfig: Config) => {
+      setWarehouseConfig(updatedConfig)
+    },
+    onError: (error: any) => {
       console.error('Error al actualizar la configuración', error)
     }
   })
 
-  return { ...query.data?.data, updateConfig: mutation.mutate }
+  return { ...data?.data?.data, updateConfig: mutation.mutate }
 }

@@ -2,22 +2,14 @@ export const ToastStyles = {
   container: {
     width: '320px',
     alignItems: 'center',
-    color: 'black',
+    color: 'white',
     padding: 3,
     borderRadius: 'md',
-    boxShadow: 'md',
-    border: '1px solid',
-    borderColor: '#3EBC59'
+    boxShadow: 'md'
   },
   icon: {
-    success: {
-      fontSize: '2rem',
-      color: '#3EBC59'
-    },
-    error: {
-      fontSize: '2rem',
-      color: '#EC0000'
-    }
+    fontSize: '2rem',
+    color: 'white'
   },
   titleText: {
     fontSize: '16px',
@@ -27,7 +19,8 @@ export const ToastStyles = {
   descriptionText: {
     fontSize: '14px',
     fontWeight: '400',
-    marginLeft: 4
+    marginLeft: 4,
+    color: 'white'
   }
 
 }

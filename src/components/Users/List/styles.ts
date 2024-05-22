@@ -3,16 +3,19 @@ export const userListStyles = {
   headerContainer: {
     justifyContent: 'space-between',
     alignItems: 'center',
-    width: '100%'
+    width: '100%',
+    paddingBottom: '16px'
   },
   heading: {
-    fontSize: '2xl'
+    fontSize: 24
   },
   sortContainer: {
+    marginX: 8,
     gap: '8px',
     alignItems: 'center'
   },
   sortText: {
+    width: '100%',
     fontSize: 'sm',
     fontWeight: 'bold'
   },

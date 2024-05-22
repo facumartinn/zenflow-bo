@@ -2,47 +2,21 @@
 'use client'
 
 import { Grid, GridItem, useDisclosure } from '@chakra-ui/react'
+import { UserRoleEnum } from '@/src/types/user'
+import { useUsers } from '@/src/hooks/user/useUser'
+import { useSystemPreferences } from '@/src/hooks/config/useConfig'
 import { Header } from '@/src/components/Header'
 import { UserList } from '@/src/components/Users/List'
-import { UserModal } from '@/src/components/Users/Modal'
-import { type UserCardProps } from '@/src/components/Users/Card'
+import { UserModal } from '@/src/components/Modal/Users/UserModal'
 import './common.css'
-import { useSystemPreferences } from '@/src/hooks/config/useConfig'
+import { type UserCardProps } from '@/src/components/Users/Card'
 
-const headerSubtitle = 'Podés dar de alta y de baja usuarios. También asociarlo a los dispositivos con lector'
-const users: UserCardProps[] = [
-  {
-    id: 1,
-    name: 'Martin Katz',
-    code: '6841',
-    role: 'Picker',
-    device: '46546843549',
-    pickingSpeed: 5.5,
-    speedTrend: 'decreasing' // Opciones: 'increasing', 'decreasing'
-  },
-  {
-    id: 2,
-    name: 'Martin Katz',
-    code: '6841',
-    role: 'Picker',
-    device: '46546843549',
-    pickingSpeed: 5.5,
-    speedTrend: 'decreasing' // Opciones: 'increasing', 'decreasing'
-  },
-  {
-    id: 3,
-    name: 'Martin Katz',
-    code: '6841',
-    role: 'Picker',
-    device: '46546843549',
-    pickingSpeed: 5.5,
-    speedTrend: 'decreasing' // Opciones: 'increasing', 'decreasing'
-  }
-]
+const headerSubtitle = 'Podés dar de alta y de baja usuarios. También asociarlo a los dispositivos con lector.'
 
 export default function UsersPage () {
   useSystemPreferences()
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { isOpen: isCreateUserModalOpen, onOpen: onCreateUserModalOpen, onClose: onCreateUserModalClose } = useDisclosure()
+  const { data: users } = useUsers(UserRoleEnum.PICKER)
 
   return (
     <main className='layout'>
@@ -60,16 +34,16 @@ export default function UsersPage () {
             subtitle={headerSubtitle}
             showButton={true}
             buttonLabel='NUEVO USUARIO'
-            onClick={onOpen}
+            onClick={onCreateUserModalOpen}
           />
         </GridItem>
-        <GridItem mx={4} mt={8} area="main">
-          <UserList users={users} />
+        <GridItem mt={4} mx={4} area="main" overflowY="hidden">
+          <UserList users={users?.data?.data.data as UserCardProps[]} isLoading={users.isLoading} />
         </GridItem>
       </Grid>
       <UserModal
-        isOpen={isOpen}
-        onClose={onClose}
+        isOpen={isCreateUserModalOpen}
+        onClose={onCreateUserModalClose}
         isNewUser={true}
       />
     </main>

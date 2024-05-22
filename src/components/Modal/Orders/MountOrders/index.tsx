@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-confusing-void-expression */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { DefaultButton } from '@/src/components/Button'
-import { ToastMessage } from '@/src/components/Toast'
-import { useUsersByRole } from '@/src/hooks/user/useUser'
+import { useUsers } from '@/src/hooks/user/useUser'
+import { selectedOrdersAtom } from '@/src/store/navigationAtom'
 import { OrderStateEnum } from '@/src/types/order'
 import { type User } from '@/src/types/user'
 import { getFormattedDay } from '@/src/utils/queryParams'
@@ -10,62 +11,46 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalCloseButton,
   ModalBody,
   ModalFooter,
   Button,
   Text,
   Select,
   InputGroup,
-  Input,
-  useToast
+  Input
 } from '@chakra-ui/react'
+import { useAtom } from 'jotai'
 import { useState } from 'react'
 
 interface AssignModalProps {
   warehouseConfig: any
   assignOrders: any
-  isAssignSuccess: boolean
-  isAssignLoading: boolean
   isOpen: boolean
   onClose: () => void
-  selectedOrders?: number[]
 }
 
-export const AssignModal = ({ warehouseConfig, assignOrders, isAssignSuccess, isAssignLoading, isOpen, onClose, selectedOrders }: AssignModalProps) => {
-  const toast = useToast()
-  const { data: users } = useUsersByRole(2)
+export const MountOrdersModal = ({ warehouseConfig, assignOrders, isOpen, onClose }: AssignModalProps) => {
+  const { data: users } = useUsers(2)
   const [assignedTo, setAssignedTo] = useState(0)
   const [preparationDate, setPreparationDate] = useState('')
   const [shiftId, setShiftId] = useState(0)
+  const [selectedOrders] = useAtom(selectedOrdersAtom)
 
   const onAssign = () => {
-    console.log(preparationDate, 'hola')
     const updates = selectedOrders?.map(order => ({
       id: order,
       user_id: assignedTo === 0 ? null : assignedTo,
       assembly_date: getFormattedDay(preparationDate),
       assembly_schedule: shiftId
     }))
-    console.log(updates)
     assignOrders({ orders: updates, newStateId: OrderStateEnum.READY_TO_PICK })
-    console.log(isAssignSuccess, 'fjdokfd')
-    if (!isAssignLoading) {
-      toast({
-        isClosable: true,
-        duration: 2000,
-        position: 'top-right',
-        render: () => <ToastMessage title={`${updates?.length} pedidos subidos`} description='Ya está listo para que los pickers lo preparen' status='success' />
-      })
-      onClose()
-    }
+    onClose()
   }
   return (
     <Modal onClose={onClose} isOpen={isOpen} isCentered>
     <ModalOverlay />
     <ModalContent width='430px'>
       <ModalHeader fontSize={32} pb={0}>Subir pedidos</ModalHeader>
-      <ModalCloseButton />
       <ModalBody pt={0}>
         <Text fontSize={14} color='#808081'>Los cambios se aplicarán a todos los pedidos seleccionados.</Text>
         <InputGroup mt={8} display='flex' flexDirection='column' >
@@ -74,7 +59,7 @@ export const AssignModal = ({ warehouseConfig, assignOrders, isAssignSuccess, is
             value={assignedTo}
             onChange={(e) => { setAssignedTo(Number(e.target.value)) }} mb={4}>
                 <option value={0}>Todos</option>
-            {users?.data?.data?.map((user: User) => (
+            {users?.data?.data?.data.map((user: User) => (
                 <option key={user.id} value={user.id}>{user.name}</option>
             ))}
             </Select>
@@ -91,6 +76,7 @@ export const AssignModal = ({ warehouseConfig, assignOrders, isAssignSuccess, is
                 value={shiftId}
                 onChange={(e) => { console.log(e.target.value); setShiftId(Number(e.target.value)) }}
                 mb={4}>
+                  <option value={0}>Sin Turno</option>
                 {warehouseConfig?.use_shifts?.shifts.map((shift: any) => (
                   <option key={shift.id} value={shift.id}>{shift.name}</option>
                 ))}

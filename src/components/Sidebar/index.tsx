@@ -2,54 +2,12 @@
 'use client'
 import { Box, Text, Flex, useDisclosure } from '@chakra-ui/react'
 import { styles } from './styles'
-import { ConfigurationSvg, DashboardSvg, LogoutSvg, OrdersSvg, UsersSvg } from '../svg/sidebarSvg'
+import { ConfigurationSvg, LogoutSvg } from '../svg/sidebarSvg'
 import { usePathname } from 'next/navigation'
 import { SidebarItem } from './item'
 import { signOut } from 'next-auth/react'
 import SettingsModal from '../Settings'
-
-interface SideBarButtonProps {
-  top: Array<
-  {
-    icon: any
-    text: string
-    link: string
-    action?: () => void
-  }>
-  bottom: Array<
-  {
-    icon: any
-    text: string
-    link?: string
-    action?: () => void
-  }>
-}
-
-const sideBarButtons: SideBarButtonProps = {
-  top: [
-    {
-      icon: <DashboardSvg color='black' />,
-      text: 'Dashboard',
-      link: '/'
-    },
-    {
-      icon: <OrdersSvg color='black' />,
-      text: 'Pedidos',
-      link: '/orders'
-    },
-    {
-      icon: <UsersSvg color='black' />,
-      text: 'Usuarios',
-      link: '/users'
-    }
-  ],
-  bottom: [
-    {
-      icon: <ConfigurationSvg color='black' />,
-      text: 'Configuración'
-    }
-  ]
-}
+import { sideBarButtons } from './sidebarList'
 
 export const Sibebar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()

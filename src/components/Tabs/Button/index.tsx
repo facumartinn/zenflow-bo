@@ -6,14 +6,13 @@ import { type TabValue } from '..'
 interface TabButtonProps {
   label: string
   value: TabValue
-  activeTab: TabValue
   counter: number
   isActive: boolean
   onClick?: () => void
 }
 
-export const TabButton = ({ label, value, activeTab, counter, isActive, onClick }: TabButtonProps) => {
-  const shouldShowCounterBadge = value === 'new' && counter > 0
+export const TabButton = ({ label, value, counter, isActive, onClick }: TabButtonProps) => {
+  const shouldShowCounterBadge = value === 'new'
   return (
     <Button
         sx={isActive ? styles.activeButton : styles.disabledButton}

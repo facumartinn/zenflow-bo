@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { AiOutlineClose, AiOutlineCheck } from 'react-icons/ai'
 import { ResourceCard } from './Card'
 import { type Resources, type UseResources } from '@/src/types/warehouse'
+import { ToastMessage } from '@/src/components/Toast'
 
 export const ResourcesList = ({ resourcesConfig, onResourcesChange }: { resourcesConfig: UseResources, onResourcesChange: (resources: Resources[]) => void }) => {
   const [resources, setResources] = useState(resourcesConfig.resources)
@@ -19,11 +20,10 @@ export const ResourcesList = ({ resourcesConfig, onResourcesChange }: { resource
   const handleConfirmAddResource = () => {
     if (!newResourceName.trim()) {
       toast({
-        title: 'Error',
-        description: 'El nombre del recurso no puede estar vacío.',
         status: 'error',
         duration: 2000,
-        isClosable: true
+        isClosable: true,
+        render: () => <ToastMessage title={'Error'} description={'El nombre del recurso no puede estar vacío.'} status='error' />
       })
       return
     }
@@ -36,11 +36,11 @@ export const ResourcesList = ({ resourcesConfig, onResourcesChange }: { resource
     onResourcesChange(newResources)
     setIsAdding(false)
     toast({
-      title: 'Recurso creado',
-      description: 'El recurso ha sido añadido exitosamente.',
       status: 'success',
       duration: 2000,
-      isClosable: true
+      isClosable: true,
+      render: () => <ToastMessage title={'Recurso creado'} description={'El recurso ha sido añadido exitosamente.'} status='success' />
+
     })
   }
 
@@ -58,11 +58,10 @@ export const ResourcesList = ({ resourcesConfig, onResourcesChange }: { resource
     setResources(filteredResources)
     onResourcesChange(filteredResources)
     toast({
-      title: 'Recurso eliminado',
-      description: 'El recurso ha sido eliminado exitosamente.',
       status: 'success',
       duration: 2000,
-      isClosable: true
+      isClosable: true,
+      render: () => <ToastMessage title={'Recurso eliminado'} description={'El recurso ha sido eliminado exitosamente.'} status='success' />
     })
   }
 

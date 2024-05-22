@@ -11,10 +11,8 @@ export const userModalStyles = {
   },
   profilePhotoBox: {
     width: '100%',
-    borderWidth: '1px',
     borderRadius: 'lg',
-    padding: '16px',
-    textAlign: 'center',
+    textAlign: 'left',
     marginBottom: '8px' // Margen debajo del texto
   },
   modalFooter: {
@@ -22,6 +20,6 @@ export const userModalStyles = {
   },
   deleteButton: {
     marginTop: '16px',
-    colorScheme: 'red'
+    color: '#EC0000'
   }
 }

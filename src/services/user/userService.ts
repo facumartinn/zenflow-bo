@@ -14,10 +14,10 @@ export const fetchUserById = async (userId: number) => {
   return await axiosInstance.get(`/users/${userId}`)
 }
 
-export const createUser = async (userData: number) => {
+export const createUser = async (userData: any) => {
   return await axiosInstance.post('/users/', userData)
 }
 
-export const updateUser = async (userId: number, updatedData: number) => {
+export const updateUser = async (userId: number, updatedData: any) => {
   return await axiosInstance.put(`/users/${userId}`, updatedData)
 }

@@ -7,7 +7,6 @@ export const styles: Record<string, SystemStyleObject> = {
     borderWidth: '1px',
     borderRadius: 'lg',
     mb: 4,
-    // mx: 4,
     gap: 4,
     templateColumns: 'min-content 1fr min-content',
     backgroundColor: 'white'
@@ -15,6 +14,11 @@ export const styles: Record<string, SystemStyleObject> = {
   cardContent: {
     gap: 6,
     gridTemplateColumns: '20px 1fr 1fr 1fr 1fr 1fr',
+    alignItems: 'center'
+  },
+  cardContentWithoutCheckbox: {
+    gap: 6,
+    gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
     alignItems: 'center'
   },
   label: {

@@ -22,3 +22,13 @@ export interface User {
   updatedAt?: Date | null
   // OrderStates, Orders, Role, Tenant, and Warehouse are relations and their types will depend on how you manage them on the frontend
 }
+
+export const USER_ROLES = [
+  { id: 1, description: 'Admin' },
+  { id: 2, description: 'Picker' }
+]
+
+export enum UserRoleEnum {
+  AMDIN = 1,
+  PICKER = 2,
+}

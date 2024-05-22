@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-confusing-void-expression */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 'use client'
 
@@ -5,36 +6,33 @@ import OrderList from '@/src/components/Orders/List'
 import { Stats } from '@/src/components/Statistics'
 import { Grid, GridItem } from '@chakra-ui/react'
 import './common.css'
-import { useState } from 'react'
-import { type Tab, TabButtons, type TabValue } from '@/src/components/Tabs'
+import { TabButtons } from '@/src/components/Tabs'
 import { useSession } from 'next-auth/react'
-import { useOrderStates, useOrders } from '@/src/hooks/order/useOrders'
+import { useOrderStates, useOrderStats, useOrders } from '@/src/hooks/order/useOrders'
 import { Header } from '@/src/components/Header'
 import { useSystemPreferences } from '@/src/hooks/config/useConfig'
-import { OrderStateEnum } from '@/src/types/order'
-import { type FilterParamTypes } from '@/src/types'
+import { useAtom } from 'jotai'
+import { filtersAtom } from '@/src/store/navigationAtom'
+import { useWarehouseConfig } from '@/src/hooks/warehouse/useWarehouseConfig'
+// import { OrderStateEnum } from '@/src/types/order'
+// import { urlPath } from '../../../utils'
 
-const stats = [
-  { title: 'Pedidos pendientes', count: 30, icon: 'pendientes' },
-  { title: 'En preparacion', count: 3, icon: 'preparacion' },
-  { title: 'Pedidos finalizados', count: 24, icon: 'finalizados' },
-  { title: 'Pedidos activos', count: 7, icon: 'activos' }
-]
-
-const tabs: Tab[] = [
-  { orderStateId: OrderStateEnum.READY_TO_PICK, label: 'Pendientes', value: 'pending' },
-  { orderStateId: OrderStateEnum.IN_PREPARATION, label: 'En preparación', value: 'doing' },
-  { orderStateId: OrderStateEnum.COMPLETED, label: 'Finalizados', value: 'completed' }
-]
+// const stats = [
+//   { status: 'pending', title: 'Pedidos pendientes', count: 30, icon: 'pendientes' },
+//   { status: OrderStateEnum.IN_PREPARATION, title: 'En preparacion', count: 3, icon: 'preparacion' },
+//   { status: OrderStateEnum.COMPLETED, title: 'Pedidos finalizados', count: 24, icon: 'finalizados' },
+//   { title: 'Pickers activos', count: 7, icon: 'activos' }
+// ]
 
 export default function Home () {
-  const urlPath = window.location.pathname
   useOrderStates()
   useSystemPreferences()
-  const [filters, setFilters] = useState<FilterParamTypes>({ stateId: OrderStateEnum.READY_TO_PICK })
+  const [filters] = useAtom(filtersAtom)
+  const { warehouseConfig } = useWarehouseConfig()
   const { data: session } = useSession()
-  const [activeTab, setActiveTab] = useState<TabValue>('pending')
   const { data: orders } = useOrders(filters)
+  const { data: stats } = useOrderStats()
+  const urlPathName = 'homePage'
 
   return (
     <main className='layout'>
@@ -46,26 +44,20 @@ export default function Home () {
         gridTemplateRows={'55px 142px 55px 1fr'}
         gridTemplateColumns={'1fr'}>
         <GridItem m={4} area="title">
-          <Header title={session?.tenants?.name || ''} showButton={false} />
+          <Header title={session?.user.Tenants.name} showButton={false} />
         </GridItem>
         <GridItem m={4} area="tabs" h="100%">
-          <Stats stats={stats} />
+          <Stats stats={stats?.data.data} />
         </GridItem>
         <GridItem m={4} area="filters" h="100%">
-          <TabButtons
-          tabs={tabs}
-          orderCounter={orders?.data?.data?.length}
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          setFilters={setFilters}
-          onClick={orders.refetch} />
+          <TabButtons urlPathName={urlPathName} orderCounter={orders?.data?.data?.length} onClick={orders.refetch} />
         </GridItem>
         <GridItem m={4} area="main" h={`${orders?.data?.data.length * 110}px`} overflowY="auto" flexGrow={1}>
-        <OrderList
-            orders={orders?.data?.data}
+          <OrderList
+            orders={orders?.data?.data.data}
+            warehouseConfig={warehouseConfig}
             isLoading={orders.isLoading}
-            activeTab={activeTab}
-            shouldPaginate={activeTab === 'pending' && urlPath !== '/'} />
+            isHomePage={true} />
         </GridItem>
       </Grid>
     </main>

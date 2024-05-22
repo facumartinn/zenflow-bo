@@ -1,4 +1,4 @@
-export type QueryParams = Record<string, string | number>
+export type QueryParams = Record<string, string | number | number[]>
 
 export function objectToQueryString (params: QueryParams): string {
   const searchParams = new URLSearchParams()
@@ -6,7 +6,11 @@ export function objectToQueryString (params: QueryParams): string {
   Object.keys(params).forEach(key => {
     const value = params[key]
     if (value === undefined) return
-    searchParams.append(key, value.toString())
+    if (Array.isArray(value)) {
+      value.forEach(item => { searchParams.append(key, item.toString()) })
+    } else {
+      searchParams.append(key, value.toString())
+    }
   })
 
   return searchParams.toString()

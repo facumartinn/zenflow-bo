@@ -21,6 +21,10 @@ export const createOrders = async (data: Order[]) => {
   return await axiosInstance.post('/orders/create', data)
 }
 
+export const updateOrderStatus = async (data: number[], stateId: number) => {
+  return await axiosInstance.post(`/orders/update-status/${stateId}`, data)
+}
+
 export const assignOrders = async (data: any) => {
   return await axiosInstance.put('/orders/assign', data)
 }
@@ -31,4 +35,8 @@ export const deleteOrder = async (orderId: number) => {
 
 export const fetchOrderStates = async () => {
   return await axiosInstance.get('/states')
+}
+
+export const fetchOrderStats = async () => {
+  return await axiosInstance.get('/orders/order-stats')
 }

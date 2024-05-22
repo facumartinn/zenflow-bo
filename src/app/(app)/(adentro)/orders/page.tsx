@@ -1,104 +1,55 @@
+/* eslint-disable @typescript-eslint/no-confusing-void-expression */
+/* eslint-disable array-callback-return */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 'use client'
 
+import { useAtom } from 'jotai'
+import { filtersAtom, orderCounterAtom, selectedOrdersAtom } from '@/src/store/navigationAtom'
+import { useWarehouseConfig } from '@/src/hooks/warehouse/useWarehouseConfig'
+import { useOrders } from '@/src/hooks/order/useOrders'
+import { useSystemPreferences } from '@/src/hooks/config/useConfig'
+import './common.css'
 import { Filters } from '@/src/components/Filters'
 import { Header } from '@/src/components/Header'
 import OrderList from '@/src/components/Orders/List'
-import { type Tab, TabButtons, type TabValue } from '@/src/components/Tabs'
-import { useOrders } from '@/src/hooks/order/useOrders'
+import { TabButtons } from '@/src/components/Tabs'
 import { Grid, GridItem, useDisclosure } from '@chakra-ui/react'
-import { useState } from 'react'
-import './common.css'
 import { OrderStateEnum, type Order } from '@/src/types/order'
-import { AssignModal } from '@/src/components/Orders/Modal/Assign'
-import { useWarehouseConfig } from '@/src/hooks/warehouse/useWarehouseConfig'
-import { useSystemPreferences } from '@/src/hooks/config/useConfig'
-import { type FilterParamTypes } from '@/src/types'
-import { getFormattedDay } from '@/src/utils/queryParams'
-
-const tabs: Tab[] = [
-  {
-    orderStateId: OrderStateEnum.NEW,
-    label: 'Nuevos pedidos',
-    value: 'new'
-  },
-  {
-    orderStateId: OrderStateEnum.READY_TO_PICK,
-    label: 'Pendientes',
-    value: 'pending'
-  },
-  {
-    orderStateId: OrderStateEnum.COMPLETED,
-    label: 'Finalizados',
-    value: 'completed'
-  }
-]
-
-export const ORDER_STATES = [
-  { id: 1, description: 'Nuevo pedido' },
-  { id: 2, description: 'Listo para preparar' },
-  { id: 3, description: 'Programado' },
-  { id: 4, description: 'En preparación' },
-  { id: 5, description: 'Finalizado' },
-  { id: 6, description: 'Eliminado' }
-]
-
-// interface OrderFilters {
-//   assemblyDate?: string
-//   stateId?: number
-//   orderId?: number
-//   shift?: number
-// }
-
-// const orderFilters: OrderFilters = {
-//   assemblyDate: '',
-//   state: 1,
-//   orderId: 0,
-//   shift: 0
-// }
+import { MountOrdersModal } from '@/src/components/Modal/Orders/MountOrders'
+import { AssignOrdersModal } from '@/src/components/Modal/Orders/AssignOrders'
+import { ScheduleOrdersModal } from '@/src/components/Modal/Orders/ScheduleOrders'
+import { Suspense } from 'react'
+import { DeleteModal } from '@/src/components/Modal/DeleteModal'
 
 export default function OrdersPage () {
-  const urlPath = window.location.pathname
+  const urlPathName = 'ordersPage'
   useSystemPreferences()
-  const [filters, setFilters] = useState<FilterParamTypes>({ stateId: OrderStateEnum.NEW })
+  const [, setSelectedOrders] = useAtom(selectedOrdersAtom)
+  const [orderCounter] = useAtom(orderCounterAtom)
+  const [filters] = useAtom(filtersAtom)
   const { warehouseConfig } = useWarehouseConfig()
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const [activeTab, setActiveTab] = useState<TabValue>('new')
-  const { data: orders, assignOrders, isAssignSuccess, isAssignLoading } = useOrders(filters)
+  const { data: orders, assignOrders, updateOrderStatus } = useOrders(filters)
   const orderList = orders?.data?.data.data
-  const [orderCounter, setOrderCounter] = useState(orderList?.length)
-  const [selectedOrders, setSelectedOrders] = useState<number[]>([])
+
+  const { isOpen: isMountModalOpen, onOpen: onMountModalOpen, onClose: onMountModalClose } = useDisclosure()
+  const { isOpen: isAssignModalOpen, onOpen: onAssignModalOpen, onClose: onAssignModalClose } = useDisclosure()
+  const { isOpen: isScheduleModalOpen, onOpen: onScheduleModalOpen, onClose: onScheduleModalClose } = useDisclosure()
+  const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose } = useDisclosure()
 
   const selectAllOrders = () => {
-    setSelectedOrders(orderList.map((order: Order) => order.id) as number[])
-  }
-  const deselectAllOrders = () => {
-    setSelectedOrders([])
-  }
-
-  const toggleOrderSelection = (orderNumber: number) => {
-    setSelectedOrders(prev => (
-      prev.includes(orderNumber) ? prev.filter(id => id !== orderNumber) : [...prev, orderNumber]
-    ))
-  }
-
-  const handleLoadOrders = () => {
-    console.log('Subiendo los pedidos seleccionados:', selectedOrders)
-    onOpen()
-  }
-
-  const handleDateSelection = (date: string) => {
-    setFilters((prev) => ({ ...prev, assemblyDate: getFormattedDay(date) }))
+    const filteredOrders = orderList.filter((order: Order) => order.state_id !== OrderStateEnum.IN_PREPARATION)
+    const selectedOrderIds = filteredOrders.map((order: Order) => order.id)
+    setSelectedOrders(selectedOrderIds as number[])
   }
 
   const handleTabSelection = async () => {
     await orders?.refetch()
-    setOrderCounter(orders.data?.data.data.length)
-    // Lógica para programar picking
   }
 
   return (
     <main className='layout'>
+      <Suspense fallback={<p>Loading...</p>}>
+
       <Grid h="100vh" rowGap={4}
         templateAreas={`"title"
                         "tabs"
@@ -114,38 +65,46 @@ export default function OrdersPage () {
             onClick={() => { console.log('Aca tiene que ir una funcion') }} />
         </GridItem>
         <GridItem m={4} area="tabs" h="100%">
-          <TabButtons
-            tabs={tabs}
-            orderCounter={orderCounter}
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            setSelectedOrders={setSelectedOrders}
-            setFilters={setFilters}
-            onClick={handleTabSelection} />
+          <TabButtons urlPathName={urlPathName} orderCounter={orderCounter} onClick={handleTabSelection} />
         </GridItem>
         <GridItem mt={4} mx={4} area="filters" h="100%">
           <Filters
-            onDeselectAll={deselectAllOrders}
             onSelectAll={selectAllOrders}
-            selectedOrders={selectedOrders}
-            ordersCount={orderList?.length}
-            activeTab={activeTab}
-            filters={filters}
-            onLoadOrders={handleLoadOrders}
+            onMountOrders={onMountModalOpen}
+            onAssignOrders={onAssignModalOpen}
+            onScheduleOrders={onScheduleModalOpen}
+            onDeleteOrders={onDeleteModalOpen}
+            ordersLength={orderList?.length}
             />
         </GridItem>
         <GridItem mt={4} mx={4} area="main" overflowY="scroll">
           <OrderList
             orders={orderList}
+            warehouseConfig={warehouseConfig}
             isLoading={orders.isLoading}
-            selectedOrders={selectedOrders}
-            onSelectOrder={toggleOrderSelection}
-            onDateChange={handleDateSelection}
-            activeTab={activeTab}
-            shouldPaginate={activeTab === 'pending' && urlPath !== '/'} />
+            isHomePage={false} />
         </GridItem>
       </Grid>
-      <AssignModal warehouseConfig={warehouseConfig} assignOrders={assignOrders} isAssignSuccess={isAssignSuccess} isAssignLoading={isAssignLoading} isOpen={isOpen} onClose={onClose} selectedOrders={selectedOrders} />
+      <MountOrdersModal
+        warehouseConfig={warehouseConfig}
+        assignOrders={assignOrders}
+        isOpen={isMountModalOpen}
+        onClose={onMountModalClose} />
+      <AssignOrdersModal
+        assignOrders={assignOrders}
+        isOpen={isAssignModalOpen}
+        onClose={onAssignModalClose} />
+      <DeleteModal
+        type='order'
+        updateOrderStatus={updateOrderStatus}
+        isOpen={isDeleteModalOpen}
+        onClose={onDeleteModalClose} />
+      <ScheduleOrdersModal
+        warehouseConfig={warehouseConfig}
+        assignOrders={assignOrders}
+        isOpen={isScheduleModalOpen}
+        onClose={onScheduleModalClose} />
+      </Suspense>
     </main>
   )
 }

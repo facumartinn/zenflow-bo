@@ -1,46 +1,13 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { VStack, Divider, Text, FormControl, Flex, FormLabel, Switch, useToast, Box, Icon } from '@chakra-ui/react'
+import { VStack, Divider, Text, FormControl, Flex, FormLabel, Switch, useToast } from '@chakra-ui/react'
 import { type Resources, type Config, type Shifts } from '@/src/types/warehouse'
 import { useState } from 'react'
 import { warehouseConfigAtom } from '@/src/store/configAtom'
 import { useAtom } from 'jotai'
 import { DefaultButton } from '../../Button'
-import { FaRegCheckCircle } from 'react-icons/fa'
-import { ResourcesList } from './Resources'
 import { useSystemPreferences } from '@/src/hooks/config/useConfig'
-import { ShiftsList } from './Shifts'
-
-interface PreferenceProps {
-  title: string
-  label: string
-  description: string
-  isChecked: (config: Config, handleShiftsChange: () => void) => boolean
-  children: (config: Config, handleResourcesChange: (str: any) => void) => React.ReactNode
-}
-
-const preferences: PreferenceProps[] = [
-  {
-    title: 'Picking automático',
-    label: 'automatic_picking',
-    description: 'Encienda esta opción para que todos los nuevos pedidos entrantes se envíen a la lista de pendientes de picking automaticamente.',
-    isChecked: (config: Config) => config.automatic_picking.status,
-    children: () => null
-  },
-  {
-    title: 'Uso de turnos',
-    label: 'use_shifts',
-    description: 'Encienda esta opción para dividir los dias por turnos.',
-    isChecked: (config: Config) => config.use_shifts.status,
-    children: (config: Config, handleShiftChange: any) => <ShiftsList shiftsConfig={config.use_shifts} onShiftsChange={handleShiftChange} />
-  },
-  {
-    title: 'Gestión de recursos',
-    label: 'use_resources',
-    description: 'Los recursos son aquellos elementos de packing, como pallets, cajas, bolsas, que ayudan a identificar el pedido entregado. Activá esta opción para crear los tuyos',
-    isChecked: (config: Config) => config.use_resources.status,
-    children: (config: Config, handleResourcesChange: any) => <ResourcesList resourcesConfig={config.use_resources} onResourcesChange={handleResourcesChange} />
-  }
-]
+import { preferences } from './settings'
+import { ToastMessage } from '../../Toast'
 
 export const PreferenceSettings = ({
   warehouseSettings
@@ -52,7 +19,7 @@ export const PreferenceSettings = ({
   const [isButtonLoading, setIsButtonLoading] = useState<boolean>(false)
   const toast = useToast()
 
-  const handleChange = (value: boolean, field: keyof Config) => {
+  const handleChange = async (value: boolean, field: keyof Config) => {
     const newState = { ...localConfig, [field]: { ...localConfig[field], status: value } }
     setLocalConfig(newState)
     setWarehouseConfig(newState)
@@ -81,7 +48,7 @@ export const PreferenceSettings = ({
     setIsSaveButtonDisabled(false)
   }
 
-  const handleSaveChanges = () => {
+  const handleSaveChanges = async () => {
     setIsButtonLoading(true)
     updateConfig({
       config: localConfig
@@ -89,16 +56,10 @@ export const PreferenceSettings = ({
     setTimeout(() => {
       setIsButtonLoading(false)
       toast({
-        title: 'Cambios guardados',
         status: 'success',
         duration: 2000,
         isClosable: true,
-        render: () => (
-          <Box sx={{ backgroundColor: 'white', border: '2px solid', borderColor: '#3EBC59', borderRadius: 5, py: 4, px: 2, display: 'flex', alignItems: 'center' }}>
-            <Icon size={24} color='#3EBC59' as={FaRegCheckCircle} />
-            <Text ml={2} color='#4A4D4F' fontSize={16} fontWeight='bold'>Cambios guardados</Text>
-          </Box>
-        )
+        render: () => <ToastMessage title={'Cambios guardados'} status='success' />
       })
     }, 1500)
     setIsSaveButtonDisabled(true)
@@ -120,7 +81,7 @@ export const PreferenceSettings = ({
               id={preference.label}
               colorScheme={'brand'}
               defaultChecked={localConfig[preference.label as keyof Config].status}
-              onChange={e => { handleChange(e.target.checked, preference.label as keyof Config) }}
+              onChange={async e => { await handleChange(e.target.checked, preference.label as keyof Config) }}
             />
             </Flex>
             <Text textAlign='start' fontSize={14} color='#4A4D4F'>{preference.description}</Text>

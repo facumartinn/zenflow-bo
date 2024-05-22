@@ -1,5 +1,5 @@
 export interface FilterParamTypes {
-  stateId?: number
+  stateId?: number[]
   orderId?: number
   userId?: number
   shiftId?: number

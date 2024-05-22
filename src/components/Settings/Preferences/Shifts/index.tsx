@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { AiOutlineClose, AiOutlineCheck } from 'react-icons/ai'
 import { type UseShifts, type Shifts } from '@/src/types/warehouse'
 import { ResourceCard } from '../Resources/Card'
+import { ToastMessage } from '@/src/components/Toast'
 
 export const ShiftsList = ({ shiftsConfig, onShiftsChange }: { shiftsConfig: UseShifts, onShiftsChange: (shifts: Shifts[]) => void }) => {
   const [shifts, setShifts] = useState(shiftsConfig.shifts)
@@ -19,11 +20,10 @@ export const ShiftsList = ({ shiftsConfig, onShiftsChange }: { shiftsConfig: Use
   const handleConfirmAddResource = () => {
     if (!newShiftName.trim()) {
       toast({
-        title: 'Error',
-        description: 'El nombre del recurso no puede estar vacío.',
         status: 'error',
         duration: 2000,
-        isClosable: true
+        isClosable: true,
+        render: () => <ToastMessage title={'Error'} description={'El nombre del recurso no puede estar vacío.'} status='error' />
       })
       return
     }
@@ -40,7 +40,8 @@ export const ShiftsList = ({ shiftsConfig, onShiftsChange }: { shiftsConfig: Use
       description: 'El recurso ha sido añadido exitosamente.',
       status: 'success',
       duration: 2000,
-      isClosable: true
+      isClosable: true,
+      render: () => <ToastMessage title={'Recurso creado'} description={'El recurso ha sido añadido exitosamente.'} status='success' />
     })
   }
 
