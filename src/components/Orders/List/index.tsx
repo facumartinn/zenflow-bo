@@ -25,7 +25,7 @@ export default function OrderList ({ orders, warehouseConfig, isLoading, isHomeP
   const [activeTab] = useAtom(activeTabAtom)
   const isChecked = (orderId: number) => selectedOrders ? selectedOrders.includes(orderId) : false
   const [showLoading, setShowLoading] = useState(isLoading)
-  const shouldPaginate = activeTab === 'pending' || activeTab === 'completed'
+  const shouldPaginate = activeTab === 'new' || activeTab === 'pending' || activeTab === 'completed'
   const groupedOrders = () => {
     if (orders) {
       if (activeTab === 'pending' && warehouseConfig.use_shifts?.status) {
@@ -83,7 +83,7 @@ export default function OrderList ({ orders, warehouseConfig, isLoading, isHomeP
             </Box>
           ))}
       </List>
-      {shouldPaginate && !isHomePage ? <Pagination /> : null}
+      {!isHomePage ? <Pagination /> : null}
     </>
   )
 }

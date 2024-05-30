@@ -57,10 +57,7 @@ export const Filters = ({
           onDeleteOrders={onDeleteOrders}
            />
       </Flex>
-        {activeTab === 'new'
-          ? <Text fontSize={14} mt={4} color='#4A4D4F'>Estos son los pedidos cargados recientemente, pero aún todavía falta subirlos para que los pickers puedan prepararlos.</Text>
-          : <Text fontSize={14} mt={4} color='#4A4D4F'>{selectedDate} - {ordersLength > 0 ? ordersLength : 'No hay'} pedidos</Text>
-        }
+        <Text fontSize={14} mt={4} color='#4A4D4F'>{selectedDate} - {ordersLength > 0 ? ordersLength : 'No hay'} pedidos</Text>
       </HStack>
   )
 }

@@ -12,8 +12,11 @@ import { useOrderStates, useOrderStats, useOrders } from '@/src/hooks/useOrders'
 import { Header } from '@/src/components/Header'
 import { useSystemPreferences } from '@/src/hooks/useConfig'
 import { useAtom } from 'jotai'
-import { filtersAtom } from '@/src/store/navigationAtom'
+import { activeTabAtom, filtersAtom } from '@/src/store/navigationAtom'
 import { useWarehouseConfig } from '@/src/hooks/useWarehouseConfig'
+import { useEffect } from 'react'
+import { OrderStateEnum } from '@/src/types/order'
+import { getFormattedDay } from '@/src/utils/queryParams'
 // import { OrderStateEnum } from '@/src/types/order'
 // import { urlPath } from '../../../utils'
 
@@ -27,12 +30,26 @@ import { useWarehouseConfig } from '@/src/hooks/useWarehouseConfig'
 export default function Home () {
   useOrderStates()
   useSystemPreferences()
-  const [filters] = useAtom(filtersAtom)
+  const [filters, setFilters] = useAtom(filtersAtom)
+  const [, setActiveTab] = useAtom(activeTabAtom)
   const { warehouseConfig } = useWarehouseConfig()
   const { data: session } = useSession()
   const { data: orders } = useOrders(filters)
   const { data: stats } = useOrderStats()
   const urlPathName = 'homePage'
+
+  useEffect(() => {
+    const initializeTab = async () => {
+      setActiveTab('pending')
+      setFilters({ stateId: [OrderStateEnum.READY_TO_PICK, OrderStateEnum.PROGRAMMED, OrderStateEnum.IN_PREPARATION], assemblyDate: getFormattedDay() })
+      try {
+        await orders?.refetch()
+      } catch (error) {
+        console.error('Failed to refetch orders:', error)
+      }
+    }
+    void initializeTab()
+  }, [])
 
   return (
     <main className='layout'>

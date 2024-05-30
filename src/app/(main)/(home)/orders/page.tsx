@@ -4,7 +4,7 @@
 'use client'
 
 import { useAtom } from 'jotai'
-import { filtersAtom, orderCounterAtom, selectedOrdersAtom } from '@/src/store/navigationAtom'
+import { activeTabAtom, filtersAtom, orderCounterAtom, selectedOrdersAtom } from '@/src/store/navigationAtom'
 import { useWarehouseConfig } from '@/src/hooks/useWarehouseConfig'
 import { useOrders } from '@/src/hooks/useOrders'
 import { useSystemPreferences } from '@/src/hooks/useConfig'
@@ -18,18 +18,32 @@ import { OrderStateEnum, type Order } from '@/src/types/order'
 import { MountOrdersModal } from '@/src/components/Modal/Orders/MountOrders'
 import { AssignOrdersModal } from '@/src/components/Modal/Orders/AssignOrders'
 import { ScheduleOrdersModal } from '@/src/components/Modal/Orders/ScheduleOrders'
-import { Suspense } from 'react'
+import { Suspense, useEffect } from 'react'
 import { DeleteModal } from '@/src/components/Modal/DeleteModal'
 
 export default function OrdersPage () {
   const urlPathName = 'ordersPage'
   useSystemPreferences()
   const [, setSelectedOrders] = useAtom(selectedOrdersAtom)
+  const [, setActiveTab] = useAtom(activeTabAtom)
   const [orderCounter] = useAtom(orderCounterAtom)
-  const [filters] = useAtom(filtersAtom)
+  const [filters, setFilters] = useAtom(filtersAtom)
   const { warehouseConfig } = useWarehouseConfig()
   const { data: orders, assignOrders, updateOrderStatus } = useOrders(filters)
   const orderList = orders?.data?.data.data
+
+  useEffect(() => {
+    const initializeTab = async () => {
+      setActiveTab('new')
+      setFilters({ stateId: [OrderStateEnum.NEW] })
+      try {
+        await orders?.refetch()
+      } catch (error) {
+        console.error('Failed to refetch orders:', error)
+      }
+    }
+    void initializeTab()
+  }, [])
 
   const { isOpen: isMountModalOpen, onOpen: onMountModalOpen, onClose: onMountModalClose } = useDisclosure()
   const { isOpen: isAssignModalOpen, onOpen: onAssignModalOpen, onClose: onAssignModalClose } = useDisclosure()
@@ -52,7 +66,7 @@ export default function OrdersPage () {
 
       <Grid h="100vh" rowGap={4}
         templateAreas={`"title"
-                        "tabs"
+                        "tabs"  
                         "filters"
                         "main"`}
         gridTemplateRows={'70px 55px 95px 1fr'}
