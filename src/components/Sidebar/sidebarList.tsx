@@ -38,7 +38,8 @@ export const sideBarButtons: SideBarButtonProps = {
   bottom: [
     {
       icon: <ConfigurationSvg color='black' />,
-      text: 'Configuración'
+      text: 'Configuración',
+      link: '/config'
     }
   ]
 }

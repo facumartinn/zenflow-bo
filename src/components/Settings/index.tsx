@@ -3,7 +3,6 @@
 import React from 'react'
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, Tabs, TabList, Tab, TabPanel, ModalBody, Icon, TabIndicator, TabPanels } from '@chakra-ui/react'
 import { BsPersonVcard } from 'react-icons/bs'
-import { VscSettings } from 'react-icons/vsc'
 import { PiCurrencyCircleDollar, PiQuestion } from 'react-icons/pi'
 import { AccountSettings } from './Account'
 import { PreferenceSettings } from './Preferences'
@@ -28,10 +27,6 @@ const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => vo
                 <Tab _selected={settingsModalStyles.tab.selected}>
                   <Icon as={BsPersonVcard} size={24} mr={2} />
                   Cuenta
-                </Tab>
-                <Tab _selected={settingsModalStyles.tab.selected}>
-                  <Icon as={VscSettings} size={24} mr={2} />
-                  Sistema
                 </Tab>
                 <Tab _selected={settingsModalStyles.tab.selected}>
                   <Icon as={PiCurrencyCircleDollar} size={24} mr={2} />
