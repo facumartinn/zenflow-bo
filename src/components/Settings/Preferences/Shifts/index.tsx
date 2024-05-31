@@ -1,92 +1,82 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { Button, useToast, VStack, Input, IconButton, Flex } from '@chakra-ui/react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { AiOutlineClose, AiOutlineCheck } from 'react-icons/ai'
 import { type UseShifts, type Shifts } from '@/src/types/warehouse'
-import { ResourceCard } from '../Resources/Card'
 import { ToastMessage } from '@/src/components/Toast'
+import { ShiftCard } from './ShiftCard'
 
 export const ShiftsList = ({ shiftsConfig, onShiftsChange }: { shiftsConfig: UseShifts, onShiftsChange: (shifts: Shifts[]) => void }) => {
-  const [shifts, setShifts] = useState(shiftsConfig.shifts)
+  const [shifts, setShifts] = useState(shiftsConfig?.shifts || [])
   const [isAdding, setIsAdding] = useState(false)
   const [newShiftName, setNewShiftName] = useState('')
   const toast = useToast()
 
-  const handleStartAddingResource = () => {
+  useEffect(() => {
+    setShifts(shiftsConfig?.shifts || [])
+  }, [shiftsConfig])
+
+  const handleStartAddingShift = () => {
     setIsAdding(true)
     setNewShiftName('')
   }
 
-  const handleConfirmAddResource = () => {
+  const handleConfirmAddShift = () => {
     if (!newShiftName.trim()) {
       toast({
         status: 'error',
         duration: 2000,
         isClosable: true,
-        render: () => <ToastMessage title={'Error'} description={'El nombre del recurso no puede estar vacío.'} status='error' />
+        position: 'top-right',
+        render: () => <ToastMessage title={'Error'} description={'El nombre del turno no puede estar vacío.'} status='error' />
       })
       return
     }
     const newShift = {
-      id: Math.floor(Math.random() * 10),
+      id: shifts.length > 0 ? Math.max(...shifts.map(shift => shift.id)) + 1 : 1,
       name: newShiftName
     }
     const newShifts = [...shifts, newShift]
     setShifts(newShifts)
     onShiftsChange(newShifts)
     setIsAdding(false)
-    toast({
-      title: 'Recurso creado',
-      description: 'El recurso ha sido añadido exitosamente.',
-      status: 'success',
-      duration: 2000,
-      isClosable: true,
-      render: () => <ToastMessage title={'Recurso creado'} description={'El recurso ha sido añadido exitosamente.'} status='success' />
-    })
   }
 
-  const handleResourceChange = (id: number, newName: string) => {
-    const updatedResources = shifts.map(shifts =>
-      shifts.id === id ? { ...shifts, name: newName } : shifts
+  const handleShiftChange = (id: number, newName: string) => {
+    const updatedShifts = shifts.map(shift =>
+      shift.id === id ? { ...shift, name: newName } : shift
     )
-    setShifts(updatedResources)
-    onShiftsChange(updatedResources)
+    setShifts(updatedShifts)
+    onShiftsChange(updatedShifts)
   }
 
-  // Eliminar recurso por id
-  const handleDeleteResource = (id: number) => {
+  const handleDeleteShift = (id: number) => {
     const filteredShifts = shifts.filter(shift => shift.id !== id)
     setShifts(filteredShifts)
     onShiftsChange(filteredShifts)
-    toast({
-      title: 'Recurso eliminado',
-      description: 'El recurso ha sido eliminado exitosamente.',
-      status: 'success',
-      duration: 2000,
-      isClosable: true
-    })
   }
 
-  const handleCancelAddResource = () => {
+  const handleCancelAddShift = () => {
     setIsAdding(false)
   }
 
   return (
     <VStack mt={4} spacing={4} align='start' w="full">
-      {shiftsConfig.status && (
+      {shiftsConfig?.status && (
         <>
-          {shifts.map(resource => (
-            <ResourceCard
-              key={resource.id}
-              resourceName={resource.name}
-              onResourceChange={(newName) => { handleResourceChange(resource.id, newName) }}
-              onDelete={() => { handleDeleteResource(resource.id) }}
+          {shifts.map(shift => (
+            <ShiftCard
+              key={shift.id}
+              shiftId={shift.id}
+              shiftName={shift.name}
+              onShiftChange={(newName) => { handleShiftChange(shift.id, newName) }}
+              onDelete={() => { handleDeleteShift(shift.id) }}
             />
           ))}
           {isAdding && (
             <Flex w='full' flexDirection='row' p={4} bg="white" boxShadow="sm" borderRadius="lg" borderWidth="1px">
               <Input
-                placeholder="Nombre del recurso"
+                placeholder="Nombre del turno"
                 value={newShiftName}
                 onChange={(e) => { setNewShiftName(e.target.value) }}
               />
@@ -95,19 +85,19 @@ export const ShiftsList = ({ shiftsConfig, onShiftsChange }: { shiftsConfig: Use
                   icon={<AiOutlineCheck />}
                   aria-label="Confirmar adición"
                   bg='white'
-                  onClick={handleConfirmAddResource}
+                  onClick={handleConfirmAddShift}
                 />
                 <IconButton
                   icon={<AiOutlineClose />}
                   aria-label="Cancelar adición"
                   bg='white'
-                  onClick={handleCancelAddResource}
+                  onClick={handleCancelAddShift}
                 />
               </Flex>
             </Flex>
           )}
-          <Button p={0} color='#2D41FC' colorScheme='none' onClick={handleStartAddingResource}>
-            Añadir nuevo recurso
+          <Button p={0} color='#2D41FC' colorScheme='none' onClick={handleStartAddingShift}>
+            + Nuevo turno
           </Button>
         </>
       )}

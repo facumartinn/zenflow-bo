@@ -18,7 +18,7 @@ import { OrderStateEnum, type Order } from '@/src/types/order'
 import { MountOrdersModal } from '@/src/components/Modal/Orders/MountOrders'
 import { AssignOrdersModal } from '@/src/components/Modal/Orders/AssignOrders'
 import { ScheduleOrdersModal } from '@/src/components/Modal/Orders/ScheduleOrders'
-import { Suspense, useEffect } from 'react'
+import { useEffect } from 'react'
 import { DeleteModal } from '@/src/components/Modal/DeleteModal'
 
 export default function OrdersPage () {
@@ -62,8 +62,6 @@ export default function OrdersPage () {
 
   return (
     <main className='layout'>
-      <Suspense fallback={<p>Loading...</p>}>
-
       <Grid h="100vh" rowGap={4}
         templateAreas={`"title"
                         "tabs"  
@@ -118,7 +116,6 @@ export default function OrdersPage () {
         assignOrders={assignOrders}
         isOpen={isScheduleModalOpen}
         onClose={onScheduleModalClose} />
-      </Suspense>
     </main>
   )
 }

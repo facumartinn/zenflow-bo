@@ -10,15 +10,17 @@ import { DeleteIcon, DragHandleIcon } from '@chakra-ui/icons'
 
 interface ShiftCardProps {
   shiftName: string
+  shiftId: number
   onShiftChange: (name: string) => void
   onDelete: () => void
 }
 
-export const ShiftCard: React.FC<ShiftCardProps> = ({ shiftName, onShiftChange, onDelete }) => {
+export const ShiftCard: React.FC<ShiftCardProps> = ({ shiftName, shiftId, onShiftChange, onDelete }) => {
   return (
-    <Box w="full" p={4} bg="white" boxShadow="sm" borderRadius="lg" borderWidth="1px">
+    <Box w="full" py={4} bg="white">
       <VStack align="stretch">
-        <HStack justifyContent="space-between">
+            <Box>Turno ID: {shiftId}</Box>
+        <HStack justifyContent="space-between" alignItems='center'>
           <Input value={shiftName} onChange={(e) => { onShiftChange(e.target.value) }} />
           <IconButton
             aria-label="Delete shift"

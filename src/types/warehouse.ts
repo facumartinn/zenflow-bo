@@ -13,6 +13,11 @@ export interface UseResources {
   resources: Resources[]
 }
 
+export interface MultiPickingPacking {
+  status: boolean
+  volume: number
+}
+
 export interface Resources {
   id: number
   name: string
@@ -24,6 +29,7 @@ interface AutomaticPicking {
 
 export interface Config {
   automatic_picking: AutomaticPicking
+  multi_picking_packing: MultiPickingPacking
   use_shifts: UseShifts
   use_resources: UseResources
 }
