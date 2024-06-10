@@ -7,7 +7,8 @@ const statName: any = {
   pending: 'Pedidos pendientes',
   in_preparation: 'En preparación',
   finished: 'Finalizados',
-  active_pickers: 'Pickers activos'
+  active_pickers: 'Pickers activos',
+  expired_orders: 'Pedidos vencidos'
 }
 const iconMap: any = {
   pending: FaClipboardList,

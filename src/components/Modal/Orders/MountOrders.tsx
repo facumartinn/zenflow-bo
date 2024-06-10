@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-confusing-void-expression */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { DefaultButton } from '@/src/components/Button'
+import { useOrderStats } from '@/src/hooks/useOrders'
 import { useUsers } from '@/src/hooks/useUser'
-import { selectedOrdersAtom } from '@/src/store/navigationAtom'
 import { OrderStateEnum } from '@/src/types/order'
 import { type User } from '@/src/types/user'
 import { getFormattedDay } from '@/src/utils/queryParams'
@@ -19,24 +19,28 @@ import {
   InputGroup,
   Input
 } from '@chakra-ui/react'
-import { useAtom } from 'jotai'
 import { useState } from 'react'
 
 interface AssignModalProps {
+  title?: string
+  description?: string
+  buttonLabel?: string
+  selectedOrders: number[]
   warehouseConfig: any
   assignOrders: any
   isOpen: boolean
   onClose: () => void
+  onExpiredModalClose?: () => void
 }
 
-export const MountOrdersModal = ({ warehouseConfig, assignOrders, isOpen, onClose }: AssignModalProps) => {
+export const MountOrdersModal = ({ title, description, buttonLabel = 'SUBIR PEDIDO', selectedOrders, warehouseConfig, assignOrders, isOpen, onClose, onExpiredModalClose }: AssignModalProps) => {
   const { data: users } = useUsers(2)
   const [assignedTo, setAssignedTo] = useState(0)
   const [preparationDate, setPreparationDate] = useState('')
   const [shiftId, setShiftId] = useState(0)
-  const [selectedOrders] = useAtom(selectedOrdersAtom)
+  const { data: stats } = useOrderStats()
 
-  const onAssign = () => {
+  const onAssign = async () => {
     const updates = selectedOrders?.map(order => ({
       id: order,
       user_id: assignedTo === 0 ? null : assignedTo,
@@ -44,15 +48,17 @@ export const MountOrdersModal = ({ warehouseConfig, assignOrders, isOpen, onClos
       assembly_schedule: shiftId
     }))
     assignOrders({ orders: updates, newStateId: OrderStateEnum.READY_TO_PICK })
+    await stats?.refetch()
     onClose()
+    onExpiredModalClose && onExpiredModalClose()
   }
   return (
     <Modal onClose={onClose} isOpen={isOpen} isCentered>
     <ModalOverlay />
     <ModalContent width='430px'>
-      <ModalHeader fontSize={32} pb={0}>Subir pedidos</ModalHeader>
+      <ModalHeader fontSize={32} pb={0}>{title}</ModalHeader>
       <ModalBody pt={0}>
-        <Text fontSize={14} color='#808081'>Los cambios se aplicarán a todos los pedidos seleccionados.</Text>
+        <Text fontSize={14} color='#808081'>{description}</Text>
         <InputGroup mt={8} display='flex' flexDirection='column' >
           <Text mb='4px' fontSize={14} fontWeight={500}>Asignado a</Text>
             <Select
@@ -87,7 +93,7 @@ export const MountOrdersModal = ({ warehouseConfig, assignOrders, isOpen, onClos
         </InputGroup>
       </ModalBody>
       <ModalFooter display='flex' flexDirection='column' >
-        <DefaultButton type='primary' label='SUBIR PEDIDO' onClick={onAssign} />
+        <DefaultButton type='primary' label={buttonLabel} onClick={onAssign} />
         <Button mt={4} variant='none' onClick={onClose}>ATRÁS</Button>
       </ModalFooter>
     </ModalContent>

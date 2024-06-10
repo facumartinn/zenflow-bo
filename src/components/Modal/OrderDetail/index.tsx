@@ -22,7 +22,6 @@ import ProductCard from './ProductCard'
 
 export const OrderDrawer = ({ isOpen, onClose, orderId }: { isOpen: boolean, onClose: () => void, orderId: number }) => {
   const orderDetail = useOrderDetail(orderId)
-  console.log(orderDetail?.[0]?.Orders)
 
   return (
       <>
@@ -41,7 +40,7 @@ export const OrderDrawer = ({ isOpen, onClose, orderId }: { isOpen: boolean, onC
             <VStack spacing={4} align="stretch">
               <Box>
                 <Text fontSize="sm" color="gray.600">Fecha de creación</Text>
-                <Text fontSize="md">{orderDetail?.[0]?.Orders?.created_at?.toString()}</Text>
+                <Text fontSize="md">{orderDetail?.[0]?.Orders?.createdAt?.toString()}</Text>
               </Box>
 
               <Box>
@@ -76,7 +75,7 @@ export const OrderDrawer = ({ isOpen, onClose, orderId }: { isOpen: boolean, onC
                     quantity={article.quantity}
                     imageSrc={article?.product_photo}
                     replacementCode={article.product_barcode}
-                    status={article.status}
+                    status={'delivered'}
                    />
                 ))
                 : null}

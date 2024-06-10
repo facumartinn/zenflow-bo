@@ -21,6 +21,9 @@ export default function RootLayout ({
 }>) {
   return (
     <html lang="en" className={inter.variable}>
+      <head>
+        <link rel="icon" href="/static/zenflow.png" sizes="any" />
+      </head>
       <body className='layout-structure'>
         <Providers>
           <Grid h="100vh" overflow={'hidden'}

@@ -1,11 +1,12 @@
 export const ToastStyles = {
   container: {
-    width: '320px',
+    width: '420px',
     alignItems: 'center',
     color: 'white',
     padding: 3,
     borderRadius: 'md',
-    boxShadow: 'md'
+    boxShadow: 'md',
+    marginBottom: 4
   },
   icon: {
     fontSize: '2rem',

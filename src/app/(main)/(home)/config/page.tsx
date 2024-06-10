@@ -52,7 +52,6 @@ export default function ConfigurationPage () {
 
   const handleSaveChanges = async () => {
     setIsButtonLoading(true)
-    console.log(localWarehouseConfig, 'localWarehouseConfig')
     updateConfig(localWarehouseConfig as Config)
     setTimeout(() => {
       setIsButtonLoading(false)

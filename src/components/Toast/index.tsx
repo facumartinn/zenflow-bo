@@ -8,6 +8,7 @@ interface ToastMessageProps {
   title: string
   description?: string
   status: ToastStatus
+  onClick?: () => void
 }
 const toastBg = (status: ToastStatus) => {
   switch (status) {
@@ -22,10 +23,10 @@ const toastBg = (status: ToastStatus) => {
   }
 }
 
-export const ToastMessage = ({ title, description, status }: ToastMessageProps) => {
+export const ToastMessage = ({ title, description, status, onClick }: ToastMessageProps) => {
   const { container, icon, titleText, descriptionText } = ToastStyles
   return (
-    <Flex sx={container} bg={toastBg(status)}>
+    <Flex sx={container} bg={toastBg(status)} onClick={onClick} _hover={{ cursor: 'pointer' }}>
       {status === 'success'
         ? <BiCheckCircle style={icon} />
         : <BiErrorCircle style={icon} />

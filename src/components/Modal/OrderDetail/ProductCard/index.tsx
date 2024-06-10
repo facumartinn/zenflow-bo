@@ -28,7 +28,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
   status,
   replacementCode
 }) => {
-  console.log(productName, productCode, quantity, imageSrc, additionalInfo, status, replacementCode)
   return (
     <Box
       p={6}

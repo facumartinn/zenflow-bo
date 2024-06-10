@@ -6,7 +6,7 @@
 import { useAtom } from 'jotai'
 import { activeTabAtom, filtersAtom, orderCounterAtom, selectedOrdersAtom } from '@/src/store/navigationAtom'
 import { useWarehouseConfig } from '@/src/hooks/useWarehouseConfig'
-import { useOrders } from '@/src/hooks/useOrders'
+import { useOrderStats, useOrders } from '@/src/hooks/useOrders'
 import { useSystemPreferences } from '@/src/hooks/useConfig'
 import './common.css'
 import { Filters } from '@/src/components/Filters'
@@ -20,15 +20,18 @@ import { AssignOrdersModal } from '@/src/components/Modal/Orders/AssignOrders'
 import { ScheduleOrdersModal } from '@/src/components/Modal/Orders/ScheduleOrders'
 import { useEffect } from 'react'
 import { DeleteModal } from '@/src/components/Modal/DeleteModal'
+import { ToastMessage } from '@/src/components/Toast'
+import { ExpiredOrdersDrawer } from '@/src/components/Modal/Orders/ExpiredOrders'
 
 export default function OrdersPage () {
   const urlPathName = 'ordersPage'
   useSystemPreferences()
-  const [, setSelectedOrders] = useAtom(selectedOrdersAtom)
+  const [selectedOrders, setSelectedOrders] = useAtom(selectedOrdersAtom)
   const [, setActiveTab] = useAtom(activeTabAtom)
   const [orderCounter] = useAtom(orderCounterAtom)
   const [filters, setFilters] = useAtom(filtersAtom)
   const { warehouseConfig } = useWarehouseConfig()
+  const { data: stats } = useOrderStats()
   const { data: orders, assignOrders, updateOrderStatus } = useOrders(filters)
   const orderList = orders?.data?.data.data
 
@@ -38,6 +41,7 @@ export default function OrdersPage () {
       setFilters({ stateId: [OrderStateEnum.NEW] })
       try {
         await orders?.refetch()
+        await stats?.refetch()
       } catch (error) {
         console.error('Failed to refetch orders:', error)
       }
@@ -49,6 +53,7 @@ export default function OrdersPage () {
   const { isOpen: isAssignModalOpen, onOpen: onAssignModalOpen, onClose: onAssignModalClose } = useDisclosure()
   const { isOpen: isScheduleModalOpen, onOpen: onScheduleModalOpen, onClose: onScheduleModalClose } = useDisclosure()
   const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose } = useDisclosure()
+  const { isOpen: isExpiredOrdersModalOpen, onOpen: onExpiredOrdersModalOpen, onClose: onExpiredOrdersModalClose } = useDisclosure()
 
   const selectAllOrders = () => {
     const filteredOrders = orderList.filter((order: Order) => order.state_id !== OrderStateEnum.IN_PREPARATION)
@@ -58,7 +63,9 @@ export default function OrdersPage () {
 
   const handleTabSelection = async () => {
     await orders?.refetch()
+    await stats?.refetch()
   }
+  const expiredOrders = stats.data?.data?.data.find((stat: any) => stat.name === 'expired_orders')?.orders
 
   return (
     <main className='layout'>
@@ -90,6 +97,7 @@ export default function OrdersPage () {
             />
         </GridItem>
         <GridItem mt={4} mx={4} area="main" overflowY="scroll">
+          {expiredOrders?.length > 0 ? <ToastMessage title={`${expiredOrders?.length} pedidos atrasados`} description='Para que se preparen tenés que reprogramarlos.' status='warning' onClick={onExpiredOrdersModalOpen} /> : null}
           <OrderList
             orders={orderList}
             warehouseConfig={warehouseConfig}
@@ -98,7 +106,11 @@ export default function OrdersPage () {
         </GridItem>
       </Grid>
       <MountOrdersModal
+        title='Subir pedidos'
+        description='Los cambios se aplicarán a todos los pedidos seleccionados.'
+        buttonLabel='SUBIR PEDIDO'
         warehouseConfig={warehouseConfig}
+        selectedOrders={selectedOrders}
         assignOrders={assignOrders}
         isOpen={isMountModalOpen}
         onClose={onMountModalClose} />
@@ -116,6 +128,12 @@ export default function OrdersPage () {
         assignOrders={assignOrders}
         isOpen={isScheduleModalOpen}
         onClose={onScheduleModalClose} />
+      <ExpiredOrdersDrawer
+        warehouseConfig={warehouseConfig}
+        assignOrders={assignOrders}
+        isOpen={isExpiredOrdersModalOpen}
+        onClose={onExpiredOrdersModalClose}
+        orders={expiredOrders} />
     </main>
   )
 }

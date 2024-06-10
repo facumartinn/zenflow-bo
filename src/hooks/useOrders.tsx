@@ -31,7 +31,7 @@ export const useOrders = (params: FilterParamTypes) => {
     {
       mutationFn: async (data: any) => {
         const response = await assignOrders(data)
-        return response.data
+        return response
       },
       onSuccess: async (data) => {
         await orders.refetch()
@@ -39,7 +39,7 @@ export const useOrders = (params: FilterParamTypes) => {
           isClosable: true,
           duration: 2000,
           position: 'top-right',
-          render: () => <ToastMessage title={`${selectedOrders?.length} pedidos subidos`} description='Ya está listo para que los pickers lo preparen' status='success' />
+          render: () => <ToastMessage title={`${JSON.parse(data?.config?.data as string)?.orders?.length} pedidos subidos`} description='Ya está listo para que los pickers lo preparen' status='success' />
         })
         setSelectedOrders([])
       },
@@ -93,17 +93,18 @@ export const useOrderStates = () => {
 
 export const useOrderStats = () => {
   const [, setOrderStats] = useAtom(orderStatsAtom)
-  const response = useQuery({
+  const stats = useQuery({
     queryKey: ['order-stats'],
     queryFn: async () => await fetchOrderStats(),
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: true,
+    refetchOnMount: true
   })
 
   useEffect(() => {
-    if (response.data?.data) {
-      setOrderStats(response.data?.data.data as State[])
+    if (stats.data?.data) {
+      setOrderStats(stats.data?.data.data as State[])
     }
-  }, [response])
+  }, [stats])
 
-  return response
+  return { data: stats }
 }

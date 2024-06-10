@@ -1,4 +1,4 @@
-import { HomeSvg, OrdersSvg, UsersSvg, ConfigurationSvg } from '../svg/sidebarSvg'
+import { HomeSvg, OrdersSvg, UsersSvg } from '../svg/sidebarSvg'
 
 interface SideBarButtonProps {
   top: Array<
@@ -36,10 +36,10 @@ export const sideBarButtons: SideBarButtonProps = {
     }
   ],
   bottom: [
-    {
-      icon: <ConfigurationSvg color='black' />,
-      text: 'Configuración',
-      link: '/config'
-    }
+    // {
+    //   icon: <ConfigurationSvg color='black' />,
+    //   text: 'Configuración',
+    //   link: '/config'
+    // }
   ]
 }
