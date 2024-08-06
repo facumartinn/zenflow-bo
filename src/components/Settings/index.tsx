@@ -5,14 +5,14 @@ import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, Tabs,
 import { BsPersonVcard } from 'react-icons/bs'
 import { PiCurrencyCircleDollar, PiQuestion } from 'react-icons/pi'
 import { AccountSettings } from './Account'
-import { PreferenceSettings } from './Preferences'
+// import { PreferenceSettings } from './Preferences'
 import { SubscriptionSettings } from './Subscription'
-import { useAtom } from 'jotai'
-import { warehouseConfigAtom } from '@/src/store/configAtom'
+// import { useAtom } from 'jotai'
+// import { warehouseConfigAtom } from '@/src/store/configAtom'
 import { settingsModalStyles } from './styles' // Asegúrate que la ruta sea correcta
 
 const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
-  const [warehouseConfig] = useAtom(warehouseConfigAtom)
+  // const [warehouseConfig] = useAtom(warehouseConfigAtom)
 
   return (
     <>
@@ -44,7 +44,7 @@ const SettingsModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => vo
                   <AccountSettings />
                 </TabPanel>
                 <TabPanel sx={settingsModalStyles.systemTabPanel}>
-                  <PreferenceSettings warehouseSettings={warehouseConfig} />
+                  {/* <PreferenceSettings warehouseSettings={warehouseConfig} /> */}
                 </TabPanel>
                 <TabPanel sx={settingsModalStyles.tabPanel}>
                   <SubscriptionSettings />

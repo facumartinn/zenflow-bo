@@ -6,11 +6,11 @@ import { LogoutSvg, ProfileSvg } from '../svg/sidebarSvg'
 import { usePathname } from 'next/navigation'
 import { SidebarItem } from './item'
 import { signOut } from 'next-auth/react'
-import SettingsModal from '../Settings'
+// import SettingsModal from '../Settings'
 import { sideBarButtons } from './sidebarList'
 
 export const Sibebar = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { onOpen } = useDisclosure()
   const pathName = usePathname()
   const isActive = (path?: string) => {
     return pathName === path ? styles.button.selected : styles.button
@@ -44,7 +44,7 @@ export const Sibebar = () => {
           link: '/logout'
         }} index={10} isActive={isActive('/logout')} onClick={handleLogout} />
       </Flex>
-      <SettingsModal isOpen={isOpen} onClose={onClose} />
+      {/* <SettingsModal isOpen={isOpen} onClose={onClose} /> */}
     </Flex>
   )
 }
