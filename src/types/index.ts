@@ -1,7 +1,9 @@
 export interface FilterParamTypes {
-  stateId?: number
+  stateId?: number[]
   orderId?: number
   userId?: number
+  shiftId?: number
+  assemblyDate?: string
   startDate?: Date
   endDate?: Date
 }

@@ -5,3 +5,4 @@ import { type FilterParamTypes } from '../types'
 export const ordersAtom = atom<Order[]>([])
 export const orderFilterParamsAtom = atom<FilterParamTypes>({})
 export const orderStatesAtom = atom<State[]>([])
+export const orderStatsAtom = atom<any>({})

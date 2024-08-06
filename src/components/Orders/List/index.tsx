@@ -3,31 +3,87 @@
 
 import { ListCard } from '@/src/components/Orders/ListCard'
 import { type Order } from '@/src/types/order'
-import { Heading, List } from '@chakra-ui/react'
+import { Box, Flex, List, Text } from '@chakra-ui/react'
+import { Pagination } from './Pagination'
+import { useEffect, useState } from 'react'
+import { useAtom } from 'jotai'
+import { activeTabAtom, selectedOrdersAtom } from '@/src/store/navigationAtom'
+import { groupOrdersByAssignedUser, groupOrdersByShift } from '@/src/utils/order.utils'
+import { type Config } from '@/src/types/warehouse'
+import { SkeletonList } from '../../Skeleton/List'
+import { SimpleOrderCard } from '../SimpleCard'
 
-export default function OrderList ({ orders, selectedOrders, onSelectOrder }: { orders: Order[], selectedOrders: number[], onSelectOrder: (orderNumber: number) => void }) {
-  return (
-    <List overflowY='scroll' pb={24}>
-      {orders?.length > 0
-        ? <>
-          {orders?.map((order: Order) => {
-            return (
-            <ListCard
-              key={order.id}
-              orderNumber={order.id}
-              assignedTo={order.User?.name}
-              articlesCount={32}
-              deliveryStatus="24F"
-              preparationStatus={'En preparación'}
-              onSelect={() => { onSelectOrder(order.id) }}
-              isChecked={selectedOrders.includes(order.id)}
-            />
-            )
-          })}
-          <Heading fontSize={12}>Hola Padre, hasta aca llegaste!</Heading>
-        </>
-        : <Heading fontSize={14}>No hay pedidos en este momento</Heading>
+interface OrderListProps {
+  orders: Order[]
+  warehouseConfig: Config
+  isLoading: boolean
+  isHomePage?: boolean
+}
+
+export default function OrderList ({ orders, warehouseConfig, isLoading, isHomePage }: OrderListProps) {
+  const [selectedOrders, setSelectedOrders] = useAtom(selectedOrdersAtom)
+  const [activeTab] = useAtom(activeTabAtom)
+  const isChecked = (orderId: number) => selectedOrders ? selectedOrders.includes(orderId) : false
+  const [showLoading, setShowLoading] = useState(isLoading)
+  const shouldPaginate = activeTab === 'new' || activeTab === 'pending' || activeTab === 'completed'
+  const groupedOrders = () => {
+    if (orders) {
+      if (activeTab === 'pending' && warehouseConfig.use_shifts?.status) {
+        return groupOrdersByShift(orders, warehouseConfig)
+      }
+      if (activeTab === 'doing') {
+        return groupOrdersByAssignedUser(orders)
+      }
+      return { default: orders }
     }
-    </List>
+    return { default: orders }
+  }
+  const showCheckbox = activeTab === 'new' || activeTab === 'pending'
+
+  useEffect(() => {
+    // Forzamos un re-render cuando cambian las configuraciones del almacén
+  }, [warehouseConfig])
+
+  const toggleOrderSelection = (orderNumber: number) => {
+    setSelectedOrders(prev => (
+      prev.includes(orderNumber) ? prev.filter(id => id !== orderNumber) : [...prev, orderNumber]
+    ))
+  }
+
+  useEffect(() => {
+    if (isLoading) {
+      setShowLoading(true)
+      setTimeout(() => {
+        setShowLoading(false)
+      }, 1000)
+    }
+  }, [isLoading])
+
+  return (
+    <>
+      <List overflowY='scroll' pb={shouldPaginate ? 4 : 24} h={shouldPaginate ? '80%' : '100%'}>
+        {showLoading
+          ? <SkeletonList />
+          : Object.entries(groupedOrders()).map(([shift, orders]) => (
+            <Box key={shift}>
+              {shift !== 'default' && <Text fontSize="md" fontWeight='700' py={4}>{shift}</Text>}
+              <Flex flexDirection={activeTab === 'doing' ? 'row' : 'column'} flexWrap='wrap'>
+                {orders?.map((order: Order) => (
+                  activeTab === 'doing'
+                    ? <SimpleOrderCard order={order} />
+                    : <ListCard
+                    key={order.id}
+                    order={order}
+                    onSelect={() => { toggleOrderSelection(order.id) }}
+                    isChecked={isChecked(order.id)}
+                    showCheckbox={showCheckbox}
+                  />)
+                )}
+              </Flex>
+            </Box>
+          ))}
+      </List>
+      {!isHomePage ? <Pagination /> : null}
+    </>
   )
 }

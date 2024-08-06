@@ -1,15 +1,20 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { Button, useToast, VStack, Input, IconButton, Flex } from '@chakra-ui/react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { AiOutlineClose, AiOutlineCheck } from 'react-icons/ai'
 import { ResourceCard } from './Card'
 import { type Resources, type UseResources } from '@/src/types/warehouse'
+import { ToastMessage } from '@/src/components/Toast'
 
 export const ResourcesList = ({ resourcesConfig, onResourcesChange }: { resourcesConfig: UseResources, onResourcesChange: (resources: Resources[]) => void }) => {
-  const [resources, setResources] = useState(resourcesConfig.resources)
+  const [resources, setResources] = useState(resourcesConfig?.resources || [])
   const [isAdding, setIsAdding] = useState(false)
   const [newResourceName, setNewResourceName] = useState('')
   const toast = useToast()
+
+  useEffect(() => {
+    setResources(resourcesConfig?.resources || [])
+  }, [resourcesConfig])
 
   const handleStartAddingResource = () => {
     setIsAdding(true)
@@ -19,16 +24,15 @@ export const ResourcesList = ({ resourcesConfig, onResourcesChange }: { resource
   const handleConfirmAddResource = () => {
     if (!newResourceName.trim()) {
       toast({
-        title: 'Error',
-        description: 'El nombre del recurso no puede estar vacío.',
         status: 'error',
         duration: 2000,
-        isClosable: true
+        isClosable: true,
+        render: () => <ToastMessage title={'Error'} description={'El nombre del recurso no puede estar vacío.'} status='error' />
       })
       return
     }
     const newResource = {
-      id: Math.floor(Math.random() * 10),
+      id: resources.length > 0 ? Math.max(...resources.map(resource => resource.id)) + 1 : 1,
       name: newResourceName
     }
     const newResources = [...resources, newResource]
@@ -36,11 +40,11 @@ export const ResourcesList = ({ resourcesConfig, onResourcesChange }: { resource
     onResourcesChange(newResources)
     setIsAdding(false)
     toast({
-      title: 'Recurso creado',
-      description: 'El recurso ha sido añadido exitosamente.',
       status: 'success',
       duration: 2000,
-      isClosable: true
+      isClosable: true,
+      position: 'top-right',
+      render: () => <ToastMessage title='Recurso creado' description={'El recurso ha sido añadido exitosamente.'} status='success' />
     })
   }
 
@@ -52,17 +56,15 @@ export const ResourcesList = ({ resourcesConfig, onResourcesChange }: { resource
     onResourcesChange(updatedResources)
   }
 
-  // Eliminar recurso por id
   const handleDeleteResource = (id: number) => {
     const filteredResources = resources.filter(resource => resource.id !== id)
     setResources(filteredResources)
     onResourcesChange(filteredResources)
     toast({
-      title: 'Recurso eliminado',
-      description: 'El recurso ha sido eliminado exitosamente.',
       status: 'success',
       duration: 2000,
-      isClosable: true
+      isClosable: true,
+      render: () => <ToastMessage title={'Recurso eliminado'} description={'El recurso ha sido eliminado exitosamente.'} status='success' />
     })
   }
 
@@ -72,7 +74,7 @@ export const ResourcesList = ({ resourcesConfig, onResourcesChange }: { resource
 
   return (
     <VStack mt={4} spacing={4} align='start' w="full">
-      {resourcesConfig.status && (
+      {resourcesConfig?.status && (
         <>
           {resources.map(resource => (
             <ResourceCard
@@ -106,7 +108,7 @@ export const ResourcesList = ({ resourcesConfig, onResourcesChange }: { resource
             </Flex>
           )}
           <Button p={0} color='#2D41FC' colorScheme='none' onClick={handleStartAddingResource}>
-            Añadir nuevo recurso
+            + Nuevo empaque
           </Button>
         </>
       )}

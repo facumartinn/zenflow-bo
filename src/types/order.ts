@@ -27,15 +27,29 @@ export interface Order {
   amount?: number // Decimal type might need to be handled as string or number depending on your setup
   amountPicked?: number | null // Same for Decimal types
   user_id?: number | null
-  assemblyDate?: Date | null
-  assemblySchedule?: Date | null
+  assembly_date?: Date | null
+  assembly_schedule?: number | null
   substitution_preference_id?: number | null
   internal_comment?: string | null
   tenant_id: number
   warehouse_id: number
   createdAt?: Date | null
   updatedAt?: Date | null
-  User: User | null
+  Users: User | null
+}
+
+export enum OrderStateEnum {
+  NEW = 1,
+  READY_TO_PICK = 2,
+  PROGRAMMED = 3,
+  IN_PREPARATION = 4,
+  COMPLETED = 5,
+  DELETED = 6
+}
+
+export enum PickingStateEnum {
+  COMPLETE = 1,
+  INCOMPLETE = 2
 }
 
 // OrderDetail Model
@@ -51,8 +65,9 @@ export interface OrderDetail {
   order?: number | null
   tenant_id: number
   warehouse_id: number
-  createdAt?: Date | null
-  updatedAt?: Date | null
+  created_at?: Date
+  updated_at?: Date | null
+  Orders: Order | null
   // Order, Tenant, and Warehouse are relations
 }
 
@@ -130,7 +145,7 @@ export interface Warehouse {
   inventoryTypes?: string | null
   facilityConditions?: string | null
   emergencyContact?: string | null
-  customAttributes?: string | null
+  custom_attributes?: string | null
   createdAt?: Date | null
   updatedAt?: Date | null
   // OrderDetails, OrderPositions, Orders, Users, and Tenant are relations
@@ -144,3 +159,12 @@ export interface StatesPicking {
   updated_at?: Date | null
   // Orders is a relation
 }
+
+export const ORDER_STATES = [
+  { id: 1, description: 'Nuevo pedido' },
+  { id: 2, description: 'Listo para preparar' },
+  { id: 3, description: 'Programado' },
+  { id: 4, description: 'En preparación' },
+  { id: 5, description: 'Finalizado' },
+  { id: 6, description: 'Eliminado' }
+]
