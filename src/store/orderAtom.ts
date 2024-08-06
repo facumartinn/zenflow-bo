@@ -1,6 +1,8 @@
-// store/orderAtoms.js
 import { atom } from 'jotai'
+import { type State, type Order } from '../types/order'
+import { type FilterParamTypes } from '../types'
 
-export const orderDataAtom = atom<any>([])
-export const orderLoadingAtom = atom<boolean>(true)
-export const orderErrorAtom = atom<any>(null)
+export const ordersAtom = atom<Order[]>([])
+export const orderFilterParamsAtom = atom<FilterParamTypes>({})
+export const orderStatesAtom = atom<State[]>([])
+export const orderStatsAtom = atom<any>({})

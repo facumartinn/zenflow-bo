@@ -1,13 +1,25 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { Flex, Heading } from '@chakra-ui/react'
+import { Box, Flex, Heading, Text } from '@chakra-ui/react'
 import { DefaultButton } from '../Button'
 import { styles } from './styles'
 
-export const Header = ({ title, showButton, buttonLabel }: { title: string, showButton: boolean, buttonLabel?: string }) => {
+interface HeaderProps {
+  title?: string
+  subtitle?: string
+  showButton: boolean
+  buttonLabel?: string
+  buttonType?: 'primary' | 'secondary'
+  onClick?: () => void
+}
+
+export const Header = ({ title, subtitle, showButton, buttonLabel, buttonType = 'primary', onClick }: HeaderProps) => {
   return (
     <Flex sx={styles.container}>
-        <Heading as="h1" m={4}>{title}</Heading>
-        {showButton && <DefaultButton type="primary" label={buttonLabel ?? ''} />}
+      <Box>
+        <Heading as="h1" fontSize={40}>{title}</Heading>
+        {subtitle && <Text sx={styles.subtitle}>{subtitle}</Text>}
+      </Box>
+        {(showButton && buttonLabel && onClick) && <DefaultButton type={buttonType} label={buttonLabel ?? ''} onClick={onClick} />}
     </Flex>
   )
 }

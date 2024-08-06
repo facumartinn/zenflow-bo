@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import NextAuth from 'next-auth'
+import { type Tenant, type Warehouse } from './order'
 
 declare module 'next-auth' {
   /**
@@ -17,8 +18,12 @@ declare module 'next-auth' {
       warehouse_id: number
       createdAt: string
       updatedAt: string
+      Tenants: Tenant
     }
     accessToken: string
+    tenants: Tenant
+    warehouses: Warehouse
+    warehouseConfig: string
     /** The user's postal address. */
   }
 }
