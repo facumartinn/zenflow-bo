@@ -41,7 +41,7 @@ export const DeleteModal = ({ type, updateOrderStatus, isOpen, onClose }: Confir
           <Button bg='#EC0000' color='white' borderRadius='50' px={6} py={6} _hover={{ border: '2px solid', color: '#EC0000', borderColor: '#EC0000', bg: 'transparent' }} onClick={onConfirm}>
             ELIMINAR
           </Button>
-          <Button bg='transparent' mt={4} borderRadius='100%' _hover='none' onClick={onClose}>
+          <Button bg='transparent' mt={4} borderRadius='100%' onClick={onClose}>
             ATRÁS
           </Button>
         </ModalFooter>
