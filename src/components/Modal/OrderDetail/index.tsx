@@ -73,10 +73,11 @@ export const OrderDrawer = ({ isOpen, onClose, orderId }: { isOpen: boolean, onC
                     productName={article.product_name}
                     productCode={article.product_barcode}
                     quantity={article.quantity}
+                    quantityPicked={article.quantityPicked}
                     imageSrc={article?.product_photo}
                     replacementCode={article.product_barcode}
                     status={'delivered'}
-                   />
+                  />
                 ))
                 : null}
             </VStack>

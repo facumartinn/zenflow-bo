@@ -78,10 +78,6 @@ export const ListCard = ({
             <Text sx={styles.boldText}>{32}</Text>
           </Box>
           <Flex alignItems='center'>
-            <Box onClick={onOpen}>
-              <Text sx={styles.label}>Entrega</Text>
-              <Text sx={styles.boldText}>{order.state_picking_id}</Text>
-            </Box>
             <Box onClick={onOpen} ml={12}>
               {displayStatusBadge()}
             </Box>

@@ -22,7 +22,7 @@ export default function RootLayout ({
   return (
     <html lang="en" className={inter.variable}>
       <head>
-        <link rel="icon" href="/static/zenflow.png" sizes="any" />
+        <link rel="icon" href="/static/zenflow1.png" sizes="any" style={{ borderRadius: '100' }} />
       </head>
       <body className='layout-structure'>
         <Providers>

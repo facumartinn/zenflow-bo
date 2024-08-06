@@ -73,8 +73,9 @@ export default function OrdersPage () {
         templateAreas={`"title"
                         "tabs"  
                         "filters"
+                        "expiredOrders"
                         "main"`}
-        gridTemplateRows={'70px 55px 95px 1fr'}
+        gridTemplateRows={`70px 55px 95px ${expiredOrders?.length > 0 ? '70px' : ''} 1fr`}
         gridTemplateColumns={'1fr'}>
         <GridItem m={4} area="title">
           <Header
@@ -96,8 +97,19 @@ export default function OrdersPage () {
             ordersLength={orderList?.length}
             />
         </GridItem>
+        <GridItem mt={expiredOrders?.length > 0 ? 4 : 0} mx={expiredOrders?.length > 0 ? 4 : 0} area="expiredOrders">
+        {expiredOrders?.length > 0
+          ? (
+            <ToastMessage
+              title={`${expiredOrders?.length} pedidos atrasados`}
+              description='Para que se preparen tenés que reprogramarlos.'
+              status='warning'
+              onClick={onExpiredOrdersModalOpen} />
+            )
+          : null}
+            </GridItem>
         <GridItem mt={4} mx={4} area="main" overflowY="scroll">
-          {expiredOrders?.length > 0 ? <ToastMessage title={`${expiredOrders?.length} pedidos atrasados`} description='Para que se preparen tenés que reprogramarlos.' status='warning' onClick={onExpiredOrdersModalOpen} /> : null}
+          {/* {expiredOrders?.length > 0 ? <ToastMessage title={`${expiredOrders?.length} pedidos atrasados`} description='Para que se preparen tenés que reprogramarlos.' status='warning' onClick={onExpiredOrdersModalOpen} /> : null} */}
           <OrderList
             orders={orderList}
             warehouseConfig={warehouseConfig}

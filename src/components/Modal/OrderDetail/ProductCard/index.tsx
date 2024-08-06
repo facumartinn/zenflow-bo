@@ -13,6 +13,7 @@ interface ProductCardProps {
   productName: string
   productCode: string
   quantity: number
+  quantityPicked?: number | null
   imageSrc?: string | null
   additionalInfo?: string
   status?: 'delivered' | 'replaced'
@@ -23,6 +24,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   productName,
   productCode,
   quantity,
+  quantityPicked,
   imageSrc,
   additionalInfo,
   status,
@@ -63,14 +65,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
         />
       )}
       <Badge
-        // colorScheme="blue"
-        // variant="solid"
         bg="#2D41FC"
         color="white"
         borderRadius="8px 0 8px 0"
         px={2}
         py={1}
-        // borderRadius="full"
         position="absolute"
         bottom="0"
         right="0"

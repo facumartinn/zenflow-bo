@@ -3,7 +3,7 @@ import axios from 'axios'
 import { getSession } from 'next-auth/react'
 
 const axiosInstance = axios.create({
-  baseURL: process.env.BACKEND_URL || 'http://localhost:4000' // Define aquí la URL base de tu API
+  baseURL: process.env.BACKEND_URL || 'https://zenflow-api-jswz4.ondigitalocean.app' // Define aquí la URL base de tu API
 })
 
 axiosInstance.interceptors.request.use(async (config) => {
