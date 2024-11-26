@@ -1,4 +1,5 @@
 import { HomeSvg, OrdersSvg, UsersSvg } from '../svg/sidebarSvg'
+import { ChatIcon } from '@chakra-ui/icons'
 
 interface SideBarButtonProps {
   top: Array<
@@ -33,6 +34,11 @@ export const sideBarButtons: SideBarButtonProps = {
       icon: <UsersSvg color='black' />,
       text: 'Usuarios',
       link: '/users'
+    },
+    {
+      icon: <ChatIcon color='black' />,
+      text: 'Chatbot',
+      link: '/chat'
     }
   ],
   bottom: [

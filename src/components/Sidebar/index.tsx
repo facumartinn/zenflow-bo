@@ -17,8 +17,7 @@ export const Sibebar = () => {
   }
 
   const handleLogout = async () => {
-    await signOut()
-    window.location.href = '/auth/sign-in'
+    await signOut({ callbackUrl: '/auth/sign-in' })
   }
 
   return (
@@ -38,11 +37,22 @@ export const Sibebar = () => {
         {sideBarButtons.bottom.map((button, index) => (
           <SidebarItem key={index} button={button} index={index} isActive={isActive(button?.link)} />
         ))}
-        <SidebarItem button={{
+        <Box
+          style={styles.button}
+          onClick={handleLogout}
+          _hover={styles.button.hover}
+          cursor="pointer"
+        >
+          <LogoutSvg color='black' />
+          <Text style={styles.button.description}>
+            Cerrar sesión
+          </Text>
+        </Box>
+        {/* <SidebarItem button={{
           icon: <LogoutSvg color='black' />,
           text: 'Cerrar sesión',
           link: '/logout'
-        }} index={10} isActive={isActive('/logout')} onClick={handleLogout} />
+        }} index={10} isActive={isActive('/logout')} onClick={handleLogout} /> */}
       </Flex>
       {/* <SettingsModal isOpen={isOpen} onClose={onClose} /> */}
     </Flex>

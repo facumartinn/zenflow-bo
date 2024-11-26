@@ -20,13 +20,6 @@ import { getFormattedDay } from '@/src/utils/queryParams'
 import { ToastMessage } from '@/src/components/Toast'
 import { ExpiredOrdersDrawer } from '@/src/components/Modal/Orders/ExpiredOrders'
 
-// const stats = [
-//   { status: 'pending', title: 'Pedidos pendientes', count: 30, icon: 'pendientes' },
-//   { status: OrderStateEnum.IN_PREPARATION, title: 'En preparacion', count: 3, icon: 'preparacion' },
-//   { status: OrderStateEnum.COMPLETED, title: 'Pedidos finalizados', count: 24, icon: 'finalizados' },
-//   { title: 'Pickers activos', count: 7, icon: 'activos' }
-// ]
-
 export default function Home () {
   useOrderStates()
   useOrderStats()

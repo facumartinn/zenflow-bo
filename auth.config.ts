@@ -13,6 +13,7 @@ export const authOptions: NextAuthOptions = {
       async authorize (credentials, req) {
         const res = await signInService(credentials?.email, credentials?.password)
         const user = await res.data
+        console.log(res)
 
         // Si la autenticación es exitosa, retorna el objeto de usuario
         if (res.status === 200 && user) {

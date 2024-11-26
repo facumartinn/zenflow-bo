@@ -2,6 +2,7 @@ import { type SystemStyleObject } from '@chakra-ui/react'
 
 export const styles: Record<string, SystemStyleObject> = {
   cardContainer: {
+    cursor: 'pointer',
     w: '100%',
     p: 6,
     borderWidth: '1px',

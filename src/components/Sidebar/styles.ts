@@ -12,6 +12,7 @@ export const styles = {
     alignItems: 'left'
   },
   button: {
+    cursor: 'pointer',
     display: 'flex',
     justifyContent: 'flex-start',
     alignItems: 'center',

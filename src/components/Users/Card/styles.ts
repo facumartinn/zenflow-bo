@@ -9,8 +9,8 @@ export const userCardStyles = {
     border: '1px solid #E2E8F0',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    cursor: 'pointer'
+    justifyContent: 'space-between'
+    // cursor: 'pointer'
   },
   avatar: {
     size: 'sm'

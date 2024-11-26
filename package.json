@@ -26,12 +26,14 @@
     "react": "^18",
     "react-dom": "^18",
     "react-icons": "^5.0.1",
-    "react-query": "^3.39.3"
+    "react-query": "^3.39.3",
+    "react-window": "^1.8.10"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/react-window": "^1.8.8",
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
     "eslint-config-standard-with-typescript": "^43.0.1",

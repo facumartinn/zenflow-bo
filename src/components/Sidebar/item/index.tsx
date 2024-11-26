@@ -19,9 +19,9 @@ export const SidebarItem = ({
   return (
     <Link key={index} as={NextLink} href={button?.link} style={isActive} onClick={onClick} _hover={styles.button.hover}>
       {button.icon}
-    <Text _selected={styles.button.selected} style={styles.button.description}>
-      {button.text}
-    </Text>
+      <Text _selected={styles.button.selected} style={styles.button.description}>
+        {button.text}
+      </Text>
   </Link>
   )
 }
