@@ -17,7 +17,7 @@ export const Sibebar = () => {
   }
 
   const handleLogout = async () => {
-    await signOut({ callbackUrl: '/auth/sign-in' })
+    await signOut()
   }
 
   return (
