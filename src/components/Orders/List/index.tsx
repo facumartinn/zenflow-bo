@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-'use client'
-
 import { ListCard } from '@/src/components/Orders/ListCard'
 import { type Order } from '@/src/types/order'
-import { Box, Flex, List, Text } from '@chakra-ui/react'
+import { Box, Flex, List, Text, VStack } from '@chakra-ui/react'
 import { Pagination } from './Pagination'
 import { useEffect, useState } from 'react'
 import { useAtom } from 'jotai'
@@ -25,10 +23,10 @@ export default function OrderList ({ orders, warehouseConfig, isLoading, isHomeP
   const [activeTab] = useAtom(activeTabAtom)
   const isChecked = (orderId: number) => selectedOrders ? selectedOrders.includes(orderId) : false
   const [showLoading, setShowLoading] = useState(isLoading)
-  const shouldPaginate = activeTab === 'new' || activeTab === 'pending' || activeTab === 'completed'
+  const shouldShowPagination = activeTab === 'new' || activeTab === 'pending' || activeTab === 'completed'
   const groupedOrders = () => {
     if (orders) {
-      if (activeTab === 'pending' && warehouseConfig.use_shifts?.status) {
+      if (activeTab === 'pending' && warehouseConfig?.use_shifts?.status) {
         return groupOrdersByShift(orders, warehouseConfig)
       }
       if (activeTab === 'doing') {
@@ -36,19 +34,9 @@ export default function OrderList ({ orders, warehouseConfig, isLoading, isHomeP
       }
       return { default: orders }
     }
-    return { default: orders }
+    return { default: [] }
   }
   const showCheckbox = activeTab === 'new' || activeTab === 'pending'
-
-  useEffect(() => {
-    // Forzamos un re-render cuando cambian las configuraciones del almacén
-  }, [warehouseConfig])
-
-  const toggleOrderSelection = (orderNumber: number) => {
-    setSelectedOrders(prev => (
-      prev.includes(orderNumber) ? prev.filter(id => id !== orderNumber) : [...prev, orderNumber]
-    ))
-  }
 
   useEffect(() => {
     if (isLoading) {
@@ -59,31 +47,51 @@ export default function OrderList ({ orders, warehouseConfig, isLoading, isHomeP
     }
   }, [isLoading])
 
+  const toggleOrderSelection = (orderNumber: number) => {
+    setSelectedOrders(prev => (
+      prev.includes(orderNumber) ? prev.filter(id => id !== orderNumber) : [...prev, orderNumber]
+    ))
+  }
+
+  if (showLoading) {
+    return <SkeletonList />
+  }
+
   return (
-    <>
-      <List overflowY='scroll' pb={shouldPaginate ? 4 : 24} h={shouldPaginate ? '80%' : '100%'}>
-        {showLoading
-          ? <SkeletonList />
-          : Object.entries(groupedOrders()).map(([shift, orders]) => (
-            <Box key={shift}>
+    <Flex direction="column" h="100%">
+      {(!orders || orders.length === 0)
+        ? (
+        <VStack flex="1" justify="center" spacing={4}>
+          <Text fontSize="xl" color="gray.500">No hay pedidos disponibles</Text>
+          <Text fontSize="md" color="gray.400">Los pedidos aparecerán aquí cuando estén disponibles</Text>
+        </VStack>
+          )
+        : (
+        <List overflowY='scroll' pb={shouldShowPagination ? 4 : 24} flex="1">
+          {Object.entries(groupedOrders()).map(([shift, shiftOrders], shiftIndex) => (
+            <Box key={`${shift}-${shiftIndex}`}>
               {shift !== 'default' && <Text fontSize="md" fontWeight='700' py={4}>{shift}</Text>}
               <Flex flexDirection={activeTab === 'doing' ? 'row' : 'column'} flexWrap='wrap'>
-                {orders?.map((order: Order) => (
+                {shiftOrders?.map((order: Order, orderIndex: number) => (
                   activeTab === 'doing'
-                    ? <SimpleOrderCard order={order} />
+                    ? <SimpleOrderCard
+                        key={`${shift}-${order.id}-${orderIndex}`}
+                        order={order}
+                      />
                     : <ListCard
-                    key={order.id}
-                    order={order}
-                    onSelect={() => { toggleOrderSelection(order.id) }}
-                    isChecked={isChecked(order.id)}
-                    showCheckbox={showCheckbox}
-                  />)
-                )}
+                        key={`${shift}-${order.id}-${orderIndex}`}
+                        order={order}
+                        onSelect={() => { toggleOrderSelection(order.id) }}
+                        isChecked={isChecked(order.id)}
+                        showCheckbox={showCheckbox}
+                      />
+                ))}
               </Flex>
             </Box>
           ))}
-      </List>
-      {!isHomePage ? <Pagination /> : null}
-    </>
+        </List>
+          )}
+      {!isHomePage && shouldShowPagination && <Pagination />}
+    </Flex>
   )
 }

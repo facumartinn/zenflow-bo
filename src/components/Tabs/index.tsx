@@ -5,7 +5,7 @@ import { getFormattedDay } from '@/src/utils/queryParams'
 import { OrderStateEnum } from '@/src/types/order'
 import { useAtom } from 'jotai'
 import { activeTabAtom, filtersAtom, selectedOrdersAtom } from '@/src/store/navigationAtom'
-import { useOrderStats } from '@/src/hooks/useOrders'
+import { useOrderStats } from '@/src/hooks/useOrderStats'
 
 const tabs: Tabs = {
   homePage: [
@@ -67,7 +67,7 @@ interface Tab {
 
 interface TabButtonsProps {
   orderCounter: number
-  onClick: any
+  onClick: () => Promise<void>
   urlPathName: string
 }
 
@@ -78,17 +78,17 @@ export const TabButtons = ({ orderCounter, onClick, urlPathName }: TabButtonsPro
   const { data: stats } = useOrderStats()
 
   const getOrderCount = (statName: string) => {
-    const stat = stats?.data?.data?.data?.find((s: any) => s.name === statName)
+    const stat = stats?.data?.data?.find((s: any) => s.name === statName)
     return stat?.count || 0
   }
 
-  const handleTabSelection = (stateId: number, value: TabValue) => {
+  const handleTabSelection = async (stateId: number, value: TabValue) => {
     if (setSelectedOrders) {
       setSelectedOrders([])
     }
     setActiveTab(value)
     if (value === 'new') {
-      setFilters({ stateId: [stateId] })
+      setFilters({ stateId: [OrderStateEnum.NEW] })
     }
     if (value === 'pending') {
       setFilters({
@@ -108,11 +108,11 @@ export const TabButtons = ({ orderCounter, onClick, urlPathName }: TabButtonsPro
     }
     if (value === 'completed') {
       setFilters({
-        stateId: [stateId],
+        stateId: [OrderStateEnum.FINISHED],
         assemblyDate: getFormattedDay()
       })
     }
-    onClick()
+    await onClick()
   }
 
   return (
@@ -124,7 +124,7 @@ export const TabButtons = ({ orderCounter, onClick, urlPathName }: TabButtonsPro
           value={tab.value}
           counter={getOrderCount(tab.statName)}
           isActive={activeTab === tab.value}
-          onClick={() => { handleTabSelection(tab.orderStateId, tab.value) }}
+          onClick={async () => { await handleTabSelection(tab.orderStateId, tab.value) }}
           showCounter={activeTab === tab.value}
         />
       ))}

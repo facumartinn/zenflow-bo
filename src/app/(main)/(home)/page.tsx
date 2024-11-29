@@ -1,10 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 'use client'
 
-import OrderList from '@/src/components/Orders/List'
-import { Stats } from '@/src/components/Statistics'
-import { Grid, GridItem, useDisclosure } from '@chakra-ui/react'
-import './common.css'
+import { Grid, GridItem, useDisclosure, Box } from '@chakra-ui/react'
 import { TabButtons } from '@/src/components/Tabs'
 import { Header } from '@/src/components/Header'
 import { useAtom } from 'jotai'
@@ -17,15 +14,21 @@ import { ExpiredOrdersDrawer } from '@/src/components/Modal/Orders/ExpiredOrders
 import { useAuthStore } from '@/src/store/authStore'
 import { DashboardSkeleton } from '@/src/components/Skeleton/Dashboard'
 import { useDashboard } from '@/src/hooks/useDashboard'
+import OrderList from '@/src/components/Orders/List'
+import { Stats } from '@/src/components/Statistics'
 
 export default function Home () {
   const [filters, setFilters] = useAtom(filtersAtom)
   const [, setActiveTab] = useAtom(activeTabAtom)
   const { user } = useAuthStore()
-  const { orders, stats, warehouseConfig, assignOrders, isLoading } = useDashboard(filters)
+  const { orders, stats, warehouseConfig, assignOrders, isLoading, handleTabSelection } = useDashboard(filters)
   const urlPathName = 'homePage'
 
-  const { isOpen: isExpiredOrdersModalOpen, onOpen: onExpiredOrdersModalOpen, onClose: onExpiredOrdersModalClose } = useDisclosure()
+  const {
+    isOpen: isExpiredOrdersModalOpen,
+    onOpen: onExpiredOrdersModalOpen,
+    onClose: onExpiredOrdersModalClose
+  } = useDisclosure()
 
   useEffect(() => {
     const initializeTab = async () => {
@@ -42,7 +45,7 @@ export default function Home () {
     void initializeTab()
   }, [])
 
-  const expiredOrders = stats?.data?.data?.data.find(
+  const expiredOrders = stats?.data?.data?.data?.find(
     (stat: any) => stat.name === 'expired_orders'
   )?.orders
 
@@ -51,67 +54,60 @@ export default function Home () {
   }
 
   return (
-    <main className='layout'>
-      <Grid
-        h="100vh"
-        rowGap={{ base: 2, md: 4 }}
+    <Grid
+      h="100vh"
+      px={{ base: 4, md: 8 }}
+      py={{ base: 4, md: 6 }}
+      gap={{ base: 4, md: 6 }}
+      templateRows={{
+        base: 'auto auto auto 1fr',
+        md: 'auto auto auto 1fr'
+      }}
+      templateColumns="1fr"
+      overflow="hidden"
+    >
+      <GridItem>
+        <Header
+          title={user?.Tenants?.name}
+          showButton={false}
+        />
+      </GridItem>
+
+      <GridItem>
+        <Stats stats={stats?.data?.data} />
+      </GridItem>
+
+      <GridItem>
+        <TabButtons
+          urlPathName={urlPathName}
+          orderCounter={orders?.data?.data?.length}
+          onClick={handleTabSelection}
+        />
+      </GridItem>
+
+      <GridItem
+        position="relative"
         overflowY="auto"
-        flexGrow={1}
-        templateAreas={{
-          base: `"title"
-                 "tabs"
-                 "filters"
-                 "main"`,
-          md: `"title"
-               "tabs"
-               "filters"
-               "main"`
-        }}
-        gridTemplateRows={{
-          base: 'auto auto auto 1fr',
-          md: '55px 142px 55px 1fr'
-        }}
-        gridTemplateColumns={'1fr'}
-        px={{ base: 2, md: 4 }}
+        pr={{ base: 0, md: 4 }}
       >
-        <GridItem area="title" py={{ base: 2, md: 4 }}>
-          <Header
-            title={user?.Tenants?.name}
-            showButton={false}
-          />
-        </GridItem>
-        <GridItem area="tabs">
-          <Stats stats={stats?.data?.data?.data} />
-        </GridItem>
-        <GridItem area="filters">
-          <TabButtons
-            urlPathName={urlPathName}
-            orderCounter={orders?.data?.data?.length}
-            onClick={orders?.refetch}
-          />
-        </GridItem>
-        <GridItem
-          area="main"
-          overflowY="auto"
-          pb={{ base: 20, md: 4 }}
-          px={{ base: 0, md: 4 }}
-        >
-          {expiredOrders?.length > 0 && (
+        {expiredOrders?.length > 0 && (
+          <Box mb={4}>
             <ToastMessage
               title={`${expiredOrders.length} pedidos atrasados`}
               description='Para que se preparen tenés que reprogramarlos.'
               status='warning'
               onClick={onExpiredOrdersModalOpen}
             />
-          )}
-          <OrderList
-            orders={orders?.data?.data?.data}
-            warehouseConfig={warehouseConfig}
-            isLoading={isLoading}
-            isHomePage={true}
-          />
-        </GridItem>
-      </Grid>
+          </Box>
+        )}
+        <OrderList
+          orders={orders?.data?.data}
+          warehouseConfig={warehouseConfig}
+          isLoading={isLoading}
+          isHomePage={true}
+        />
+      </GridItem>
+
       <ExpiredOrdersDrawer
         warehouseConfig={warehouseConfig}
         assignOrders={assignOrders}
@@ -119,6 +115,6 @@ export default function Home () {
         onClose={onExpiredOrdersModalClose}
         orders={expiredOrders}
       />
-    </main>
+    </Grid>
   )
 }

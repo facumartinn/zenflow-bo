@@ -19,7 +19,6 @@ export const Stats = ({ stats }: StatsProps) => {
       columns={{ base: 1, sm: 2, md: 4 }}
       spacing={{ base: 4, md: 6 }}
       w="full"
-      mb={{ base: 6, md: 8 }}
     >
       {stats?.map((stat, index) => (
         stat.name !== 'expired_orders' && (

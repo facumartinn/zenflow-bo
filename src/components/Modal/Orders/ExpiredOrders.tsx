@@ -18,7 +18,7 @@ import {
 import { MdOutlineEditCalendar } from 'react-icons/md'
 import { useEffect, useState } from 'react'
 import { MountOrdersModal } from './MountOrders'
-import { useOrderStats } from '@/src/hooks/useOrders'
+import { useOrderStats } from '@/src/hooks/useOrderStats'
 
 function getFormattedDay (date?: string): string {
   const day = date ? new Date(date) : new Date()
@@ -40,13 +40,13 @@ interface ExpiredOrdersDrawerProps {
 
 export const ExpiredOrdersDrawer = ({ warehouseConfig, assignOrders, isOpen, onClose, orders }: ExpiredOrdersDrawerProps) => {
   const [selectedOrders, setSelectedOrders] = useState<number[]>([])
-  const { data: stats } = useOrderStats()
+  const { refetch: refetchStats } = useOrderStats()
   const { isOpen: isMountModalOpen, onOpen: onMountModalOpen, onClose: onMountModalClose } = useDisclosure()
 
   useEffect(() => {
     const initializeTab = async () => {
       try {
-        await stats?.refetch()
+        await refetchStats()
       } catch (error) {
         console.error('Failed to refetch stats:', error)
       }
@@ -74,7 +74,7 @@ export const ExpiredOrdersDrawer = ({ warehouseConfig, assignOrders, isOpen, onC
 
   const handleReprogram = async () => {
     onMountModalOpen()
-    await stats?.refetch()
+    await refetchStats()
   }
 
   return (

@@ -1,131 +1,125 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { assignOrders, fetchFilteredOrders, fetchOrderStates, fetchOrderStats, updateOrderStatus } from '../services/orderService'
-import { type FilterParamTypes } from '@/src/types'
-import { useMutation, useQuery, type UseQueryResult } from '@tanstack/react-query'
-import { useEffect } from 'react'
 import { useAtom } from 'jotai'
-import { activeTabAtom, orderCounterAtom, selectedOrdersAtom } from '@/src/store/navigationAtom'
-import { orderStatesAtom, orderStatsAtom } from '@/src/store/orderAtom'
-import { type State } from '@/src/types/order'
+import { activeTabAtom, filtersAtom, orderCounterAtom, selectedOrdersAtom } from '@/src/store/navigationAtom'
+import { useDisclosure } from '@chakra-ui/react'
+import { OrderStateEnum } from '@/src/types/order'
+import { useEffect } from 'react'
+import { assignOrders as assignOrdersService, fetchFilteredOrders, updateOrderStatus as updateOrderStatusService } from '../services/orderService'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { ToastMessage } from '@/src/components/Toast'
 import { useToast } from '@chakra-ui/toast'
-import { type AxiosResponse } from 'axios'
+import { type FilterParamTypes } from '@/src/types'
+import { useWarehouseConfig } from './useWarehouseConfig'
+import { useOrderStats } from './useOrderStats'
 
-interface OrdersHookReturn {
-  data: UseQueryResult<AxiosResponse<any, any>, Error>
-  assignOrders: (data: any) => void
-  updateOrderStatus: (data: any) => void
-  isLoading: boolean
-}
-
-interface OrderStatsHookReturn {
-  data: UseQueryResult<AxiosResponse<any, any>, Error>
-  isLoading: boolean
-}
-
-export const useOrders = (params: FilterParamTypes): OrdersHookReturn => {
-  const [, setOrderCounter] = useAtom(orderCounterAtom)
-  const [selectedOrders, setSelectedOrders] = useAtom(selectedOrdersAtom)
+export const useOrders = (params?: FilterParamTypes) => {
   const toast = useToast()
-  const [activeTab] = useAtom(activeTabAtom)
-  const orders = useQuery({
-    queryKey: ['orders', params],
-    queryFn: async () => await fetchFilteredOrders(params),
-    refetchOnWindowFocus: false
-  })
+  const [selectedOrders, setSelectedOrders] = useAtom(selectedOrdersAtom)
+  const [activeTab, setActiveTab] = useAtom(activeTabAtom)
+  const [orderCounter, setOrderCounter] = useAtom(orderCounterAtom)
+  const [filters, setFilters] = useAtom(filtersAtom)
+  const { warehouseConfig } = useWarehouseConfig()
+  const { data: stats, refetch: refetchStats } = useOrderStats()
 
-  useEffect(() => {
-    if (orders.data?.data && activeTab === 'new') {
-      setOrderCounter(orders.data?.data.data.length as number)
-    }
-  }, [orders])
+  // Modal controls
+  const mountModal = useDisclosure()
+  const assignModal = useDisclosure()
+  const scheduleModal = useDisclosure()
+  const deleteModal = useDisclosure()
+  const expiredModal = useDisclosure()
 
-  const assignOrder = useMutation(
-    {
-      mutationFn: async (data: any) => {
-        const response = await assignOrders(data)
-        return response
-      },
-      onSuccess: async (data) => {
-        await orders.refetch()
-        toast({
-          isClosable: true,
-          duration: 2000,
-          position: 'top-right',
-          render: () => <ToastMessage title={`${JSON.parse(data?.config?.data as string)?.orders?.length} pedidos subidos`} description='Ya está listo para que los pickers lo preparen' status='success' />
-        })
-        setSelectedOrders([])
-      },
-      onError: (error: any) => {
-        console.error('Error al actualizar la configuración', error)
-      }
-    }
-  )
-
-  const updateOrder = useMutation(
-    {
-      mutationFn: async (data: any) => {
-        const response = await updateOrderStatus(data.orders as number[], data.stateId as number)
-        return { response: response.data, stateId: data.stateId }
-      },
-      onSuccess: async (data) => {
-        await orders.refetch()
-        toast({
-          isClosable: true,
-          duration: 2000,
-          position: 'top-right',
-          render: () => <ToastMessage title={data.stateId === 6 ? 'Eliminados correctamente' : `${selectedOrders?.length} pedidos subidos`} description={`${selectedOrders?.length} pedidos fueron eliminados`} status='success' />
-        })
-        setSelectedOrders([])
-      },
-      onError: (error: any) => {
-        console.error('Error al actualizar la configuración', error)
-      }
-    }
-  )
-
-  return {
-    data: orders,
-    assignOrders: assignOrder.mutate,
-    updateOrderStatus: updateOrder.mutate,
-    isLoading: orders.isLoading
-  }
-}
-
-export const useOrderStates = () => {
-  const [, setOrderStates] = useAtom(orderStatesAtom)
-  const response = useQuery({
-    queryKey: ['order-states'],
-    queryFn: async () => await fetchOrderStates(),
-    refetchOnWindowFocus: false
-  })
-
-  useEffect(() => {
-    if (response.data?.data) {
-      setOrderStates(response.data?.data as State[])
-    }
-  }, [response])
-
-  return response
-}
-
-export const useOrderStats = (): OrderStatsHookReturn => {
-  const [, setOrderStats] = useAtom(orderStatsAtom)
-  const stats = useQuery({
-    queryKey: ['order-stats'],
-    queryFn: async () => await fetchOrderStats(),
-    refetchOnWindowFocus: true,
+  const { data: orders, refetch: refetchOrders, isLoading } = useQuery({
+    queryKey: ['orders', params || filters],
+    queryFn: async () => await fetchFilteredOrders(params || filters),
+    refetchOnWindowFocus: false,
     refetchOnMount: true
   })
 
   useEffect(() => {
-    if (stats.data?.data) {
-      setOrderStats(stats.data?.data.data as State[])
+    if (orders?.data && activeTab === 'new') {
+      setOrderCounter(orders?.data?.data?.length as number)
     }
-  }, [stats])
+  }, [orders, activeTab, setOrderCounter])
+
+  const assignOrdersMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await assignOrdersService(data)
+      return response
+    },
+    onSuccess: async (data) => {
+      await refetchOrders()
+      toast({
+        isClosable: true,
+        duration: 2000,
+        position: 'top-right',
+        render: () => <ToastMessage title={`${JSON.parse(data?.config?.data as string)?.orders?.length} pedidos subidos`} description='Ya está listo para que los pickers lo preparen' status='success' />
+      })
+      setSelectedOrders([])
+    }
+  })
+
+  const updateOrderStatusMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await updateOrderStatusService(data?.orders as number[], data.stateId as number)
+      return { response: response.data, stateId: data.stateId }
+    },
+    onSuccess: async (data) => {
+      await refetchOrders()
+      toast({
+        isClosable: true,
+        duration: 2000,
+        position: 'top-right',
+        render: () => <ToastMessage title={data.stateId === 6 ? 'Eliminados correctamente' : `${selectedOrders?.length} pedidos subidos`} description={`${selectedOrders?.length} pedidos fueron eliminados`} status='success' />
+      })
+      setSelectedOrders([])
+    }
+  })
+
+  const handleSelectAll = () => {
+    if (!orders?.data?.data) return
+    const filteredOrders = orders?.data?.data?.filter((order: any) => order.state_id !== OrderStateEnum.IN_PREPARATION)
+    const selectedOrderIds = filteredOrders.map((order: any) => order.id)
+    setSelectedOrders(selectedOrderIds as number[])
+  }
+
+  const handleTabSelection = async () => {
+    await Promise.all([refetchOrders(), refetchStats()])
+  }
+
+  const expiredOrders = stats?.data?.data?.data?.find((stat: any) => stat.name === 'expired_orders')?.orders
 
   return {
-    data: stats,
-    isLoading: stats.isLoading
+    // Data
+    orders,
+    stats,
+    warehouseConfig,
+    selectedOrders,
+    filters,
+    activeTab,
+    orderCounter,
+    expiredOrders,
+
+    // Loading state
+    isLoading,
+
+    // Actions
+    assignOrders: assignOrdersMutation.mutate,
+    updateOrderStatus: updateOrderStatusMutation.mutate,
+    setSelectedOrders,
+    setActiveTab,
+    setOrderCounter,
+    setFilters,
+    handleSelectAll,
+    handleTabSelection,
+    refetchOrders,
+
+    // Modals
+    modals: {
+      mount: mountModal,
+      assign: assignModal,
+      schedule: scheduleModal,
+      delete: deleteModal,
+      expired: expiredModal
+    }
   }
 }

@@ -56,7 +56,7 @@ const ActionComponents = {
     </Button>
   ),
   SelectAll: ({ onSelectAll, ordersCount }: any) => (
-    <Button fontSize={16} color="#2D41FC" colorScheme='none' onClick={onSelectAll} isDisabled={ordersCount <= 0} _disabled={{ color: 'grey', cursor: 'not-allowed' }}>
+    <Button fontSize={16} color="#2D41FC" colorScheme='none' onClick={onSelectAll} isDisabled={ordersCount < 0} _disabled={{ color: 'grey', cursor: 'not-allowed' }}>
       SELECCIONAR TODOS
     </Button>
   )

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-confusing-void-expression */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { DefaultButton } from '@/src/components/Button'
-import { useOrderStats } from '@/src/hooks/useOrders'
+import { useOrderStats } from '@/src/hooks/useOrderStats'
 import { useUsers } from '@/src/hooks/useUser'
 import { OrderStateEnum } from '@/src/types/order'
 import { type User } from '@/src/types/user'
@@ -38,7 +38,7 @@ export const MountOrdersModal = ({ title, description, buttonLabel = 'SUBIR PEDI
   const [assignedTo, setAssignedTo] = useState(0)
   const [preparationDate, setPreparationDate] = useState('')
   const [shiftId, setShiftId] = useState(0)
-  const { data: stats } = useOrderStats()
+  const { refetch: refetchStats } = useOrderStats()
 
   const onAssign = async () => {
     const updates = selectedOrders?.map(order => ({
@@ -48,7 +48,7 @@ export const MountOrdersModal = ({ title, description, buttonLabel = 'SUBIR PEDI
       assembly_schedule: shiftId
     }))
     assignOrders({ orders: updates, newStateId: OrderStateEnum.READY_TO_PICK })
-    await stats?.refetch()
+    await refetchStats()
     onClose()
     onExpiredModalClose && onExpiredModalClose()
   }

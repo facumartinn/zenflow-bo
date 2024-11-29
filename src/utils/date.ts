@@ -1,21 +1,3 @@
-export type QueryParams = Record<string, string | number | number[]>
-
-export function objectToQueryString (params: QueryParams): string {
-  const searchParams = new URLSearchParams()
-
-  Object.keys(params).forEach(key => {
-    const value = params[key]
-    if (value === undefined) return
-    if (Array.isArray(value)) {
-      value.forEach(item => { searchParams.append(key, item.toString()) })
-    } else {
-      searchParams.append(key, value.toString())
-    }
-  })
-
-  return searchParams.toString()
-}
-
 export function getFormattedDay (date?: string): string {
   let day: Date
 
@@ -35,4 +17,16 @@ export function getFormattedDay (date?: string): string {
   dd = dd.toString().padStart(2, '0')
 
   return `${yyyy}-${mm}-${dd}`
+}
+
+export function addDays (date: Date, days: number): Date {
+  const result = new Date(date)
+  result.setDate(result.getDate() + days)
+  return result
+}
+
+export function subtractDays (date: Date, days: number): Date {
+  const result = new Date(date)
+  result.setDate(result.getDate() - days)
+  return result
 }

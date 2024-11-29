@@ -1,19 +1,24 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { useOrders, useOrderStats, useOrderStates } from './useOrders'
+import { useOrders } from './useOrders'
+import { useOrderStats } from './useOrderStats'
 import { useSystemPreferences } from './useConfig'
 import { useWarehouseConfig } from './useWarehouseConfig'
 import { type FilterParamTypes } from '@/src/types'
 
 export const useDashboard = (filters: FilterParamTypes) => {
-  const { data: orders, assignOrders } = useOrders(filters)
-  const ordersLoading = orders?.isLoading
-  const { data: stats } = useOrderStats()
-  const statsLoading = stats?.isLoading
+  const { orders, assignOrders, isLoading: ordersLoading, handleTabSelection } = useOrders(filters)
+  const { data: stats, isLoading: statsLoading } = useOrderStats()
   const { isLoading: preferencesLoading } = useSystemPreferences()
   const { warehouseConfig, isLoading: configLoading } = useWarehouseConfig()
-  const { isLoading: statesLoading } = useOrderStates()
 
-  const isLoading = ordersLoading || statsLoading || preferencesLoading || configLoading || statesLoading
+  const isLoading = ordersLoading || statsLoading || preferencesLoading || configLoading
 
-  return { orders, stats, warehouseConfig, assignOrders, isLoading }
+  return {
+    orders,
+    stats,
+    warehouseConfig,
+    assignOrders,
+    isLoading,
+    handleTabSelection
+  }
 }

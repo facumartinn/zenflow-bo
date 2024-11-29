@@ -1,129 +1,108 @@
-/* eslint-disable @typescript-eslint/no-confusing-void-expression */
-/* eslint-disable array-callback-return */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 'use client'
 
-import { useAtom } from 'jotai'
-import { activeTabAtom, filtersAtom, orderCounterAtom, selectedOrdersAtom } from '@/src/store/navigationAtom'
-import { useWarehouseConfig } from '@/src/hooks/useWarehouseConfig'
-import { useOrderStats, useOrders } from '@/src/hooks/useOrders'
-import { useSystemPreferences } from '@/src/hooks/useConfig'
-import './common.css'
-import { Filters } from '@/src/components/Filters'
+import { Grid, GridItem } from '@chakra-ui/react'
 import { Header } from '@/src/components/Header'
-import OrderList from '@/src/components/Orders/List'
 import { TabButtons } from '@/src/components/Tabs'
-import { Grid, GridItem, useDisclosure } from '@chakra-ui/react'
-import { OrderStateEnum, type Order } from '@/src/types/order'
+import { Filters } from '@/src/components/Filters'
+import OrderList from '@/src/components/Orders/List'
+import { ToastMessage } from '@/src/components/Toast'
+import { OrdersSkeleton } from '@/src/components/Skeleton/Orders'
 import { MountOrdersModal } from '@/src/components/Modal/Orders/MountOrders'
 import { AssignOrdersModal } from '@/src/components/Modal/Orders/AssignOrders'
 import { ScheduleOrdersModal } from '@/src/components/Modal/Orders/ScheduleOrders'
-import { useEffect } from 'react'
 import { DeleteModal } from '@/src/components/Modal/DeleteModal'
-import { ToastMessage } from '@/src/components/Toast'
 import { ExpiredOrdersDrawer } from '@/src/components/Modal/Orders/ExpiredOrders'
-import { OrdersSkeleton } from '@/src/components/Skeleton/Orders'
+import { useOrders } from '@/src/hooks/useOrders'
 
 export default function OrdersPage () {
-  const urlPathName = 'ordersPage'
-  useSystemPreferences()
-  const [selectedOrders, setSelectedOrders] = useAtom(selectedOrdersAtom)
-  const [, setActiveTab] = useAtom(activeTabAtom)
-  const [orderCounter] = useAtom(orderCounterAtom)
-  const [filters, setFilters] = useAtom(filtersAtom)
-  const { warehouseConfig } = useWarehouseConfig()
-  const { data: stats, isLoading: statsLoading } = useOrderStats()
-  const { data: orders, assignOrders, updateOrderStatus, isLoading: ordersLoading } = useOrders(filters)
-  const orderList = orders?.data?.data.data
-  const isLoading = ordersLoading || statsLoading
-
-  useEffect(() => {
-    const initializeTab = async () => {
-      setActiveTab('new')
-      setFilters({ stateId: [OrderStateEnum.NEW] })
-      try {
-        await orders?.refetch()
-        await stats?.refetch()
-      } catch (error) {
-        console.error('Failed to refetch orders:', error)
-      }
+  const {
+    selectedOrders,
+    orderCounter,
+    orders,
+    warehouseConfig,
+    assignOrders,
+    updateOrderStatus,
+    isLoading,
+    handleSelectAll,
+    handleTabSelection,
+    expiredOrders,
+    modals: {
+      mount: { isOpen: isMountModalOpen, onOpen: onMountModalOpen, onClose: onMountModalClose },
+      assign: { isOpen: isAssignModalOpen, onOpen: onAssignModalOpen, onClose: onAssignModalClose },
+      schedule: { isOpen: isScheduleModalOpen, onOpen: onScheduleModalOpen, onClose: onScheduleModalClose },
+      delete: { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose },
+      expired: { isOpen: isExpiredOrdersModalOpen, onOpen: onExpiredOrdersModalOpen, onClose: onExpiredOrdersModalClose }
     }
-    void initializeTab()
-  }, [])
-
-  const { isOpen: isMountModalOpen, onOpen: onMountModalOpen, onClose: onMountModalClose } = useDisclosure()
-  const { isOpen: isAssignModalOpen, onOpen: onAssignModalOpen, onClose: onAssignModalClose } = useDisclosure()
-  const { isOpen: isScheduleModalOpen, onOpen: onScheduleModalOpen, onClose: onScheduleModalClose } = useDisclosure()
-  const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose } = useDisclosure()
-  const { isOpen: isExpiredOrdersModalOpen, onOpen: onExpiredOrdersModalOpen, onClose: onExpiredOrdersModalClose } = useDisclosure()
-
-  const selectAllOrders = () => {
-    if (!orderList) return
-    const filteredOrders = orderList.filter((order: Order) => order.state_id !== OrderStateEnum.IN_PREPARATION)
-    const selectedOrderIds = filteredOrders.map((order: Order) => order.id)
-    setSelectedOrders(selectedOrderIds as number[])
-  }
-
-  const handleTabSelection = async () => {
-    await orders?.refetch()
-    await stats?.refetch()
-  }
-
-  const expiredOrders = stats?.data?.data?.data.find((stat: any) => stat.name === 'expired_orders')?.orders
+  } = useOrders()
 
   if (isLoading) {
     return <OrdersSkeleton />
   }
 
   return (
-    <main className='layout'>
-      <Grid h="100vh" rowGap={4}
-        templateAreas={`"title"
-                        "tabs"  
-                        "filters"
-                        "expiredOrders"
-                        "main"`}
-        gridTemplateRows={`70px 55px 95px ${expiredOrders?.length > 0 ? '70px' : ''} 1fr`}
-        gridTemplateColumns={'1fr'}>
-        <GridItem m={4} area="title">
-          <Header
-            title="Pedidos"
-            showButton={false}
-            buttonLabel='CARGAR PEDIDO'
-            onClick={() => { console.log('Aca tiene que ir una funcion') }} />
+    <Grid
+      h="100vh"
+      px={{ base: 4, md: 8 }}
+      py={{ base: 4, md: 6 }}
+      gap={{ base: 4, md: 6 }}
+      templateRows={{
+        base: 'auto auto auto auto 1fr',
+        md: 'auto auto auto auto 1fr'
+      }}
+      templateColumns="1fr"
+      overflow="hidden"
+    >
+      <GridItem>
+        <Header
+          title="Pedidos"
+          showButton={false}
+        />
+      </GridItem>
+
+      <GridItem>
+        <TabButtons
+          urlPathName="ordersPage"
+          orderCounter={orderCounter}
+          onClick={handleTabSelection}
+        />
+      </GridItem>
+
+      <GridItem>
+        <Filters
+          onSelectAll={handleSelectAll}
+          onMountOrders={onMountModalOpen}
+          onAssignOrders={onAssignModalOpen}
+          onScheduleOrders={onScheduleModalOpen}
+          onDeleteOrders={onDeleteModalOpen}
+          ordersLength={orders?.data?.data?.length ?? 0}
+        />
+      </GridItem>
+
+      {expiredOrders?.length > 0 && (
+        <GridItem>
+          <ToastMessage
+            title={`${expiredOrders?.length} pedidos atrasados`}
+            description='Para que se preparen tenés que reprogramarlos.'
+            status='warning'
+            onClick={onExpiredOrdersModalOpen}
+          />
         </GridItem>
-        <GridItem m={4} area="tabs" h="100%">
-          <TabButtons urlPathName={urlPathName} orderCounter={orderCounter} onClick={handleTabSelection} />
-        </GridItem>
-        <GridItem mt={4} mx={4} area="filters" h="100%">
-          <Filters
-            onSelectAll={selectAllOrders}
-            onMountOrders={onMountModalOpen}
-            onAssignOrders={onAssignModalOpen}
-            onScheduleOrders={onScheduleModalOpen}
-            onDeleteOrders={onDeleteModalOpen}
-            ordersLength={orderList?.length ?? 0}
-            />
-        </GridItem>
-        <GridItem mt={expiredOrders?.length > 0 ? 4 : 0} mx={expiredOrders?.length > 0 ? 4 : 0} area="expiredOrders">
-        {expiredOrders?.length > 0
-          ? (
-            <ToastMessage
-              title={`${expiredOrders?.length} pedidos atrasados`}
-              description='Para que se preparen tenés que reprogramarlos.'
-              status='warning'
-              onClick={onExpiredOrdersModalOpen} />
-            )
-          : null}
-            </GridItem>
-        <GridItem mt={4} mx={4} area="main" overflowY="scroll">
-          <OrderList
-            orders={orderList}
-            warehouseConfig={warehouseConfig}
-            isLoading={isLoading}
-            isHomePage={false} />
-        </GridItem>
-      </Grid>
+      )}
+
+      <GridItem
+        position="relative"
+        overflowY="auto"
+        pr={{ base: 0, md: 4 }}
+      >
+        <OrderList
+          orders={orders?.data?.data}
+          warehouseConfig={warehouseConfig}
+          isLoading={isLoading}
+          isHomePage={false}
+        />
+      </GridItem>
+
       <MountOrdersModal
         title='Subir pedidos'
         description='Los cambios se aplicarán a todos los pedidos seleccionados.'
@@ -132,27 +111,36 @@ export default function OrdersPage () {
         selectedOrders={selectedOrders}
         assignOrders={assignOrders}
         isOpen={isMountModalOpen}
-        onClose={onMountModalClose} />
+        onClose={onMountModalClose}
+      />
+
       <AssignOrdersModal
         assignOrders={assignOrders}
         isOpen={isAssignModalOpen}
-        onClose={onAssignModalClose} />
+        onClose={onAssignModalClose}
+      />
+
       <DeleteModal
         type='order'
         updateOrderStatus={updateOrderStatus}
         isOpen={isDeleteModalOpen}
-        onClose={onDeleteModalClose} />
+        onClose={onDeleteModalClose}
+      />
+
       <ScheduleOrdersModal
         warehouseConfig={warehouseConfig}
         assignOrders={assignOrders}
         isOpen={isScheduleModalOpen}
-        onClose={onScheduleModalClose} />
+        onClose={onScheduleModalClose}
+      />
+
       <ExpiredOrdersDrawer
         warehouseConfig={warehouseConfig}
         assignOrders={assignOrders}
         isOpen={isExpiredOrdersModalOpen}
         onClose={onExpiredOrdersModalClose}
-        orders={expiredOrders} />
-    </main>
+        orders={expiredOrders}
+      />
+    </Grid>
   )
 }

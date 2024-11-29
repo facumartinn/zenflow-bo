@@ -7,7 +7,7 @@ interface AuthState {
   user: User | null
   token: string | null
   isAuthenticated: boolean
-  login: (user: User, token: string) => void
+  login: (user: User, token: string, remember?: boolean) => void
   logout: () => void
 }
 
@@ -17,12 +17,13 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       token: null,
       isAuthenticated: false,
-      login: (user: User, token: string) => {
-        Cookies.set('token', token, {
-          expires: 30,
+      login: (user: User, token: string, remember = false) => {
+        const cookieOptions = {
+          expires: remember ? 30 : 1,
           secure: true,
-          sameSite: 'strict'
-        })
+          sameSite: 'Strict' as const
+        }
+        Cookies.set('token', token, cookieOptions)
         set({ user, token, isAuthenticated: true })
       },
       logout: () => {

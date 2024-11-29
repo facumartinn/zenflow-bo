@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { Box, Text, Icon, Heading, SkeletonCircle, Flex, useColorModeValue } from '@chakra-ui/react'
+import { Box, Text, Icon, Heading, SkeletonCircle, Flex } from '@chakra-ui/react'
 import { FaClipboardList, FaUserCheck, FaClock, FaShoppingBasket } from 'react-icons/fa'
 
 const statName: Record<string, string> = {
@@ -25,14 +25,12 @@ interface StatCardProps {
 export const StatCard = ({ name, count }: StatCardProps) => {
   const isPending = name === 'pending'
   const IconComponent = iconMap[name]
-  const bgColor = useColorModeValue(isPending ? 'transparent' : 'white', 'gray.700')
-  const borderColor = useColorModeValue('gray.200', 'gray.600')
 
   return (
     <Box
-      bg={bgColor}
+      bg={isPending ? 'transparent' : 'white'}
       borderWidth="1px"
-      borderColor={borderColor}
+      borderColor="gray.200"
       borderRadius="xl"
       p={{ base: 4, md: 6 }}
       transition="all 0.2s"
@@ -45,7 +43,7 @@ export const StatCard = ({ name, count }: StatCardProps) => {
         {isPending
           ? (
           <Text
-            fontSize={{ base: 'xs', md: 'sm' }}
+            fontSize="sm"
             fontWeight="medium"
             color="gray.500"
             mb={2}
@@ -56,16 +54,16 @@ export const StatCard = ({ name, count }: StatCardProps) => {
           : (
           <Icon
             as={IconComponent}
-            boxSize={{ base: 5, md: 6 }}
+            boxSize={6}
             color="gray.500"
-            mb={2}
+            mb={3}
           />
             )}
 
         <Text
-          fontSize={{ base: 'xs', md: 'sm' }}
+          fontSize="sm"
           color="gray.500"
-          mb={2}
+          mb={3}
         >
           {statName[name]}
         </Text>
