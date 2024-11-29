@@ -8,18 +8,26 @@ interface TabButtonProps {
   value: TabValue
   counter: number
   isActive: boolean
+  showCounter: boolean
   onClick?: () => void
 }
 
-export const TabButton = ({ label, value, counter, isActive, onClick }: TabButtonProps) => {
-  const shouldShowCounterBadge = value === 'new'
+export const TabButton = ({
+  label,
+  value,
+  counter,
+  isActive,
+  showCounter,
+  onClick
+}: TabButtonProps) => {
+  const shouldShowCounterBadge = value === 'new' || showCounter
   return (
     <Button
-        sx={isActive ? styles.activeButton : styles.disabledButton}
-        variant={isActive ? 'solid' : 'ghost'}
-        borderRadius="100%"
-        p={6}
-        onClick={onClick}
+      sx={isActive ? styles.activeButton : styles.disabledButton}
+      variant={isActive ? 'solid' : 'ghost'}
+      borderRadius="100%"
+      p={6}
+      onClick={onClick}
     >
       {label}
       {shouldShowCounterBadge && (

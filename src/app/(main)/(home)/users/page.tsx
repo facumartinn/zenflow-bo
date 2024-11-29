@@ -10,13 +10,18 @@ import { UserList } from '@/src/components/Users/List'
 import { UserModal } from '@/src/components/Modal/Users/UserModal'
 import './common.css'
 import { type UserCardProps } from '@/src/components/Users/Card'
+import { UsersSkeleton } from '@/src/components/Skeleton/Users'
 
 const headerSubtitle = 'Podés dar de alta y de baja usuarios. También asociarlo a los dispositivos con lector.'
 
 export default function UsersPage () {
   useSystemPreferences()
   const { isOpen: isCreateUserModalOpen, onOpen: onCreateUserModalOpen, onClose: onCreateUserModalClose } = useDisclosure()
-  const { data: users } = useUsers(UserRoleEnum.PICKER)
+  const { data: users, isLoading } = useUsers(UserRoleEnum.PICKER)
+
+  if (isLoading) {
+    return <UsersSkeleton />
+  }
 
   return (
     <main className='layout'>
@@ -38,7 +43,7 @@ export default function UsersPage () {
           />
         </GridItem>
         <GridItem mt={4} mx={4} area="main" overflowY="hidden">
-          <UserList users={users?.data?.data.data as UserCardProps[]} isLoading={users.isLoading} />
+          <UserList users={users?.data?.data.data as UserCardProps[]} isLoading={isLoading} />
         </GridItem>
       </Grid>
       <UserModal

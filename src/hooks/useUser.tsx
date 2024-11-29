@@ -1,10 +1,20 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { ToastMessage } from '@/src/components/Toast'
 import { createUser, fetchUsersByRole, updateUser } from '../services/userService'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, type UseQueryResult } from '@tanstack/react-query'
 import { useToast } from '@chakra-ui/react'
+import { type AxiosResponse } from 'axios'
 
-export const useUsers = (roleId: number) => {
+interface UsersHookReturn {
+  data: UseQueryResult<AxiosResponse<any, any>, Error>
+  editUser: (params: { userId: number, data: any }) => void
+  isUpdateSuccess: boolean
+  newUser: (data: any) => void
+  isNewUserSuccess: boolean
+  isLoading: boolean
+}
+
+export const useUsers = (roleId: number): UsersHookReturn => {
   const toast = useToast()
   const users = useQuery({
     queryKey: ['roles', roleId],
@@ -46,11 +56,13 @@ export const useUsers = (roleId: number) => {
       console.error('Error al actualizar la configuración', error)
     }
   })
+
   return {
     data: users,
     editUser,
     isUpdateSuccess,
     newUser,
-    isNewUserSuccess
+    isNewUserSuccess,
+    isLoading: users.isLoading
   }
 }

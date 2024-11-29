@@ -20,6 +20,9 @@ export interface User {
   warehouse_id: number
   createdAt?: Date | null
   updatedAt?: Date | null
+  Tenants?: {
+    name: string
+  }
   // OrderStates, Orders, Role, Tenant, and Warehouse are relations and their types will depend on how you manage them on the frontend
 }
 

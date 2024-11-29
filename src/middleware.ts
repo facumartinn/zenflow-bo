@@ -1,21 +1,30 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { type NextMiddlewareWithAuth, withAuth, type NextAuthMiddlewareOptions } from 'next-auth/middleware'
 import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+import { verifyToken } from './utils/auth/token'
 
-const handler: NextMiddlewareWithAuth = (request) => {
-  const session = request.nextauth
+export async function middleware (request: NextRequest) {
+  const token = request.cookies.get('token')?.value
+  const isAuthPage = request.nextUrl.pathname.startsWith('/auth')
 
-  if (!session) {
-    return NextResponse.redirect(new URL('/auth/sign-in', request.nextUrl.origin))
+  if (!token && !isAuthPage) {
+    return NextResponse.redirect(new URL('/auth/sign-in', request.url))
   }
+
+  if (token && isAuthPage) {
+    try {
+      await verifyToken(token)
+      return NextResponse.redirect(new URL('/', request.url))
+    } catch {
+      return NextResponse.next()
+    }
+  }
+
+  return NextResponse.next()
 }
 
-const options: NextAuthMiddlewareOptions = {
-  pages: {
-    signIn: '/auth/sign-in'
-  }
+export const config = {
+  matcher: [
+    '/((?!api|_next/static|_next/image|favicon.ico|static).*)'
+  ]
 }
-
-export default withAuth(handler, options)
-
-export const config = { matcher: '/((?!api|static|.*\\..*|_next).*)' }

@@ -41,10 +41,12 @@ export interface Order {
 export enum OrderStateEnum {
   NEW = 1,
   READY_TO_PICK = 2,
-  PROGRAMMED = 3,
+  SCHEDULED = 3,
   IN_PREPARATION = 4,
-  COMPLETED = 5,
-  DELETED = 6
+  PACKING = 5,
+  DELIVERED = 6,
+  FINISHED = 7,
+  DELETED = 8
 }
 
 export enum PickingStateEnum {

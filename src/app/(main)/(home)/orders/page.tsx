@@ -22,6 +22,7 @@ import { useEffect } from 'react'
 import { DeleteModal } from '@/src/components/Modal/DeleteModal'
 import { ToastMessage } from '@/src/components/Toast'
 import { ExpiredOrdersDrawer } from '@/src/components/Modal/Orders/ExpiredOrders'
+import { OrdersSkeleton } from '@/src/components/Skeleton/Orders'
 
 export default function OrdersPage () {
   const urlPathName = 'ordersPage'
@@ -31,9 +32,10 @@ export default function OrdersPage () {
   const [orderCounter] = useAtom(orderCounterAtom)
   const [filters, setFilters] = useAtom(filtersAtom)
   const { warehouseConfig } = useWarehouseConfig()
-  const { data: stats } = useOrderStats()
-  const { data: orders, assignOrders, updateOrderStatus } = useOrders(filters)
+  const { data: stats, isLoading: statsLoading } = useOrderStats()
+  const { data: orders, assignOrders, updateOrderStatus, isLoading: ordersLoading } = useOrders(filters)
   const orderList = orders?.data?.data.data
+  const isLoading = ordersLoading || statsLoading
 
   useEffect(() => {
     const initializeTab = async () => {
@@ -56,6 +58,7 @@ export default function OrdersPage () {
   const { isOpen: isExpiredOrdersModalOpen, onOpen: onExpiredOrdersModalOpen, onClose: onExpiredOrdersModalClose } = useDisclosure()
 
   const selectAllOrders = () => {
+    if (!orderList) return
     const filteredOrders = orderList.filter((order: Order) => order.state_id !== OrderStateEnum.IN_PREPARATION)
     const selectedOrderIds = filteredOrders.map((order: Order) => order.id)
     setSelectedOrders(selectedOrderIds as number[])
@@ -65,7 +68,12 @@ export default function OrdersPage () {
     await orders?.refetch()
     await stats?.refetch()
   }
-  const expiredOrders = stats.data?.data?.data.find((stat: any) => stat.name === 'expired_orders')?.orders
+
+  const expiredOrders = stats?.data?.data?.data.find((stat: any) => stat.name === 'expired_orders')?.orders
+
+  if (isLoading) {
+    return <OrdersSkeleton />
+  }
 
   return (
     <main className='layout'>
@@ -94,7 +102,7 @@ export default function OrdersPage () {
             onAssignOrders={onAssignModalOpen}
             onScheduleOrders={onScheduleModalOpen}
             onDeleteOrders={onDeleteModalOpen}
-            ordersLength={orderList?.length}
+            ordersLength={orderList?.length ?? 0}
             />
         </GridItem>
         <GridItem mt={expiredOrders?.length > 0 ? 4 : 0} mx={expiredOrders?.length > 0 ? 4 : 0} area="expiredOrders">
@@ -109,11 +117,10 @@ export default function OrdersPage () {
           : null}
             </GridItem>
         <GridItem mt={4} mx={4} area="main" overflowY="scroll">
-          {/* {expiredOrders?.length > 0 ? <ToastMessage title={`${expiredOrders?.length} pedidos atrasados`} description='Para que se preparen tenés que reprogramarlos.' status='warning' onClick={onExpiredOrdersModalOpen} /> : null} */}
           <OrderList
             orders={orderList}
             warehouseConfig={warehouseConfig}
-            isLoading={orders.isLoading}
+            isLoading={isLoading}
             isHomePage={false} />
         </GridItem>
       </Grid>

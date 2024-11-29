@@ -12,14 +12,27 @@ interface HeaderProps {
   onClick?: () => void
 }
 
-export const Header = ({ title, subtitle, showButton, buttonLabel, buttonType = 'primary', onClick }: HeaderProps) => {
+export const Header = ({
+  title,
+  subtitle,
+  showButton,
+  buttonLabel,
+  buttonType = 'primary',
+  onClick
+}: HeaderProps) => {
   return (
     <Flex sx={styles.container}>
       <Box>
         <Heading as="h1" fontSize={40}>{title}</Heading>
         {subtitle && <Text sx={styles.subtitle}>{subtitle}</Text>}
       </Box>
-        {(showButton && buttonLabel && onClick) && <DefaultButton type={buttonType} label={buttonLabel ?? ''} onClick={onClick} />}
+      {(showButton && buttonLabel && onClick) && (
+        <DefaultButton
+          type={buttonType}
+          label={buttonLabel}
+          onClick={onClick}
+        />
+      )}
     </Flex>
   )
 }

@@ -5,19 +5,28 @@ import { styles } from './styles'
 import { LogoutSvg, ProfileSvg } from '../svg/sidebarSvg'
 import { usePathname } from 'next/navigation'
 import { SidebarItem } from './item'
-import { signOut } from 'next-auth/react'
-// import SettingsModal from '../Settings'
+import { useAuthStore } from '@/src/store/authStore'
 import { sideBarButtons } from './sidebarList'
+import { SidebarSkeleton } from '../Skeleton/Sidebar'
+import { useSystemPreferences } from '@/src/hooks/useConfig'
 
 export const Sibebar = () => {
   const { onOpen } = useDisclosure()
   const pathName = usePathname()
+  const logout = useAuthStore((state) => state.logout)
+  const { isLoading } = useSystemPreferences()
+
+  if (isLoading) {
+    return <SidebarSkeleton />
+  }
+
   const isActive = (path?: string) => {
     return pathName === path ? styles.button.selected : styles.button
   }
 
-  const handleLogout = async () => {
-    await signOut()
+  const handleLogout = () => {
+    logout()
+    window.location.href = '/auth/sign-in'
   }
 
   return (
@@ -48,13 +57,7 @@ export const Sibebar = () => {
             Cerrar sesión
           </Text>
         </Box>
-        {/* <SidebarItem button={{
-          icon: <LogoutSvg color='black' />,
-          text: 'Cerrar sesión',
-          link: '/logout'
-        }} index={10} isActive={isActive('/logout')} onClick={handleLogout} /> */}
       </Flex>
-      {/* <SettingsModal isOpen={isOpen} onClose={onClose} /> */}
     </Flex>
   )
 }

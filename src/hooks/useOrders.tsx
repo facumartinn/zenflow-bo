@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { assignOrders, fetchFilteredOrders, fetchOrderStates, fetchOrderStats, updateOrderStatus } from '../services/orderService'
 import { type FilterParamTypes } from '@/src/types'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, type UseQueryResult } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useAtom } from 'jotai'
 import { activeTabAtom, orderCounterAtom, selectedOrdersAtom } from '@/src/store/navigationAtom'
@@ -9,8 +9,21 @@ import { orderStatesAtom, orderStatsAtom } from '@/src/store/orderAtom'
 import { type State } from '@/src/types/order'
 import { ToastMessage } from '@/src/components/Toast'
 import { useToast } from '@chakra-ui/toast'
+import { type AxiosResponse } from 'axios'
 
-export const useOrders = (params: FilterParamTypes) => {
+interface OrdersHookReturn {
+  data: UseQueryResult<AxiosResponse<any, any>, Error>
+  assignOrders: (data: any) => void
+  updateOrderStatus: (data: any) => void
+  isLoading: boolean
+}
+
+interface OrderStatsHookReturn {
+  data: UseQueryResult<AxiosResponse<any, any>, Error>
+  isLoading: boolean
+}
+
+export const useOrders = (params: FilterParamTypes): OrdersHookReturn => {
   const [, setOrderCounter] = useAtom(orderCounterAtom)
   const [selectedOrders, setSelectedOrders] = useAtom(selectedOrdersAtom)
   const toast = useToast()
@@ -71,7 +84,12 @@ export const useOrders = (params: FilterParamTypes) => {
     }
   )
 
-  return { data: orders, assignOrders: assignOrder.mutate, updateOrderStatus: updateOrder.mutate }
+  return {
+    data: orders,
+    assignOrders: assignOrder.mutate,
+    updateOrderStatus: updateOrder.mutate,
+    isLoading: orders.isLoading
+  }
 }
 
 export const useOrderStates = () => {
@@ -91,7 +109,7 @@ export const useOrderStates = () => {
   return response
 }
 
-export const useOrderStats = () => {
+export const useOrderStats = (): OrderStatsHookReturn => {
   const [, setOrderStats] = useAtom(orderStatsAtom)
   const stats = useQuery({
     queryKey: ['order-stats'],
@@ -106,5 +124,8 @@ export const useOrderStats = () => {
     }
   }, [stats])
 
-  return { data: stats }
+  return {
+    data: stats,
+    isLoading: stats.isLoading
+  }
 }
