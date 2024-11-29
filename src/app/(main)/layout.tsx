@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { Providers } from '../providers'
 import { NavBar } from '../../components/Navbar'
 import { Sibebar } from '../../components/Sidebar'
 import { Grid, GridItem } from '@chakra-ui/react'
+import { Suspense } from 'react'
+import { LayoutSkeleton } from '@/src/components/Skeleton/Layout'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
@@ -26,22 +27,34 @@ export default function RootLayout ({
       </head>
       <body className='layout-structure'>
         <Providers>
-          <Grid h="100vh" overflow={'hidden'}
-            templateAreas={`"navbar navbar"
-                            "sidebar main"
-                            "sidebar main"`}
-            gridTemplateRows={'55px 1fr 1fr'}
-            gridTemplateColumns={'240px 1fr'}>
-            <GridItem area="navbar">
-              <NavBar />
-            </GridItem>
-            <GridItem area="sidebar" h="100%">
-              <Sibebar />
-            </GridItem>
-            <GridItem area="main" h="100%">
-              {children}
-            </GridItem>
-          </Grid>
+          <Suspense fallback={<LayoutSkeleton />}>
+            <Grid h="100vh" overflow={'hidden'}
+              templateAreas={{
+                base: `"navbar"
+                       "main"`,
+                md: `"navbar navbar"
+                     "sidebar main"
+                     "sidebar main"`
+              }}
+              gridTemplateRows={{
+                base: '55px 1fr',
+                md: '55px 1fr 1fr'
+              }}
+              gridTemplateColumns={{
+                base: '1fr',
+                md: '240px 1fr'
+              }}>
+              <GridItem area="navbar">
+                <NavBar />
+              </GridItem>
+              <GridItem area="sidebar" h="100%" display={{ base: 'none', md: 'block' }}>
+                <Sibebar />
+              </GridItem>
+              <GridItem area="main" h="100%" pt={{ base: 12, md: 0 }}>
+                {children}
+              </GridItem>
+            </Grid>
+          </Suspense>
         </Providers>
       </body>
     </html>

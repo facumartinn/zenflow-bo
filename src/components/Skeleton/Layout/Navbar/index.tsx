@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { HStack, Skeleton, VStack } from '@chakra-ui/react'
 
 export const NavbarSkeleton = () => {

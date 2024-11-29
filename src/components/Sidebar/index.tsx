@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 'use client'
-import { Box, Text, Flex, useDisclosure } from '@chakra-ui/react'
+
+import { Box, Text, Flex, useDisclosure, IconButton, Drawer, DrawerOverlay, DrawerContent, DrawerBody, useMediaQuery } from '@chakra-ui/react'
 import { styles } from './styles'
 import { LogoutSvg, ProfileSvg } from '../svg/sidebarSvg'
 import { usePathname } from 'next/navigation'
@@ -9,9 +10,11 @@ import { useAuthStore } from '@/src/store/authStore'
 import { sideBarButtons } from './sidebarList'
 import { SidebarSkeleton } from '../Skeleton/Sidebar'
 import { useSystemPreferences } from '@/src/hooks/useConfig'
+import { HamburgerIcon } from '@chakra-ui/icons'
 
 export const Sibebar = () => {
-  const { onOpen } = useDisclosure()
+  const { onOpen, onClose, isOpen } = useDisclosure()
+  const [isMobile] = useMediaQuery('(max-width: 768px)')
   const pathName = usePathname()
   const logout = useAuthStore((state) => state.logout)
   const { isLoading } = useSystemPreferences()
@@ -29,7 +32,7 @@ export const Sibebar = () => {
     window.location.href = '/auth/sign-in'
   }
 
-  return (
+  const SidebarContent = () => (
     <Flex flexDirection="column" style={styles.container}>
       <Flex flexDirection="column" style={styles.buttonContainer}>
         {sideBarButtons.top.map((button, index) => (
@@ -60,4 +63,31 @@ export const Sibebar = () => {
       </Flex>
     </Flex>
   )
+
+  if (isMobile) {
+    return (
+      <>
+        <IconButton
+          aria-label="Open menu"
+          icon={<HamburgerIcon />}
+          onClick={onOpen}
+          position="fixed"
+          top={2}
+          left={2}
+          zIndex={20}
+          display={{ base: 'flex', md: 'none' }}
+        />
+        <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
+          <DrawerOverlay />
+          <DrawerContent maxW="240px">
+            <DrawerBody p={0}>
+              <SidebarContent />
+            </DrawerBody>
+          </DrawerContent>
+        </Drawer>
+      </>
+    )
+  }
+
+  return <SidebarContent />
 }

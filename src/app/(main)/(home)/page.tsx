@@ -52,27 +52,50 @@ export default function Home () {
 
   return (
     <main className='layout'>
-      <Grid h="100vh" rowGap={4} overflowY="auto" flexGrow={1}
-        templateAreas={`"title"
-                        "tabs"
-                        "filters"
-                        "main"`}
-        gridTemplateRows={'55px 142px 55px 1fr'}
-        gridTemplateColumns={'1fr'}>
-        <GridItem m={4} area="title">
-          <Header title={user?.Tenants?.name} showButton={false} />
+      <Grid
+        h="100vh"
+        rowGap={{ base: 2, md: 4 }}
+        overflowY="auto"
+        flexGrow={1}
+        templateAreas={{
+          base: `"title"
+                 "tabs"
+                 "filters"
+                 "main"`,
+          md: `"title"
+               "tabs"
+               "filters"
+               "main"`
+        }}
+        gridTemplateRows={{
+          base: 'auto auto auto 1fr',
+          md: '55px 142px 55px 1fr'
+        }}
+        gridTemplateColumns={'1fr'}
+        px={{ base: 2, md: 4 }}
+      >
+        <GridItem area="title" py={{ base: 2, md: 4 }}>
+          <Header
+            title={user?.Tenants?.name}
+            showButton={false}
+          />
         </GridItem>
-        <GridItem m={4} area="tabs" h="100%">
+        <GridItem area="tabs">
           <Stats stats={stats?.data?.data?.data} />
         </GridItem>
-        <GridItem m={4} area="filters" h="100%">
+        <GridItem area="filters">
           <TabButtons
             urlPathName={urlPathName}
             orderCounter={orders?.data?.data?.length}
             onClick={orders?.refetch}
           />
         </GridItem>
-        <GridItem m={4} area="main" h={`${orders?.data?.data?.length * 110}px`} overflowY="auto" flexGrow={1}>
+        <GridItem
+          area="main"
+          overflowY="auto"
+          pb={{ base: 20, md: 4 }}
+          px={{ base: 0, md: 4 }}
+        >
           {expiredOrders?.length > 0 && (
             <ToastMessage
               title={`${expiredOrders.length} pedidos atrasados`}

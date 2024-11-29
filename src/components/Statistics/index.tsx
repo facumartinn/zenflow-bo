@@ -1,5 +1,9 @@
-import { SimpleGrid } from '@chakra-ui/react'
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+import { SimpleGrid, Box } from '@chakra-ui/react'
 import { StatCard } from './Card'
+import { motion } from 'framer-motion'
+
+const MotionBox = motion(Box)
 
 interface StatsProps {
   stats: Array<{
@@ -8,15 +12,30 @@ interface StatsProps {
     count: number
   }> | null
 }
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
+
 export const Stats = ({ stats }: StatsProps) => {
   return (
-    <SimpleGrid columns={{ sm: 1, md: 2, lg: 4 }} spacing={4} mb={8} gap={4} w="full">
-      {stats?.map((stat) => {
-        return stat.name !== 'expired_orders' && (
-        <StatCard key={stat.id} name={stat.name} count={stat.count} />
+    <SimpleGrid
+      columns={{ base: 1, sm: 2, md: 4 }}
+      spacing={{ base: 4, md: 6 }}
+      w="full"
+      mb={{ base: 6, md: 8 }}
+    >
+      {stats?.map((stat, index) => (
+        stat.name !== 'expired_orders' && (
+          <MotionBox
+            key={stat.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: index * 0.1 }}
+          >
+            <StatCard
+              name={stat.name}
+              count={stat.count}
+            />
+          </MotionBox>
         )
-      })}
+      ))}
     </SimpleGrid>
   )
 }

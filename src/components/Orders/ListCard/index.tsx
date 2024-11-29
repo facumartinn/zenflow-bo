@@ -21,12 +21,12 @@ export const ListCard = ({
 }: OrderCardProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
-  const shouldDisplayDragButton = order.state_id !== OrderStateEnum.COMPLETED && order.state_id !== OrderStateEnum.IN_PREPARATION
+  const shouldDisplayDragButton = order.state_id !== OrderStateEnum.FINISHED && order.state_id !== OrderStateEnum.IN_PREPARATION
 
   const prepStatusColor = (orderStatus: OrderStateEnum) => {
     if (orderStatus === OrderStateEnum.READY_TO_PICK) return '#E1FFD9'
     if (orderStatus === OrderStateEnum.IN_PREPARATION) return '#A0AAFF4D'
-    if (orderStatus === OrderStateEnum.PROGRAMMED) return '#F6F6F6'
+    if (orderStatus === OrderStateEnum.SCHEDULED) return '#F6F6F6'
     return 'transparent'
   }
   const status = ORDER_STATES?.find((state) => state.id === order.state_id)
@@ -34,7 +34,7 @@ export const ListCard = ({
     onSelect(orderNumber)
   }
   const displayStatusBadge = () => {
-    if (order.state_id === OrderStateEnum.COMPLETED && order.state_picking_id === PickingStateEnum.INCOMPLETE) {
+    if (order.state_id === OrderStateEnum.FINISHED && order.state_picking_id === PickingStateEnum.INCOMPLETE) {
       return (
         <Flex alignItems='center'>
           <Icon as={GrCircleAlert} w={6} h={6} fontWeight={600} color='#DEAE34' />
@@ -42,7 +42,7 @@ export const ListCard = ({
         </Flex>
       )
     }
-    if (order.state_id !== OrderStateEnum.NEW && order.state_id !== OrderStateEnum.COMPLETED) {
+    if (order.state_id !== OrderStateEnum.NEW && order.state_id !== OrderStateEnum.FINISHED) {
       return (
         <Badge bg={order.state_id ? prepStatusColor(order.state_id) : 'transparent'} sx={styles.badge}>
           {status?.description}

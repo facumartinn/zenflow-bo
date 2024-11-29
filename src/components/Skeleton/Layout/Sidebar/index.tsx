@@ -1,12 +1,13 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { VStack, Skeleton, HStack, Box } from '@chakra-ui/react'
 
 export const SidebarSkeleton = () => {
   return (
-    <VStack 
-      align="stretch" 
-      spacing={6} 
-      height="100%" 
-      borderRight="1px solid" 
+    <VStack
+      align="stretch"
+      spacing={6}
+      height="100%"
+      borderRight="1px solid"
       borderColor="gray.200"
       p={4}
       justify="space-between"
