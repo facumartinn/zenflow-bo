@@ -4,17 +4,7 @@ import { createUser, fetchUsersByRole, updateUser } from '../services/userServic
 import { useMutation, useQuery, type UseQueryResult } from '@tanstack/react-query'
 import { useToast } from '@chakra-ui/react'
 import { type AxiosResponse } from 'axios'
-
-interface UserData {
-  id: number
-  role_id: number
-  name: string
-  user_email: string
-  barcode?: number
-  password?: string
-  tenant_id: number
-  warehouse_id: number
-}
+import { type User } from '../types/user'
 
 interface EditUserData {
   name: string
@@ -22,10 +12,10 @@ interface EditUserData {
 }
 
 interface UsersHookReturn {
-  data: UseQueryResult<AxiosResponse<UserData[]>, Error>
+  data: UseQueryResult<AxiosResponse<User[]>, Error>
   editUser: (params: { userId: number, data: EditUserData }) => void
   isUpdateSuccess: boolean
-  newUser: (data: UserData) => void
+  newUser: (data: User) => void
   isNewUserSuccess: boolean
   isLoading: boolean
 }
@@ -58,7 +48,7 @@ export const useUsers = (roleId: number): UsersHookReturn => {
     })
 
   const { mutate: newUser, isSuccess: isNewUserSuccess } = useMutation({
-    mutationFn: async (data: UserData) => await createUser(data),
+    mutationFn: async (data: User) => await createUser(data),
     onSuccess: async (data) => {
       toast({
         isClosable: true,

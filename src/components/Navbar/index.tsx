@@ -8,9 +8,11 @@ import { useSystemPreferences } from '@/src/hooks/useConfig'
 import { HamburgerIcon } from '@chakra-ui/icons'
 import { Sibebar } from '../Sidebar'
 import { ColorModeToggle } from '../ColorModeToggle'
+import { useAuthStore } from '@/src/store/authStore'
 
 export const NavBar = () => {
   const { isLoading } = useSystemPreferences()
+  const { user } = useAuthStore()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [isMobile] = useMediaQuery('(max-width: 768px)')
   const { colorMode } = useColorMode()
@@ -28,8 +30,8 @@ export const NavBar = () => {
       }}
     >
       <Box style={styles.clientLogo.container}>
-        <Image src={'/static/unilever.png'} alt="Client Logo" height='30' width='30' />
-        <Heading as='h1' style={styles.clientLogo.title}>Unilever</Heading>
+        <Image src={'https://zenflowimg.nyc3.cdn.digitaloceanspaces.com/Mask%20group.png'} alt="Client Logo" height='30' width='30' />
+        <Heading as='h1' style={styles.clientLogo.title}>{user?.Tenants?.name}</Heading>
       </Box>
       <Flex alignItems="center" gap={4}>
         <ColorModeToggle />

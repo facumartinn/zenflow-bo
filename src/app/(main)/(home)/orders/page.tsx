@@ -70,7 +70,7 @@ export default function OrdersPage () {
           onAssignOrders={onAssignModalOpen}
           onScheduleOrders={onScheduleModalOpen}
           onDeleteOrders={onDeleteModalOpen}
-          ordersLength={orders?.data?.data?.length ?? 0}
+          ordersLength={orders?.length ?? 0}
         />
       </GridItem>
 
@@ -91,7 +91,7 @@ export default function OrdersPage () {
         pr={{ base: 0, md: 4 }}
       >
         <OrderList
-          orders={orders?.data?.data}
+          orders={orders}
           warehouseConfig={warehouseConfig}
           isLoading={isLoading}
           isHomePage={false}

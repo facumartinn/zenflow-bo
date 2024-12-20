@@ -33,7 +33,6 @@ const getAIResponse = async (query: string): Promise<string> => {
       throw new Error('Network response was not ok')
     }
     const data = await response.json()
-    console.log(data)
     return data.results || 'Lo siento, no pude generar una respuesta.'
   } catch (error) {
     console.error('Error fetching AI response:', error)

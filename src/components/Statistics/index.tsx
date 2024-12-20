@@ -3,7 +3,7 @@ import { SimpleGrid, Box, useColorMode } from '@chakra-ui/react'
 import { StatCard } from './Card'
 import { motion } from 'framer-motion'
 
-const MotionBox = motion(Box)
+const MotionBox = motion.create(Box)
 
 interface StatsProps {
   stats: Array<{

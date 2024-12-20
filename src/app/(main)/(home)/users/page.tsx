@@ -18,7 +18,6 @@ export default function UsersPage () {
   const { isOpen: isCreateUserModalOpen, onOpen: onCreateUserModalOpen, onClose: onCreateUserModalClose } = useDisclosure()
   const { data: users, isLoading } = useUsers(UserRoleEnum.PICKER)
   const { colorMode } = useColorMode()
-
   if (isLoading) {
     return <UsersSkeleton />
   }
@@ -43,13 +42,13 @@ export default function UsersPage () {
         />
       </GridItem>
       <GridItem mt={4} mx={4} area="main" overflowY="hidden">
-        <UserList users={users?.data?.data as unknown as UserCardProps[]} isLoading={isLoading} />
+        <UserList users={users as unknown as UserCardProps[]} isLoading={isLoading} />
       </GridItem>
       <UserModal
         isOpen={isCreateUserModalOpen}
         onClose={onCreateUserModalClose}
         isNewUser={true}
-        userData={users?.data?.data[0] as UserCardProps}
+        userData={users as any}
       />
     </Grid>
   )

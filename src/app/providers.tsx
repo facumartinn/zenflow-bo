@@ -19,8 +19,8 @@ export const Providers = ({ children }: { children: React.ReactNode }): React.Re
 
   return (
     <JotaiProvider>
+      <ColorModeScript initialColorMode={theme.config.initialColorMode} />
       <ChakraProvider theme={theme}>
-        <ColorModeScript initialColorMode={theme.config.initialColorMode} />
         <QueryClientProvider client={reactQueryClient}>
           <ReactQueryStreamedHydration>{children}</ReactQueryStreamedHydration>
           <ReactQueryDevtools initialIsOpen={false} />

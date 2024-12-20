@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { DefaultButton } from '../../../Button'
 import { userModalStyles } from './styles' // Asegúrate que la ruta sea correcta
 import { useUsers } from '@/src/hooks/useUser'
-import { UserRoleEnum } from '@/src/types/user'
+import { type User, UserRoleEnum } from '@/src/types/user'
 
 interface UserModalProps {
   isOpen: boolean
@@ -29,57 +29,62 @@ interface UserCardProps {
 }
 
 export const UserModal = ({ isOpen, onClose, userData, isNewUser }: UserModalProps) => {
-  const [user, setUser] = useState<UserCardProps | undefined>(isNewUser
-    ? {
+  const [user, setUser] = useState<UserCardProps>(() => {
+    if (isNewUser) {
+      return {
         id: 0,
         role_id: UserRoleEnum.PICKER,
         name: '',
         user_email: '',
         barcode: undefined,
         password: '',
-        tenant_id: userData?.tenant_id,
-        warehouse_id: userData?.warehouse_id,
+        tenant_id: userData.tenant_id,
+        warehouse_id: userData.warehouse_id,
         device: undefined,
         pickingSpeed: undefined,
         speedTrend: undefined
       }
-    : userData)
+    }
+    return userData
+  })
+
   const { newUser, editUser } = useUsers(UserRoleEnum.PICKER)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    if (name === 'barcode') {
-      setUser(prev => prev ? ({ ...prev, [name]: value ? Number(value) : undefined }) : undefined)
-      return
-    }
-    setUser(prev => prev ? ({ ...prev, [name]: value }) : undefined)
+
+    setUser(prev => ({
+      ...prev,
+      [name]: name === 'barcode' ? (value ? parseInt(value) : undefined) : value
+    }))
   }
 
   const handleSaveChanges = async () => {
-    if (!user) return
-
     if (isNewUser) {
-      // Aseguramos que todos los campos requeridos estén presentes
-      const newUserData = {
+      const newUserData: User = {
         ...user,
         role_id: UserRoleEnum.PICKER,
-        tenant_id: 1, // Estos valores deberían venir de algún contexto o prop
-        warehouse_id: 1
+        tenant_id: userData.tenant_id,
+        warehouse_id: userData.warehouse_id,
+        barcode: user.barcode ?? 1234,
+        password: user.password ?? '123456'
       }
       newUser(newUserData)
-      setUser(undefined)
-      onClose()
-      return
+    } else {
+      const editableData = {
+        name: user.name,
+        barcode: user.barcode
+      }
+      editUser({ userId: user.id, data: editableData })
     }
-
-    // Para edición, solo enviamos los campos editables
-    const editableData = {
-      name: user.name,
-      barcode: user.barcode
-    }
-
-    editUser({ userId: user.id, data: editableData })
     onClose()
+  }
+
+  const isFormValid = () => {
+    if (isNewUser) {
+      return user.name && user.user_email && (user.barcode || user.barcode === 0)
+    }
+    return user.name && (user.barcode || user.barcode === 0)
   }
 
   return (
@@ -142,7 +147,7 @@ export const UserModal = ({ isOpen, onClose, userData, isNewUser }: UserModalPro
               type="primary"
               label='GUARDAR CAMBIOS'
               onClick={handleSaveChanges}
-              isDisabled={!user?.name} // Deshabilitar si no hay nombre
+              isDisabled={!isFormValid()}
             />
             {!isNewUser && (
               <Button style={userModalStyles.deleteButton} variant="ghost">

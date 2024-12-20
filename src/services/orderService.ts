@@ -10,7 +10,8 @@ export const fetchAllOrders = async () => {
 }
 
 export const fetchFilteredOrders = async (params: FilterParamTypes) => {
-  return await axiosInstance.get(`/orders/filtered?${objectToQueryString(params as QueryParams)}`)
+  const response = await axiosInstance.get(`/orders/filtered?${objectToQueryString(params as QueryParams)}`)
+  return response.data.data
 }
 
 export const fetchOrderById = async (orderId: number) => {

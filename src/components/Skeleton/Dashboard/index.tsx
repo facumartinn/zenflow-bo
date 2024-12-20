@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
+'use client'
 import { Grid, Skeleton, SimpleGrid, Box, HStack, useColorMode } from '@chakra-ui/react'
 
 export const DashboardSkeleton = () => {

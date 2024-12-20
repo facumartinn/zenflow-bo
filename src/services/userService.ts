@@ -7,7 +7,8 @@ export const fetchAllUsers = async () => {
 }
 
 export const fetchUsersByRole = async (roleId: number) => {
-  return await axiosInstance.get(`/users/by-role/${roleId}`)
+  const response = await axiosInstance.get(`/users/by-role/${roleId}`)
+  return response.data.data
 }
 
 export const fetchUserById = async (userId: number) => {

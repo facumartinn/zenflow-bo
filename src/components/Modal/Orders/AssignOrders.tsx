@@ -26,7 +26,7 @@ interface AssignModalProps {
 }
 
 export const AssignOrdersModal = ({ assignOrders, isOpen, onClose }: AssignModalProps) => {
-  const { data: users } = useUsers(2)
+  const { data: usersData } = useUsers(2)
   const [assignedTo, setAssignedTo] = useState(0)
   const [selectedOrders] = useAtom(selectedOrdersAtom)
 
@@ -51,9 +51,9 @@ export const AssignOrdersModal = ({ assignOrders, isOpen, onClose }: AssignModal
             value={assignedTo}
             onChange={(e) => { setAssignedTo(Number(e.target.value)) }} mb={4}>
                 <option value={0}>Todos</option>
-            {users?.data?.data?.data.map((user: User) => (
+                {usersData.data?.data?.map((user: User) => (
                 <option key={user.id} value={user.id}>{user.name}</option>
-            ))}
+                ))}
             </Select>
         </InputGroup>
       </ModalBody>

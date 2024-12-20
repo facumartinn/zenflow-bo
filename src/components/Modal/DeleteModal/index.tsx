@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { selectedOrdersAtom } from '@/src/store/navigationAtom'
 import { OrderStateEnum } from '@/src/types/order'
-import { Button } from '@chakra-ui/button'
-import { Text } from '@chakra-ui/layout'
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/modal'
+import { Button, Text, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@chakra-ui/react'
 import { useAtom } from 'jotai'
 import { PiTrash } from 'react-icons/pi'
 
