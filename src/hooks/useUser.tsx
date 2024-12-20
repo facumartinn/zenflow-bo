@@ -5,11 +5,27 @@ import { useMutation, useQuery, type UseQueryResult } from '@tanstack/react-quer
 import { useToast } from '@chakra-ui/react'
 import { type AxiosResponse } from 'axios'
 
+interface UserData {
+  id: number
+  role_id: number
+  name: string
+  user_email: string
+  barcode?: number
+  password?: string
+  tenant_id: number
+  warehouse_id: number
+}
+
+interface EditUserData {
+  name: string
+  barcode?: number
+}
+
 interface UsersHookReturn {
-  data: UseQueryResult<AxiosResponse<any, any>, Error>
-  editUser: (params: { userId: number, data: any }) => void
+  data: UseQueryResult<AxiosResponse<UserData[]>, Error>
+  editUser: (params: { userId: number, data: EditUserData }) => void
   isUpdateSuccess: boolean
-  newUser: (data: any) => void
+  newUser: (data: UserData) => void
   isNewUserSuccess: boolean
   isLoading: boolean
 }
@@ -24,7 +40,7 @@ export const useUsers = (roleId: number): UsersHookReturn => {
 
   const { mutate: editUser, isSuccess: isUpdateSuccess } = useMutation(
     {
-      mutationFn: async (params: { userId: number, data: any }) => {
+      mutationFn: async (params: { userId: number, data: EditUserData }) => {
         await updateUser(params.userId, params.data)
       },
       onSuccess: async (data) => {
@@ -42,7 +58,7 @@ export const useUsers = (roleId: number): UsersHookReturn => {
     })
 
   const { mutate: newUser, isSuccess: isNewUserSuccess } = useMutation({
-    mutationFn: async (data: any) => await createUser(data),
+    mutationFn: async (data: UserData) => await createUser(data),
     onSuccess: async (data) => {
       toast({
         isClosable: true,

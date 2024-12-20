@@ -7,7 +7,6 @@ import { TabButtons } from '@/src/components/Tabs'
 import { Filters } from '@/src/components/Filters'
 import OrderList from '@/src/components/Orders/List'
 import { ToastMessage } from '@/src/components/Toast'
-import { OrdersSkeleton } from '@/src/components/Skeleton/Orders'
 import { MountOrdersModal } from '@/src/components/Modal/Orders/MountOrders'
 import { AssignOrdersModal } from '@/src/components/Modal/Orders/AssignOrders'
 import { ScheduleOrdersModal } from '@/src/components/Modal/Orders/ScheduleOrders'
@@ -35,10 +34,6 @@ export default function OrdersPage () {
       expired: { isOpen: isExpiredOrdersModalOpen, onOpen: onExpiredOrdersModalOpen, onClose: onExpiredOrdersModalClose }
     }
   } = useOrders()
-
-  if (isLoading) {
-    return <OrdersSkeleton />
-  }
 
   return (
     <Grid

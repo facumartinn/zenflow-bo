@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { Providers } from '../providers'
@@ -18,7 +17,10 @@ export default function RootLayout ({
 }>) {
   return (
     <html lang="en" className={inter.variable}>
-      <body className='layout-structure'>
+      <head>
+        <link rel="icon" href="/static/zenflow1.png" sizes="any" style={{ borderRadius: '100' }} />
+      </head>
+      <body>
         <Providers>
           {children}
         </Providers>

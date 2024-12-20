@@ -5,7 +5,7 @@ export const userCardStyles = {
     marginBottom: '16px', // 4*4px
     background: 'white',
     boxShadow: 'sm',
-    borderRadius: 'md',
+    borderRadius: '4',
     border: '1px solid #E2E8F0',
     display: 'flex',
     alignItems: 'center',

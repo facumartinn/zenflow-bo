@@ -42,11 +42,12 @@ export enum OrderStateEnum {
   NEW = 1,
   READY_TO_PICK = 2,
   SCHEDULED = 3,
-  IN_PREPARATION = 4,
-  PACKING = 5,
-  DELIVERED = 6,
-  FINISHED = 7,
-  DELETED = 8
+  BASKET_ASSIGNMENT = 4,
+  IN_PREPARATION = 5,
+  PACKING = 6,
+  DELIVERING = 7,
+  FINISHED = 8,
+  DELETED = 9
 }
 
 export enum PickingStateEnum {

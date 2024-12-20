@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import React from 'react'
-import { Button, Flex, Input, InputGroup } from '@chakra-ui/react'
+import { Button, Flex, Input, useColorMode } from '@chakra-ui/react'
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons'
 import { filtersAtom, selectedOrdersAtom } from '@/src/store/navigationAtom'
 import { useAtom } from 'jotai'
@@ -13,6 +12,7 @@ interface PaginationProps {
 export const Pagination = ({ date }: PaginationProps) => {
   const [filters, setFilters] = useAtom(filtersAtom)
   const [, setSelectedOrders] = useAtom(selectedOrdersAtom)
+  const { colorMode } = useColorMode()
   const currentDate = filters?.assemblyDate || getFormattedDay()
 
   const handleDateChange = (newDate: string) => {
@@ -40,35 +40,44 @@ export const Pagination = ({ date }: PaginationProps) => {
       py={6}
       mt="auto"
       borderTop="1px solid"
-      borderColor="gray.200"
-      bg="white"
+      borderColor={colorMode === 'dark' ? 'darkMode.border.primary' : 'gray.200'}
+      bg={colorMode === 'dark' ? 'darkMode.bg.secondary' : 'white'}
     >
       <Button
         leftIcon={<ChevronLeftIcon />}
-        variant='none'
+        variant='ghost'
         onClick={handlePreviousDay}
-        color="#2D41FC"
-        _hover={{ bg: '#A0AAFF4D' }}
+        color="brand.500"
+        _hover={{
+          bg: colorMode === 'dark' ? 'whiteAlpha.200' : 'brand.50'
+        }}
       >
         Anterior
       </Button>
 
-      <InputGroup w='220px'>
-        <Input
-          type='date'
-          value={currentDate}
-          onChange={(e) => { handleDateChange(e.target.value) }}
-          textAlign="left"
-          bg='white'
-        />
-      </InputGroup>
+      <Input
+        type='date'
+        value={currentDate}
+        onChange={(e) => { handleDateChange(e.target.value) }}
+        textAlign="left"
+        w='220px'
+        mx={4}
+        bg={colorMode === 'dark' ? 'darkMode.bg.tertiary' : 'white'}
+        borderColor={colorMode === 'dark' ? 'darkMode.border.primary' : 'gray.200'}
+        color={colorMode === 'dark' ? 'darkMode.text.primary' : 'inherit'}
+        _hover={{
+          borderColor: colorMode === 'dark' ? 'darkMode.border.secondary' : 'gray.300'
+        }}
+      />
 
       <Button
         rightIcon={<ChevronRightIcon />}
-        variant='none'
+        variant='ghost'
         onClick={handleNextDay}
-        color="#2D41FC"
-        _hover={{ bg: '#A0AAFF4D' }}
+        color="brand.500"
+        _hover={{
+          bg: colorMode === 'dark' ? 'whiteAlpha.200' : 'brand.50'
+        }}
       >
         Siguiente
       </Button>

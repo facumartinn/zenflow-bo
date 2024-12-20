@@ -4,7 +4,6 @@ import { DefaultButton } from '@/src/components/Button'
 import { useOrderStats } from '@/src/hooks/useOrderStats'
 import { useUsers } from '@/src/hooks/useUser'
 import { OrderStateEnum } from '@/src/types/order'
-import { type User } from '@/src/types/user'
 import { getFormattedDay } from '@/src/utils/queryParams'
 import {
   Modal,
@@ -65,7 +64,7 @@ export const MountOrdersModal = ({ title, description, buttonLabel = 'SUBIR PEDI
             value={assignedTo}
             onChange={(e) => { setAssignedTo(Number(e.target.value)) }} mb={4}>
                 <option value={0}>Todos</option>
-            {users?.data?.data?.data.map((user: User) => (
+            {Array.isArray(users?.data?.data) && users.data.data.map((user: any) => (
                 <option key={user.id} value={user.id}>{user.name}</option>
             ))}
             </Select>
