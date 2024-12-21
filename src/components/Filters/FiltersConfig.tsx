@@ -1,6 +1,6 @@
 // src/components/orders/FiltersConfig.js
 import React from 'react'
-import { IconButton, Button, Flex, Tooltip } from '@chakra-ui/react'
+import { IconButton, Button, Flex, Tooltip, useColorModeValue } from '@chakra-ui/react'
 import { MdOutlinePersonAddAlt, MdOutlineEditCalendar, MdOutlineUnpublished } from 'react-icons/md'
 import { PiTrash } from 'react-icons/pi'
 import { type TabValue } from '../Tabs'
@@ -51,12 +51,12 @@ const ActionComponents = {
     </Tooltip>
   ),
   UploadOrders: ({ onMountOrders }: any) => (
-    <Button borderRadius='full' bg='#2D41FC' color="white" px={6} py={4} _hover={{ bg: '#A0AAFF4D', color: '#2D41FC' }} onClick={onMountOrders}>
+    <Button borderRadius='full' bg={useColorModeValue('#2D41FC', 'white')} color={useColorModeValue('white', 'gray.800')} px={6} py={4} _hover={{ bg: '#A0AAFF4D', color: '#2D41FC' }} onClick={onMountOrders}>
       SUBIR PEDIDOS
     </Button>
   ),
   SelectAll: ({ onSelectAll, ordersCount }: any) => (
-    <Button fontSize={16} color="#2D41FC" colorScheme='none' onClick={onSelectAll} isDisabled={ordersCount < 0} _disabled={{ color: 'grey', cursor: 'not-allowed' }}>
+    <Button fontSize={16} color={useColorModeValue('#2D41FC', 'white')} colorScheme='none' onClick={onSelectAll} isDisabled={ordersCount < 0} _disabled={{ color: 'grey', cursor: 'not-allowed' }}>
       SELECCIONAR TODOS
     </Button>
   )

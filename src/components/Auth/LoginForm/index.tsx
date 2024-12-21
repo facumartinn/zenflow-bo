@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 'use client'
 
-import { Container, VStack, FormControl, FormLabel, Input, Button, Text, useToast, Checkbox, FormErrorMessage } from '@chakra-ui/react'
+import { Container, VStack, FormControl, FormLabel, Input, Button, Text, useToast, Checkbox, FormErrorMessage, useColorModeValue } from '@chakra-ui/react'
 import { useState } from 'react'
 import { signInService } from '@/src/services/authService'
 import { useAuthStore } from '@/src/store/authStore'
 import { useLoginForm } from '@/src/hooks/useLogin'
 import { type User } from '@/src/types/user'
+import Colors from '@/src/theme/Colors'
 
 export const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false)
@@ -46,17 +47,17 @@ export const LoginForm = () => {
       as="form"
       onSubmit={handleSubmit}
       position="relative"
-      padding="20px"
-      bg="white"
-      borderRadius="md"
+      padding="30"
+      bg={useColorModeValue('white', '#2D3748')}
+      borderRadius="14"
       boxShadow="lg"
       width="100%"
       maxWidth="md"
     >
       <VStack spacing="6">
-        <Text fontSize="4xl" fontWeight="bold" alignSelf="flex-start">Inicio de sesión</Text>
+        <Text fontSize="4xl" fontWeight="bold" alignSelf="flex-start" color={useColorModeValue('gray.800', 'white')}>Inicio de sesión</Text>
         <FormControl id="email" isInvalid={!!errors.email}>
-          <FormLabel fontSize="sm">Correo electrónico</FormLabel>
+          <FormLabel fontSize="sm" color={useColorModeValue('gray.800', 'white')}>Correo electrónico</FormLabel>
           <Input
             type="email"
             name="email"
@@ -67,10 +68,11 @@ export const LoginForm = () => {
           <FormErrorMessage>{errors.email}</FormErrorMessage>
         </FormControl>
         <FormControl id="password" isInvalid={!!errors.password}>
-          <FormLabel fontSize="sm">Contraseña</FormLabel>
+          <FormLabel fontSize="sm" color={useColorModeValue('gray.800', 'white')}>Contraseña</FormLabel>
           <Input
             type="password"
             name="password"
+            color={useColorModeValue('gray.800', 'white')}
             value={form.password}
             onChange={handleChange}
             isDisabled={isLoading}
@@ -82,15 +84,16 @@ export const LoginForm = () => {
             name="rememberMe"
             isChecked={form.rememberMe}
             onChange={handleChange}
+            colorScheme="brand"
           >
             Recordarme
           </Checkbox>
         </FormControl>
         <Button
           type="submit"
-          backgroundColor="#2D41FC"
+          backgroundColor={Colors.mainBlue}
           borderRadius='full'
-          colorScheme="blue"
+          color={Colors.white}
           paddingY="6"
           width="full"
           isLoading={isLoading}

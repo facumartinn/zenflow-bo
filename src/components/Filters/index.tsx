@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { InputGroup, InputLeftElement, Input, HStack, Text, Flex } from '@chakra-ui/react'
+import { InputGroup, InputLeftElement, Input, HStack, Text, Flex, useColorModeValue } from '@chakra-ui/react'
 import { SearchIcon } from '@chakra-ui/icons'
 import { getFormattedDay } from '@/src/utils/queryParams'
 import { useAtom } from 'jotai'
@@ -36,15 +36,16 @@ export const Filters = ({
   const [filters] = useAtom(filtersAtom)
   const selectedDate = filters?.assemblyDate || getFormattedDay()
   const Actions = filterConfigs[activeTab]?.actions || (() => null)
-
+  const textColor = useColorModeValue('gray.800', 'white')
+  const inputBgColor = useColorModeValue('white', '#2D3748')
   return (
       <HStack mt={2} spacing={2} flexDirection={'column'} alignItems={'flex-start'}>
         <Flex w='100%' justifyContent='space-between'>
-        <InputGroup w='45%' mr={4} bg='white'>
+        <InputGroup w='45%' mr={4} borderRadius={'full'} bg={inputBgColor}>
           <InputLeftElement pointerEvents="none">
             <SearchIcon color="gray.300" />
           </InputLeftElement>
-          <Input type="text" placeholder="Número de pedido" />
+          <Input type="text" placeholder="Número de pedido" color={textColor} />
         </InputGroup>
         <Actions
           selectedOrders={selectedOrders}
@@ -57,7 +58,7 @@ export const Filters = ({
           onDeleteOrders={onDeleteOrders}
            />
       </Flex>
-        <Text fontSize={14} mt={4} color='#4A4D4F'>{selectedDate} - {ordersLength > 0 ? ordersLength : 'No hay'} pedidos</Text>
+        <Text fontSize={14} mt={4} color={textColor}>{selectedDate} - {ordersLength > 0 ? ordersLength : 'No hay'} pedidos</Text>
       </HStack>
   )
 }

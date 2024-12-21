@@ -2,7 +2,6 @@
 import { ListCard } from '@/src/components/Orders/ListCard'
 import { type Order } from '@/src/types/order'
 import { Box, Flex, List, Text, VStack, useColorMode } from '@chakra-ui/react'
-import { Pagination } from './Pagination'
 import { useEffect, useState } from 'react'
 import { useAtom } from 'jotai'
 import { activeTabAtom, selectedOrdersAtom } from '@/src/store/navigationAtom'
@@ -59,7 +58,11 @@ export default function OrderList ({ orders, warehouseConfig, isLoading, isHomeP
   }
 
   return (
-    <Flex direction="column" h="100%">
+    <Box
+      flex="1"
+      overflowY="auto"
+      pr={{ base: 0, md: 4 }}
+    >
       {(!orders || orders.length === 0)
         ? (
         <VStack flex="1" justify="center" spacing={4}>
@@ -105,7 +108,6 @@ export default function OrderList ({ orders, warehouseConfig, isLoading, isHomeP
           ))}
         </List>
           )}
-      {!isHomePage && shouldShowPagination && <Pagination />}
-    </Flex>
+    </Box>
   )
 }

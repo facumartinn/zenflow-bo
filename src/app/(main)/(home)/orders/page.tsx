@@ -13,11 +13,11 @@ import { ScheduleOrdersModal } from '@/src/components/Modal/Orders/ScheduleOrder
 import { DeleteModal } from '@/src/components/Modal/DeleteModal'
 import { ExpiredOrdersDrawer } from '@/src/components/Modal/Orders/ExpiredOrders'
 import { useOrders } from '@/src/hooks/useOrders'
+import { Pagination } from '@/src/components/Orders/List/Pagination'
 
 export default function OrdersPage () {
   const {
     selectedOrders,
-    orderCounter,
     orders,
     warehouseConfig,
     assignOrders,
@@ -42,8 +42,8 @@ export default function OrdersPage () {
       py={{ base: 4, md: 6 }}
       gap={{ base: 4, md: 6 }}
       templateRows={{
-        base: 'auto auto auto auto 1fr',
-        md: 'auto auto auto auto 1fr'
+        base: 'auto auto auto 1fr',
+        md: 'auto auto auto 1fr'
       }}
       templateColumns="1fr"
       overflow="hidden"
@@ -58,7 +58,7 @@ export default function OrdersPage () {
       <GridItem>
         <TabButtons
           urlPathName="ordersPage"
-          orderCounter={orderCounter}
+          ordersLength={orders?.length ?? 0}
           onClick={handleTabSelection}
         />
       </GridItem>
@@ -72,23 +72,23 @@ export default function OrdersPage () {
           onDeleteOrders={onDeleteModalOpen}
           ordersLength={orders?.length ?? 0}
         />
-      </GridItem>
-
-      {expiredOrders?.length > 0 && (
-        <GridItem>
+        {expiredOrders?.length > 0 && (
           <ToastMessage
             title={`${expiredOrders?.length} pedidos atrasados`}
             description='Para que se preparen tenés que reprogramarlos.'
             status='warning'
             onClick={onExpiredOrdersModalOpen}
           />
-        </GridItem>
-      )}
+        )}
+      </GridItem>
 
       <GridItem
         position="relative"
-        overflowY="auto"
-        pr={{ base: 0, md: 4 }}
+        display="flex"
+        flexDirection="column"
+        h="100%"
+        marginBottom={4}
+        overflowY="hidden"
       >
         <OrderList
           orders={orders}
@@ -96,6 +96,7 @@ export default function OrdersPage () {
           isLoading={isLoading}
           isHomePage={false}
         />
+        <Pagination />
       </GridItem>
 
       <MountOrdersModal

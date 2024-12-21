@@ -5,7 +5,6 @@ import { getFormattedDay } from '@/src/utils/queryParams'
 import { OrderStateEnum } from '@/src/types/order'
 import { useAtom } from 'jotai'
 import { activeTabAtom, filtersAtom, selectedOrdersAtom } from '@/src/store/navigationAtom'
-import { useOrderStats } from '@/src/hooks/useOrderStats'
 
 const tabs: Tabs = {
   homePage: [
@@ -66,21 +65,15 @@ interface Tab {
 }
 
 interface TabButtonsProps {
-  orderCounter: number
+  ordersLength: number
   onClick: () => Promise<void>
   urlPathName: string
 }
 
-export const TabButtons = ({ orderCounter, onClick, urlPathName }: TabButtonsProps) => {
+export const TabButtons = ({ ordersLength, onClick, urlPathName }: TabButtonsProps) => {
   const [activeTab, setActiveTab] = useAtom(activeTabAtom)
   const [, setSelectedOrders] = useAtom(selectedOrdersAtom)
   const [, setFilters] = useAtom(filtersAtom)
-  const { data: stats } = useOrderStats()
-
-  const getOrderCount = (statName: string) => {
-    const stat = stats?.data?.data?.find((s: any) => s.name === statName)
-    return stat?.count || 0
-  }
 
   const handleTabSelection = async (stateId: number, value: TabValue) => {
     if (setSelectedOrders) {
@@ -122,10 +115,9 @@ export const TabButtons = ({ orderCounter, onClick, urlPathName }: TabButtonsPro
           key={tab.value}
           label={tab.label}
           value={tab.value}
-          counter={getOrderCount(tab.statName)}
+          counter={ordersLength}
           isActive={activeTab === tab.value}
           onClick={async () => { await handleTabSelection(tab.orderStateId, tab.value) }}
-          showCounter={activeTab === tab.value}
         />
       ))}
     </HStack>

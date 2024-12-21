@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { Badge, Button } from '@chakra-ui/react'
+import { Badge, Button, useColorModeValue } from '@chakra-ui/react'
 import { styles } from './style'
 import { type TabValue } from '..'
 
@@ -8,7 +8,6 @@ interface TabButtonProps {
   value: TabValue
   counter: number
   isActive: boolean
-  showCounter: boolean
   onClick?: () => void
 }
 
@@ -17,13 +16,14 @@ export const TabButton = ({
   value,
   counter,
   isActive,
-  showCounter,
   onClick
 }: TabButtonProps) => {
-  const shouldShowCounterBadge = value === 'new' || showCounter
+  const shouldShowCounterBadge = isActive && (value === 'completed' || value === 'pending')
+  const buttonStyle = useColorModeValue(styles.activeButton, styles.darkActiveButton)
+  const badgeStyle = useColorModeValue(styles.badge, styles.darkBadge)
   return (
     <Button
-      sx={isActive ? styles.activeButton : styles.disabledButton}
+      sx={isActive ? buttonStyle : styles.disabledButton}
       variant={isActive ? 'solid' : 'ghost'}
       borderRadius="100%"
       p={6}
@@ -31,7 +31,7 @@ export const TabButton = ({
     >
       {label}
       {shouldShowCounterBadge && (
-        <Badge sx={styles.badge}>
+        <Badge sx={badgeStyle}>
           {counter}
         </Badge>
       )}

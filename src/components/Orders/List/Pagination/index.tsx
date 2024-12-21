@@ -1,18 +1,15 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { Button, Flex, Input, useColorMode } from '@chakra-ui/react'
+import { Button, Flex, Input, useColorModeValue } from '@chakra-ui/react'
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons'
 import { filtersAtom, selectedOrdersAtom } from '@/src/store/navigationAtom'
 import { useAtom } from 'jotai'
 import { getFormattedDay } from '@/src/utils/queryParams'
+import Colors from '@/src/theme/Colors'
+import { type ChangeEvent } from 'react'
 
-interface PaginationProps {
-  date?: string
-}
-
-export const Pagination = ({ date }: PaginationProps) => {
+export const Pagination = () => {
   const [filters, setFilters] = useAtom(filtersAtom)
   const [, setSelectedOrders] = useAtom(selectedOrdersAtom)
-  const { colorMode } = useColorMode()
   const currentDate = filters?.assemblyDate || getFormattedDay()
 
   const handleDateChange = (newDate: string) => {
@@ -21,15 +18,20 @@ export const Pagination = ({ date }: PaginationProps) => {
   }
 
   const handlePreviousDay = () => {
-    const date = new Date(currentDate)
+    const date = new Date(currentDate + 'T00:00:00')
     date.setDate(date.getDate() - 1)
-    handleDateChange(date.toISOString())
+    handleDateChange(getFormattedDay(date.toISOString()))
   }
 
   const handleNextDay = () => {
-    const date = new Date(currentDate)
+    const date = new Date(currentDate + 'T00:00:00')
     date.setDate(date.getDate() + 1)
-    handleDateChange(date.toISOString())
+    handleDateChange(getFormattedDay(date.toISOString()))
+  }
+
+  const isToday = (dateStr: string) => {
+    const today = getFormattedDay()
+    return dateStr === today
   }
 
   return (
@@ -37,20 +39,19 @@ export const Pagination = ({ date }: PaginationProps) => {
       align="center"
       justifyContent="center"
       px={4}
-      py={6}
+      pt={6}
+      pb={16}
       mt="auto"
+      bottom={0}
       borderTop="1px solid"
-      borderColor={colorMode === 'dark' ? 'darkMode.border.primary' : 'gray.200'}
-      bg={colorMode === 'dark' ? 'darkMode.bg.secondary' : 'white'}
+      borderColor={useColorModeValue(Colors.grey3, Colors.grey3)}
+      bg={useColorModeValue(Colors.white, 'gray.800')}
     >
       <Button
         leftIcon={<ChevronLeftIcon />}
         variant='ghost'
         onClick={handlePreviousDay}
-        color="brand.500"
-        _hover={{
-          bg: colorMode === 'dark' ? 'whiteAlpha.200' : 'brand.50'
-        }}
+        color={useColorModeValue(Colors.mainBlue, Colors.white)}
       >
         Anterior
       </Button>
@@ -58,15 +59,15 @@ export const Pagination = ({ date }: PaginationProps) => {
       <Input
         type='date'
         value={currentDate}
-        onChange={(e) => { handleDateChange(e.target.value) }}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => { handleDateChange(e.target.value) }}
         textAlign="left"
         w='220px'
         mx={4}
-        bg={colorMode === 'dark' ? 'darkMode.bg.tertiary' : 'white'}
-        borderColor={colorMode === 'dark' ? 'darkMode.border.primary' : 'gray.200'}
-        color={colorMode === 'dark' ? 'darkMode.text.primary' : 'inherit'}
+        bg={useColorModeValue(Colors.white, '#2D3748')}
+        borderColor={useColorModeValue(Colors.grey2, 'gray.600')}
+        color={useColorModeValue(Colors.black, Colors.white)}
         _hover={{
-          borderColor: colorMode === 'dark' ? 'darkMode.border.secondary' : 'gray.300'
+          borderColor: useColorModeValue(Colors.grey3, 'gray.500')
         }}
       />
 
@@ -74,10 +75,8 @@ export const Pagination = ({ date }: PaginationProps) => {
         rightIcon={<ChevronRightIcon />}
         variant='ghost'
         onClick={handleNextDay}
-        color="brand.500"
-        _hover={{
-          bg: colorMode === 'dark' ? 'whiteAlpha.200' : 'brand.50'
-        }}
+        color={useColorModeValue(Colors.mainBlue, Colors.white)}
+        isDisabled={isToday(currentDate)}
       >
         Siguiente
       </Button>
