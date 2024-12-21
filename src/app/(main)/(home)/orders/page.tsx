@@ -87,7 +87,6 @@ export default function OrdersPage () {
         display="flex"
         flexDirection="column"
         h="100%"
-        marginBottom={4}
         overflowY="hidden"
       >
         <OrderList
