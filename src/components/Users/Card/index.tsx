@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import React from 'react'
-import { Box, Flex, Avatar, HStack, Icon, Spacer, VStack, Button, Text, useDisclosure, useColorMode } from '@chakra-ui/react'
-import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons'
+import { Box, Flex, Avatar, HStack, Spacer, VStack, Button, Text, useDisclosure, useColorModeValue } from '@chakra-ui/react'
+// import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons'
 import { UserModal } from '../../Modal/Users/UserModal'
 import { userCardStyles } from './styles'
 import { USER_ROLES } from '@/src/types/user'
@@ -22,17 +22,16 @@ export interface UserCardProps {
 
 export const UserCard = ({ user }: { user: UserCardProps }) => {
   const { isOpen: isEditUserModalOpen, onOpen: onEditUserModalOpen, onClose: onEditUserModalClose } = useDisclosure()
-  const SpeedTrendIcon = user.speedTrend === 'increasing' ? TriangleUpIcon : TriangleDownIcon
-  const speedTrendColor = userCardStyles.speedIconColor(user.speedTrend)
+  // const SpeedTrendIcon = user.speedTrend === 'increasing' ? TriangleUpIcon : TriangleDownIcon
+  // const speedTrendColor = userCardStyles.speedIconColor(user.speedTrend)
   const findRole = (roleId: number) => USER_ROLES.find((role) => role.id === roleId)?.description
-  const { colorMode } = useColorMode()
 
   return (
     <Box
       style={{
         ...userCardStyles.container,
-        background: colorMode === 'dark' ? 'darkMode.bg.secondary' : 'white',
-        borderColor: colorMode === 'dark' ? 'darkMode.border.primary' : '#E2E8F0'
+        backgroundColor: useColorModeValue('white', 'darkMode.bg.secondary'),
+        borderColor: useColorModeValue('#E2E8F0', 'darkMode.border.primary')
       }}
       onClick={() => { console.log('User Card clicked') }}
     >
@@ -42,13 +41,13 @@ export const UserCard = ({ user }: { user: UserCardProps }) => {
           <Box w="200px">
             <Text
               style={userCardStyles.infoText}
-              color={colorMode === 'dark' ? 'darkMode.text.tertiary' : 'gray.500'}
+              color={useColorModeValue('gray.500', 'darkMode.text.tertiary')}
             >
               Nombre y apellido
             </Text>
             <Text
               style={userCardStyles.nameText}
-              color={colorMode === 'dark' ? 'darkMode.text.primary' : 'inherit'}
+              color={useColorModeValue('inherit', 'darkMode.text.primary')}
             >
               {user.name}
             </Text>
@@ -57,13 +56,13 @@ export const UserCard = ({ user }: { user: UserCardProps }) => {
           <Box>
             <Text
               style={userCardStyles.infoText}
-              color={colorMode === 'dark' ? 'darkMode.text.tertiary' : 'gray.500'}
+              color={useColorModeValue('gray.500', 'darkMode.text.tertiary')}
             >
               Código
             </Text>
             <Text
               style={userCardStyles.nameText}
-              color={colorMode === 'dark' ? 'darkMode.text.primary' : 'inherit'}
+              color={useColorModeValue('inherit', 'darkMode.text.primary')}
             >
               {user.barcode}
             </Text>
@@ -72,19 +71,19 @@ export const UserCard = ({ user }: { user: UserCardProps }) => {
           <Box>
             <Text
               style={userCardStyles.infoText}
-              color={colorMode === 'dark' ? 'darkMode.text.tertiary' : 'gray.500'}
+              color={useColorModeValue('gray.500', 'darkMode.text.tertiary')}
             >
               Rol
             </Text>
             <Text
               style={userCardStyles.nameText}
-              color={colorMode === 'dark' ? 'darkMode.text.primary' : 'inherit'}
+              color={useColorModeValue('inherit', 'darkMode.text.primary')}
             >
               {findRole(user.role_id)}
             </Text>
           </Box>
-          <Box>
-            <Text
+          {/* <Box> */}
+            {/* <Text
               style={userCardStyles.infoText}
               color={colorMode === 'dark' ? 'darkMode.text.tertiary' : 'gray.500'}
             >
@@ -95,25 +94,25 @@ export const UserCard = ({ user }: { user: UserCardProps }) => {
               color={colorMode === 'dark' ? 'darkMode.text.primary' : 'inherit'}
             >
               {user.device}12394889213
-            </Text>
-          </Box>
-          <Box>
-            <Text
+            // </Text> */}
+          {/* </Box> */}
+          {/* <Box> */}
+            {/* <Text
               style={userCardStyles.infoText}
               color={colorMode === 'dark' ? 'darkMode.text.tertiary' : 'gray.500'}
             >
               Velocidad de picking
-            </Text>
-            <Flex align="center">
+            </Text> */}
+            {/* <Flex align="center">
               <Text
                 style={userCardStyles.speedIndicator}
                 color={colorMode === 'dark' ? 'darkMode.text.primary' : 'inherit'}
               >
                 {user.pickingSpeed}55 min
               </Text>
-              <Icon as={SpeedTrendIcon} color={speedTrendColor} style={userCardStyles.speedIcon} />
-            </Flex>
-          </Box>
+              {/* <Icon as={SpeedTrendIcon} color={speedTrendColor} style={userCardStyles.speedIcon} /> */}
+            {/* </Flex> */}
+          {/* </Box> */}
         </HStack>
       </Flex>
 
@@ -126,9 +125,9 @@ export const UserCard = ({ user }: { user: UserCardProps }) => {
           variant="none"
           colorScheme={userCardStyles.button.colorScheme}
           onClick={onEditUserModalOpen}
-          color={colorMode === 'dark' ? 'brand.200' : 'brand.500'}
+          color={useColorModeValue('brand.500', 'brand.200')}
           _hover={{
-            color: colorMode === 'dark' ? 'brand.100' : 'brand.600'
+            color: useColorModeValue('brand.600', 'brand.100')
           }}
         >
           Editar

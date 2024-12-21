@@ -5,6 +5,7 @@ import { getFormattedDay } from '@/src/utils/queryParams'
 import { useAtom } from 'jotai'
 import { activeTabAtom, filtersAtom, orderCounterAtom, selectedOrdersAtom } from '@/src/store/navigationAtom'
 import { filterConfigs } from './FiltersConfig'
+import { useCallback } from 'react'
 
 /*
   FILTROS
@@ -20,6 +21,7 @@ interface FiltersProps {
   onScheduleOrders: () => void
   onDeleteOrders: () => void
   ordersLength: number
+  onSearch: (searchTerm: string) => void
 }
 
 export const Filters = ({
@@ -28,7 +30,8 @@ export const Filters = ({
   onAssignOrders,
   onScheduleOrders,
   onDeleteOrders,
-  ordersLength
+  ordersLength,
+  onSearch
 }: FiltersProps) => {
   const [activeTab] = useAtom(activeTabAtom)
   const [ordersCount] = useAtom(orderCounterAtom)
@@ -38,6 +41,11 @@ export const Filters = ({
   const Actions = filterConfigs[activeTab]?.actions || (() => null)
   const textColor = useColorModeValue('gray.800', 'white')
   const inputBgColor = useColorModeValue('white', '#2D3748')
+
+  const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    onSearch(e.target.value)
+  }, [onSearch])
+
   return (
       <HStack mt={2} spacing={2} flexDirection={'column'} alignItems={'flex-start'}>
         <Flex w='100%' justifyContent='space-between'>
@@ -45,7 +53,7 @@ export const Filters = ({
           <InputLeftElement pointerEvents="none">
             <SearchIcon color="gray.300" />
           </InputLeftElement>
-          <Input type="text" placeholder="Número de pedido" color={textColor} />
+          <Input type="text" placeholder="Número de pedido" color={textColor} onChange={handleSearch} />
         </InputGroup>
         <Actions
           selectedOrders={selectedOrders}

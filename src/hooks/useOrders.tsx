@@ -3,7 +3,7 @@ import { useAtom } from 'jotai'
 import { activeTabAtom, filtersAtom, orderCounterAtom, selectedOrdersAtom } from '@/src/store/navigationAtom'
 import { useDisclosure, useToast } from '@chakra-ui/react'
 import { OrderStateEnum } from '@/src/types/order'
-import { useEffect } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { assignOrders as assignOrdersService, fetchFilteredOrders, updateOrderStatus as updateOrderStatusService } from '../services/orderService'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { ToastMessage } from '@/src/components/Toast'
@@ -19,6 +19,7 @@ export const useOrders = (params?: FilterParamTypes) => {
   const [filters, setFilters] = useAtom(filtersAtom)
   const { warehouseConfig } = useWarehouseConfig()
   const { data: stats, refetch: refetchStats } = useOrderStats()
+  const [searchTerm, setSearchTerm] = useState('')
 
   // Modal controls
   const mountModal = useDisclosure()
@@ -75,8 +76,8 @@ export const useOrders = (params?: FilterParamTypes) => {
   })
 
   const handleSelectAll = () => {
-    if (!orders?.data?.data) return
-    const filteredOrders = orders?.data?.data?.filter((order: any) => order.state_id !== OrderStateEnum.IN_PREPARATION)
+    if (!orders) return
+    const filteredOrders = orders?.filter((order: any) => order.state_id !== OrderStateEnum.IN_PREPARATION)
     const selectedOrderIds = filteredOrders.map((order: any) => order.id)
     setSelectedOrders(selectedOrderIds as number[])
   }
@@ -87,9 +88,19 @@ export const useOrders = (params?: FilterParamTypes) => {
 
   const expiredOrders = stats?.data?.data?.data?.find((stat: any) => stat.name === 'expired_orders')?.orders
 
+  const handleSearch = useCallback((term: string) => {
+    setSearchTerm(term)
+  }, [])
+
+  // Filtrar los pedidos basados en el término de búsqueda
+  const filteredOrders = orders?.filter((order: any) => {
+    if (!searchTerm) return true
+    return order.id.toString().includes(searchTerm)
+  })
+
   return {
     // Data
-    orders,
+    orders: filteredOrders,
     stats,
     warehouseConfig,
     selectedOrders,
@@ -119,6 +130,7 @@ export const useOrders = (params?: FilterParamTypes) => {
       schedule: scheduleModal,
       delete: deleteModal,
       expired: expiredModal
-    }
+    },
+    handleSearch
   }
 }

@@ -26,6 +26,7 @@ export default function OrdersPage () {
     handleSelectAll,
     handleTabSelection,
     expiredOrders,
+    handleSearch,
     modals: {
       mount: { isOpen: isMountModalOpen, onOpen: onMountModalOpen, onClose: onMountModalClose },
       assign: { isOpen: isAssignModalOpen, onOpen: onAssignModalOpen, onClose: onAssignModalClose },
@@ -71,6 +72,7 @@ export default function OrdersPage () {
           onScheduleOrders={onScheduleModalOpen}
           onDeleteOrders={onDeleteModalOpen}
           ordersLength={orders?.length ?? 0}
+          onSearch={handleSearch}
         />
         {expiredOrders?.length > 0 && (
           <ToastMessage

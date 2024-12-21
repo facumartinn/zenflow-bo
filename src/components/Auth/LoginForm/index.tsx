@@ -31,8 +31,8 @@ export const LoginForm = () => {
       }
     } catch (error: any) {
       toast({
-        title: 'Error de inicio de sesión',
-        description: error.message || 'Credenciales inválidas',
+        title: 'Correo electrónico o contraseña incorrectos',
+        description: 'En caso de no poder iniciar sesión ponete en contacto con el administrador',
         status: 'error',
         duration: 3000,
         isClosable: true

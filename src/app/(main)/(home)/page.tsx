@@ -101,7 +101,7 @@ export default function Home () {
           </Box>
         )}
         <OrderList
-          orders={orders?.data?.data}
+          orders={orders}
           warehouseConfig={warehouseConfig}
           isLoading={isLoading}
           isHomePage={true}
