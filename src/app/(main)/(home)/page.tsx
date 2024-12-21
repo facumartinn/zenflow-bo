@@ -80,7 +80,7 @@ export default function Home () {
       <GridItem>
         <TabButtons
           urlPathName={urlPathName}
-          orderCounter={orders?.data?.data?.length}
+          ordersLength={orders?.length ?? 0}
           onClick={handleTabSelection}
         />
       </GridItem>

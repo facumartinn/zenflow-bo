@@ -41,7 +41,8 @@ export const UserList = ({ users = [], isLoading }: { users: any, isLoading: boo
           </Text>
           <Select
             style={userListStyles.select}
-            onChange={(e) => { setSortCriteria(e.target.value as string) }}
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+            onChange={(e) => { setSortCriteria(e.target.value) }}
             bg={colorMode === 'dark' ? 'darkMode.bg.secondary' : 'white'}
             borderColor={colorMode === 'dark' ? 'darkMode.border.primary' : 'gray.200'}
             color={colorMode === 'dark' ? 'darkMode.text.primary' : 'inherit'}
