@@ -6,7 +6,8 @@ import {
   Text,
   VStack,
   Tag,
-  Flex
+  Flex,
+  useColorModeValue
 } from '@chakra-ui/react'
 
 interface ProductCardProps {
@@ -30,11 +31,17 @@ const ProductCard: React.FC<ProductCardProps> = ({
   status,
   replacementCode
 }) => {
+  const bgColor = useColorModeValue('#F6F6F6', '#1A202C')
+  const shadowColor = useColorModeValue('sm', 'md')
+  const textColor = useColorModeValue('#808081', '#FFFFFF')
+  const badgeColor = useColorModeValue('#2D41FC', '#FFFFFF')
+  const tagColor = useColorModeValue('green', 'red')
+
   return (
     <Box
       p={6}
-      bg="#F6F6F6"
-      boxShadow="sm"
+      bg={bgColor}
+      boxShadow={shadowColor}
       borderRadius="lg"
       display="flex"
       alignItems="center"
@@ -43,16 +50,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
       <VStack align="start" spacing={2}>
         <Text fontWeight="bold">{productName}</Text>
         <Flex alignItems='center'>
-          <Text fontSize="sm" color="#808081" mr={2}>Código</Text>
+          <Text fontSize="sm" color={textColor} mr={2}>Código</Text>
           <Text fontSize="md">{productCode}</Text>
         </Flex>
         {status === 'delivered' && (
-          <Tag colorScheme="green" size="sm">
-            Entregados {additionalInfo}
+          <Tag colorScheme={tagColor} size="sm">
+            Recogidos: {additionalInfo}
           </Tag>
         )}
         {status === 'replaced' && (
-          <Text fontSize="sm" color="gray.500">Reemplazado por {replacementCode}</Text>
+          <Text fontSize="sm" color={textColor}>Reemplazado por {replacementCode}</Text>
         )}
       </VStack>
       <Box position="relative" display="inline-block">
@@ -65,8 +72,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
         />
       )}
       <Badge
-        bg="#2D41FC"
-        color="white"
+        bg={badgeColor}
+        color={useColorModeValue('#FFFFFF', '#000000')}
         borderRadius="8px 0 8px 0"
         px={2}
         py={1}

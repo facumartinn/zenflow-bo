@@ -33,8 +33,8 @@ export interface Order {
   internal_comment?: string | null
   tenant_id: number
   warehouse_id: number
-  createdAt?: Date | null
-  updatedAt?: Date | null
+  created_at?: Date | null
+  updated_at?: Date | null
   Users: User | null
 }
 
@@ -64,7 +64,7 @@ export interface OrderDetail {
   product_photo?: string | null
   product_barcode: string
   quantity: number
-  quantityPicked?: number | null
+  quantity_picked?: number | null
   order?: number | null
   tenant_id: number
   warehouse_id: number
