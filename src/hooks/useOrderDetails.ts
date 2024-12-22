@@ -9,5 +9,5 @@ export const useOrderDetail = (orderId: number) => {
     queryFn: async () => await fetchOrderDetailById(orderId),
     refetchOnWindowFocus: false
   })
-  return data?.data.data as OrderDetail[]
+  return data?.data.data[0] as OrderDetail[]
 }

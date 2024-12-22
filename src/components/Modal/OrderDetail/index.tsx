@@ -22,9 +22,8 @@ import ProductCard from './ProductCard'
 export const OrderDrawer = ({ isOpen, onClose, orderId }: { isOpen: boolean, onClose: () => void, orderId: number }) => {
   const orderDetail = useOrderDetail(orderId)
 
-  // Formatear la fecha de creación
   const createdAt = orderDetail?.[0]?.Orders?.created_at
-    ? new Date(orderDetail?.[0]?.Orders?.created_at).toLocaleDateString('es-ES', {
+    ? new Date(orderDetail[0].Orders.created_at).toLocaleDateString('es-ES', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
@@ -76,8 +75,7 @@ export const OrderDrawer = ({ isOpen, onClose, orderId }: { isOpen: boolean, onC
               <Badge colorScheme="green">Listo para preparar</Badge>
             </Stack>
 
-            {orderDetail?.[0].map((article, index) => {
-              console.log(article.quantity_picked, 'asdkmaskdmaskdsa123')
+            {orderDetail?.map((article, index) => {
               return (
                 <ProductCard
                   key={index}
