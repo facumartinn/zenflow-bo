@@ -1,30 +1,28 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { verifyToken } from './utils/auth/token'
 
-export async function middleware (request: NextRequest) {
-  const token = request.cookies.get('token')?.value
-  const isAuthPage = request.nextUrl.pathname.startsWith('/auth')
+export function middleware (request: NextRequest) {
+  const token = request.cookies.get('token')
+  const tenantId = request.cookies.get('tenant_id')
+  const warehouseId = request.cookies.get('warehouse_id')
 
-  if (!token && !isAuthPage) {
-    return NextResponse.redirect(new URL('/auth/sign-in', request.url))
+  // Si estamos en la página de login y hay token, redirigimos a home
+  if (request.nextUrl.pathname === '/auth/sign-in') {
+    if (token && tenantId && warehouseId) {
+      return NextResponse.redirect(new URL('/', request.url))
+    }
+    return NextResponse.next()
   }
 
-  if (token && isAuthPage) {
-    try {
-      await verifyToken(token)
-      return NextResponse.redirect(new URL('/', request.url))
-    } catch {
-      return NextResponse.next()
-    }
+  // Si no estamos en login y no hay token, redirigimos a login
+  if (!token || !tenantId || !warehouseId) {
+    return NextResponse.redirect(new URL('/auth/sign-in', request.url))
   }
 
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|static).*)'
-  ]
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)']
 }

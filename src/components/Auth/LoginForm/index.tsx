@@ -8,10 +8,12 @@ import { useAuthStore } from '@/src/store/authStore'
 import { useLoginForm } from '@/src/hooks/useLogin'
 import { type User } from '@/src/types/user'
 import Colors from '@/src/theme/Colors'
+import { useRouter } from 'next/navigation'
 
 export const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false)
   const toast = useToast()
+  const router = useRouter()
   const login = useAuthStore((state) => state.login)
   const { form, errors, handleChange, isValid } = useLoginForm()
 
@@ -24,10 +26,18 @@ export const LoginForm = () => {
     try {
       const response = await signInService(form.email, form.password)
 
-      if (response.status === 200 && response.data?.data) {
-        const { user, token } = response.data.data
-        login(user as User, token as string, form.rememberMe as boolean)
-        window.location.href = '/'
+      if (response.metadata.code === 200 && response.data) {
+        const { user, token } = response.data
+        await login(
+          user as User,
+          token as string,
+          '',
+          user.tenant_id as string,
+          user.warehouse_id as string,
+          form.rememberMe as boolean
+        )
+        router.push('/')
+        router.refresh()
       }
     } catch (error: any) {
       toast({
