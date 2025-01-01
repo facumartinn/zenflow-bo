@@ -9,6 +9,7 @@ import { useLoginForm } from '@/src/hooks/useLogin'
 import { type User } from '@/src/types/user'
 import Colors from '@/src/theme/Colors'
 import { useRouter } from 'next/navigation'
+import Cookies from 'js-cookie'
 
 export const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false)
@@ -28,21 +29,40 @@ export const LoginForm = () => {
 
       if (response.metadata.code === 200 && response.data) {
         const { user, token } = response.data
-        await login(
+
+        // Asegurarnos de que tenemos todos los datos necesarios
+        if (!user || !token || !user.tenant_id || !user.warehouse_id) {
+          throw new Error('Datos de autenticación incompletos')
+        }
+
+        login(
           user as User,
           token as string,
-          '',
+          '', // refreshToken
           user.tenant_id as string,
           user.warehouse_id as string,
-          form.rememberMe as boolean
+          form.rememberMe
         )
+
+        // Verificar que las cookies se establecieron correctamente
+        const savedToken = Cookies.get('token')
+        const savedTenantId = Cookies.get('tenant_id')
+        const savedWarehouseId = Cookies.get('warehouse_id')
+
+        if (!savedToken || !savedTenantId || !savedWarehouseId) {
+          throw new Error('Error al guardar las cookies de autenticación')
+        }
+
         router.push('/')
-        router.refresh()
+      } else {
+        throw new Error('Respuesta inválida del servidor')
       }
     } catch (error: any) {
+      console.error('Login error:', error) // Para debugging
+
       toast({
-        title: 'Correo electrónico o contraseña incorrectos',
-        description: 'En caso de no poder iniciar sesión ponete en contacto con el administrador',
+        title: 'Error de autenticación',
+        description: 'Credenciales inválidas o error de conexión',
         status: 'error',
         duration: 3000,
         isClosable: true

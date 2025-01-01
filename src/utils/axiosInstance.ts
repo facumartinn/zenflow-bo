@@ -11,28 +11,24 @@ interface JWTPayload {
 
 const axiosInstance = axios.create({
   // baseURL: 'https://zenflow-api-daq3y.ondigitalocean.app',
-  baseURL: 'http://192.168.0.22:4000', // Reemplaza con la URL base de tu API
+  baseURL: 'http://192.168.68.51:4000', // Reemplaza con la URL base de tu API
   timeout: 100000
 })
 
 axiosInstance.interceptors.request.use(async (config) => {
   const token = Cookies.get('token')
-  console.log(token, 'asdkmaskdmaskdsa0')
 
   if (token) {
     try {
       // Decodificamos el token para obtener los claims
       const decodedToken = jwtDecode<JWTPayload>(token)
-      console.log(decodedToken, 'asdkmaskdmaskdsa')
       // Verificamos que los IDs coincidan con los almacenados
       const storedTenantId = Cookies.get('tenant_id')
       const storedWarehouseId = Cookies.get('warehouse_id')
-      console.log(storedTenantId, 'asdkmaskdmaskdsa1')
-      console.log(storedWarehouseId, 'asdkmaskdmaskdsa2')
 
       if (
-        decodedToken.tenant_id !== storedTenantId ||
-        decodedToken.warehouse_id !== storedWarehouseId
+        decodedToken.tenant_id.toString() !== storedTenantId ||
+        decodedToken.warehouse_id.toString() !== storedWarehouseId
       ) {
         // Si no coinciden, es un intento de manipulación
         clearSession()

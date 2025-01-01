@@ -3,9 +3,10 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export function middleware (request: NextRequest) {
-  const token = request.cookies.get('token')
-  const tenantId = request.cookies.get('tenant_id')
-  const warehouseId = request.cookies.get('warehouse_id')
+  // Usamos la API nativa de cookies de Next.js
+  const token = request.cookies.get('token')?.value
+  const tenantId = request.cookies.get('tenant_id')?.value
+  const warehouseId = request.cookies.get('warehouse_id')?.value
 
   // Si estamos en la página de login y hay token, redirigimos a home
   if (request.nextUrl.pathname === '/auth/sign-in') {

@@ -27,7 +27,7 @@ export const getSession = () => {
 
 export const setSession = async (user: User, token: string) => {
   const decodedToken = jwtDecode<{ tenant_id: string, warehouse_id: string }>(token)
-  await useAuthStore.getState().login(user, token, '', decodedToken.tenant_id as string, decodedToken.warehouse_id as string, true)
+  useAuthStore.getState().login(user, token, '', decodedToken.tenant_id, decodedToken.warehouse_id, true)
 }
 
 export const clearSession = () => {

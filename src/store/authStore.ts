@@ -22,15 +22,15 @@ export const useAuthStore = create<AuthState>()(
       login: (user: User, token: string, refreshToken: string, tenantId: string, warehouseId: string, remember = false) => {
         const cookieOptions = {
           expires: remember ? 180 : 1,
-          secure: true,
-          sameSite: 'Strict' as const,
-          httpOnly: true
+          path: '/',
+          sameSite: 'strict' as const,
+          secure: process.env.NODE_ENV === 'production'
         }
-        console.log(user, 'user')
-        console.log(token, 'token')
-        console.log(refreshToken, 'refreshToken')
-        console.log(tenantId, 'tenantId')
-        console.log(warehouseId, 'warehouseId')
+
+        // Establecemos las cookies
+        Cookies.set('token', token, cookieOptions)
+        Cookies.set('tenant_id', tenantId, cookieOptions)
+        Cookies.set('warehouse_id', warehouseId, cookieOptions)
 
         if (refreshToken) {
           Cookies.set('refresh_token', refreshToken, {
@@ -38,10 +38,6 @@ export const useAuthStore = create<AuthState>()(
             path: '/api/auth/refresh'
           })
         }
-
-        Cookies.set('token', token, cookieOptions)
-        Cookies.set('tenant_id', tenantId, cookieOptions)
-        Cookies.set('warehouse_id', warehouseId, cookieOptions)
 
         set({
           user,
@@ -51,11 +47,27 @@ export const useAuthStore = create<AuthState>()(
         })
       },
       logout: () => {
-        Cookies.remove('token')
-        Cookies.remove('tenant_id')
-        Cookies.remove('warehouse_id')
-        Cookies.remove('refresh_token')
-        set({ user: null, token: null, refreshToken: null, isAuthenticated: false })
+        const cookieOptions = {
+          path: '/',
+          sameSite: 'strict' as const,
+          secure: process.env.NODE_ENV === 'production'
+        }
+
+        // Removemos las cookies
+        Cookies.remove('token', cookieOptions)
+        Cookies.remove('tenant_id', cookieOptions)
+        Cookies.remove('warehouse_id', cookieOptions)
+        Cookies.remove('refresh_token', {
+          ...cookieOptions,
+          path: '/api/auth/refresh'
+        })
+
+        set({
+          user: null,
+          token: null,
+          refreshToken: null,
+          isAuthenticated: false
+        })
       }
     }),
     {

@@ -7,7 +7,6 @@ export const signInService = async (userEmail: string | undefined, password: str
       userEmail,
       password
     })
-    console.log(response.data.data, 'asdkmaskdmaskdsa')
     if (response.status !== 200) {
       throw new Error('Error al recuperar los datos del usuario')
     }
