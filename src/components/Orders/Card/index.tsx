@@ -128,7 +128,7 @@ export const OrderCard = ({ order, onSelect, isSelected }: OrderCardProps) => {
         </HStack>
 
         <VStack align="center" justify="flex-end" flexDir="row" spacing={4}>
-          {(statusColors || showIncompleteStatus) && (
+          {(statusColors ?? showIncompleteStatus) && (
             <Box
               px={3}
               py={1}
@@ -139,14 +139,14 @@ export const OrderCard = ({ order, onSelect, isSelected }: OrderCardProps) => {
               flexDir="row"
               gap={2}
             >
-              <InfoSvg 
-                color={showIncompleteStatus ? Colors.warningYellow : (statusColors?.text ?? Colors.mainBlue)} 
-                width={18} 
-                height={18} 
+              <InfoSvg
+                color={showIncompleteStatus ? Colors.warningYellow : (statusColors?.text ?? Colors.mainBlue)}
+                width={18}
+                height={18}
               />
-              <Text 
-                fontSize="16px" 
-                fontWeight="bold" 
+              <Text
+                fontSize="16px"
+                fontWeight="bold"
                 color={showIncompleteStatus ? Colors.warningYellow : (statusColors?.text ?? Colors.mainBlue)}
               >
                 {showIncompleteStatus ? 'Incompleto' : statusText}

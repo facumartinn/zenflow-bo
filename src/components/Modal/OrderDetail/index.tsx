@@ -344,13 +344,13 @@ export const OrderDrawer: FC<OrderDrawerProps> = ({ isOpen, onClose, orderId }) 
               <VStack spacing={2} align="stretch">
                 {isLoading
                   ? [...Array(3)].map((_, index) => (
-                    <ProductCardSkeleton key={index} />
+                  <ProductCardSkeleton key={index} />
                     ))
                   : orderDetail?.details?.length ?? 0
-                  ? orderDetail?.details?.map((item, index) => (
-                    <ProductCard key={index} item={item} />
-                  ))
-                  : <Text fontSize="16px" fontWeight="bold">{orderDetail?.total_products ?? 0}</Text>
+                    ? orderDetail?.details?.map((item, index) => (
+                  <ProductCard key={index} item={item} />
+                    ))
+                    : <Text fontSize="16px" fontWeight="bold">{orderDetail?.total_products ?? 0}</Text>
                 }
               </VStack>
             <Flex justifyContent="center" mt={8} mb={4}>

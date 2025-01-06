@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { Checkbox, Grid, Text, Badge, IconButton, Box, ListItem, useDisclosure, Flex, Icon, useColorMode } from '@chakra-ui/react'
+import { Checkbox, Grid, Text, IconButton, Box, ListItem, useDisclosure, Flex, useColorMode } from '@chakra-ui/react'
 import { styles } from './styles'
 import { OrderDrawer } from '../../Modal/OrderDetail'
-import { ORDER_STATES, type Order, OrderStateEnum, PickingStateEnum } from '@/src/types/order'
+import { type Order, OrderStateEnum } from '@/src/types/order'
 import { InfoSvg } from '../../svg/infoSvg'
 import { RxDragHandleDots2 } from 'react-icons/rx'
 import Colors from '@/src/theme/Colors'
