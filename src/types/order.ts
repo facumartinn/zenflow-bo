@@ -36,6 +36,9 @@ export interface Order {
   created_at?: Date | null
   updated_at?: Date | null
   Users: User | null
+  total_products?: number | null
+  positions?: string | null
+  OrderPositions?: OrderPosition[] | null
 }
 
 export enum OrderStateEnum {
@@ -71,6 +74,7 @@ export interface OrderDetail {
   created_at?: Date
   updated_at?: Date | null
   Orders: Order | null
+  total_products?: number | null
   // Order, Tenant, and Warehouse are relations
 }
 

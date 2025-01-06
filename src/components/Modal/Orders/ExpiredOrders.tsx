@@ -19,16 +19,7 @@ import { MdOutlineEditCalendar } from 'react-icons/md'
 import { useEffect, useState } from 'react'
 import { MountOrdersModal } from './MountOrders'
 import { useOrderStats } from '@/src/hooks/useOrderStats'
-
-function getFormattedDay (date?: string): string {
-  const day = date ? new Date(date) : new Date()
-  const yyyy = day.getUTCFullYear()
-  let mm: any = day.getUTCMonth() + 1 // Months start at 0!
-  let dd: any = day.getUTCDate()
-  mm = mm.toString().padStart(2, '0') // Add leading zero if needed
-  dd = dd.toString().padStart(2, '0') // Add leading zero if needed
-  return `${yyyy}/${mm}/${dd}`
-}
+import { formatDateToLocal } from '@/src/utils/date'
 
 interface ExpiredOrdersDrawerProps {
   warehouseConfig: any
@@ -138,7 +129,9 @@ export const ExpiredOrdersDrawer = ({ warehouseConfig, assignOrders, isOpen, onC
                   </Flex>
                   <Box ml={8}>
                     <Text color='#808081' fontSize={14}>Fecha</Text>
-                    <Text fontSize={16} fontWeight='bold'>{getFormattedDay(order?.assembly_date?.toString())}</Text>
+                    <Text fontSize={16} fontWeight='bold'>
+                      {order?.assembly_date ? formatDateToLocal(order.assembly_date) : '--/--/----'}
+                    </Text>
                   </Box>
                 </Flex>
               ))}

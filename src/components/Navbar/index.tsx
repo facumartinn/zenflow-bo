@@ -23,11 +23,10 @@ export const NavBar = () => {
 
   return (
     <Flex
-      style={{
-        ...styles.container,
-        backgroundColor: colorMode === 'dark' ? 'var(--chakra-colors-darkMode-bg-secondary)' : 'white',
-        borderBottomColor: colorMode === 'dark' ? 'var(--chakra-colors-darkMode-border-primary)' : '#B7B7B7'
-      }}
+      position="relative"
+      backgroundColor={colorMode === 'dark' ? 'darkMode.bg.secondary' : 'white'}
+      borderBottomColor={colorMode === 'dark' ? 'darkMode.border.primary' : '#B7B7B7'}
+      sx={styles.container}
     >
       <Box style={styles.clientLogo.container}>
         <Image src={'https://zenflowimg.nyc3.cdn.digitaloceanspaces.com/Mask%20group.png'} alt="Client Logo" height='30' width='30' />

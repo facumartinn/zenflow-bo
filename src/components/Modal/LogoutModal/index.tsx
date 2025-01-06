@@ -3,51 +3,40 @@ import {
   ModalOverlay,
   ModalContent,
   VStack,
-  Text,
-  Box
+  Box,
+  Text
 } from '@chakra-ui/react'
 import { DefaultButton } from '../../Button'
+import { InfoSvg } from '../../svg/infoSvg'
 import Colors from '@/src/theme/Colors'
-import { WarningSvg } from '../../svg/warningSvg'
 
-interface DeleteModalProps {
-  title: string
-  subtitle: string
+interface LogoutModalProps {
   isOpen: boolean
   onClose: () => void
-  onDelete: () => void
+  onConfirm: () => void
 }
 
-export const DeleteModal = ({ title, subtitle, isOpen, onClose, onDelete }: DeleteModalProps): JSX.Element => {
+export const LogoutModal = ({ isOpen, onClose, onConfirm }: LogoutModalProps): JSX.Element => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
-      <ModalContent maxW="400px" p={6} borderRadius="xl">
+      <ModalContent maxW="400px" p={12} borderRadius="xl">
         <VStack spacing={6} align="center">
-            <WarningSvg color={Colors.warningYellow} />
-            <Text
-            fontSize="lg"
-            fontWeight="medium"
-            textAlign="center"
-            w={44}
-          >
-            {title}
-          </Text>
+            <InfoSvg color={Colors.mainBlue} width={48} height={48} />
           <Text
-            fontSize="sm"
-            fontWeight="medium"
+            fontSize="lg"
+            fontWeight="bold"
             textAlign="center"
-            w={44}
           >
-            {subtitle}
+            ¿Querés cerrar sesión?
           </Text>
 
           <Box w="100%" display="flex" flexDirection="column" alignItems="center" gap={2}>
             <Box mb={2}>
               <DefaultButton
-                label="ELIMINAR"
+                label="CERRAR SESIÓN"
                 type="primary"
-                onClick={onDelete}
+                onClick={onConfirm}
               />
             </Box>
             <DefaultButton

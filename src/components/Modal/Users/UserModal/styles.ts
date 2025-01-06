@@ -1,3 +1,5 @@
+import Colors from '@/src/theme/Colors'
+
 // styles.ts
 export const userModalStyles = {
   modalContent: {
@@ -21,5 +23,9 @@ export const userModalStyles = {
   deleteButton: {
     marginTop: '16px',
     color: '#EC0000'
+  },
+  cancelButton: {
+    marginTop: '16px',
+    color: Colors.mainBlue
   }
 }

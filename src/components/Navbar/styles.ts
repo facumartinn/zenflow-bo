@@ -1,10 +1,13 @@
 export const styles = {
   container: {
-    height: '55px',
+    width: '100%',
+    height: '64px',
+    display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: '8px 16px',
-    borderBottom: '1px solid #B7B7B7'
+    padding: '0 24px',
+    zIndex: 2,
+    boxShadow: '0px 4px 40px 24px #D8D8E959'
   },
   clientLogo: {
     container: {

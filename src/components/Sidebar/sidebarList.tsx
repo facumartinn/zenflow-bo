@@ -1,4 +1,4 @@
-import { HomeSvg, OrdersSvg, UsersSvg } from '../svg/sidebarSvg'
+import { HomeSvg, LogoutSvg, OrdersSvg, UsersSvg } from '../svg/sidebarSvg'
 // import { ChatIcon } from '@chakra-ui/icons'
 
 interface SideBarButtonProps {
@@ -32,7 +32,7 @@ export const sideBarButtons: SideBarButtonProps = {
     },
     {
       icon: <UsersSvg color='black' />,
-      text: 'Usuarios',
+      text: 'Pickers',
       link: '/users'
     }
     // {
@@ -47,5 +47,10 @@ export const sideBarButtons: SideBarButtonProps = {
     //   text: 'Configuración',
     //   link: '/config'
     // }
+    {
+      icon: <LogoutSvg color='black' />,
+      text: 'Cerrar sesión',
+      link: '#'
+    }
   ]
 }

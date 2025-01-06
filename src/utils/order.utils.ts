@@ -16,7 +16,7 @@ export const groupOrdersByShift = (orders: Order[], warehouseConfig: Config): Re
   // Reducir los pedidos a grupos basados en el turno asignado
   const shifts = orders.reduce<Record<string, Order[]>>((acc, order) => {
     // Buscar el turno correspondiente al horario de montaje del pedido
-    const shiftName = warehouseConfig.use_shifts?.shifts.find((shift: Shifts) => order.assembly_schedule === shift.id)?.name || 'Sin turno'
+    const shiftName = warehouseConfig.use_shifts?.shifts.find((shift: Shifts) => order.assembly_schedule === shift.id)?.name ?? 'Sin turno'
 
     // Si no hay un grupo para este turno, inicializarlo
     if (!acc[shiftName]) {
@@ -34,7 +34,7 @@ export const groupOrdersByShift = (orders: Order[], warehouseConfig: Config): Re
 export const groupOrdersByAssignedUser = (orders: Order[]): Record<string, Order[]> => {
   // Reducir los pedidos a grupos basados en el usuario asignado
   const groupedByUser = orders.reduce<Record<string, Order[]>>((acc, order) => {
-    const assignedUser = order.Users?.name || 'Sin asignar' // Asumiendo que 'Users' puede ser undefined y tiene una propiedad 'name'
+    const assignedUser = order.Users?.name ?? 'Sin asignar' // Asumiendo que 'Users' puede ser undefined y tiene una propiedad 'name'
 
     // Inicializar el grupo si aún no existe
     if (!acc[assignedUser]) {

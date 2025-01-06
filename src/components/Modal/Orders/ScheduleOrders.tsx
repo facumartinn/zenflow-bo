@@ -2,7 +2,7 @@
 import { DefaultButton } from '@/src/components/Button'
 import { ToastMessage } from '@/src/components/Toast'
 import { selectedOrdersAtom } from '@/src/store/navigationAtom'
-import { getFormattedDay } from '@/src/utils/queryParams'
+import { getFormattedDay, toISOLocalDate } from '@/src/utils/date'
 import {
   Modal,
   ModalOverlay,
@@ -60,8 +60,15 @@ export const ScheduleOrdersModal = ({ warehouseConfig, assignOrders, isOpen, onC
           <Input
             type="date"
             value={preparationDate}
-            onChange={(e) => { setPreparationDate(e.target.value) }}
-            placeholder="Seleccionar fecha" mb={4} />
+            onChange={(e) => {
+              const selectedDate = new Date(e.target.value)
+              // Asegurarnos de que la fecha se mantenga en la zona horaria local
+              setPreparationDate(toISOLocalDate(selectedDate))
+            }}
+            min={toISOLocalDate(new Date())} // No permitir fechas anteriores a hoy
+            placeholder="Seleccionar fecha"
+            mb={4}
+          />
           {warehouseConfig?.use_shifts?.status && (
             <>
               <Text mb='4px' fontSize={14} fontWeight={500}>Turno</Text>

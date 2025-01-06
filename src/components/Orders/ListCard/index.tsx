@@ -3,8 +3,9 @@ import { Checkbox, Grid, Text, Badge, IconButton, Box, ListItem, useDisclosure, 
 import { styles } from './styles'
 import { OrderDrawer } from '../../Modal/OrderDetail'
 import { ORDER_STATES, type Order, OrderStateEnum, PickingStateEnum } from '@/src/types/order'
-import { GrCircleAlert } from 'react-icons/gr'
+import { InfoSvg } from '../../svg/infoSvg'
 import { RxDragHandleDots2 } from 'react-icons/rx'
+import Colors from '@/src/theme/Colors'
 
 interface OrderCardProps {
   order: Order
@@ -24,72 +25,54 @@ export const ListCard = ({
 
   const shouldDisplayDragButton = order.state_id !== OrderStateEnum.FINISHED && order.state_id !== OrderStateEnum.IN_PREPARATION
 
-  const getStatusColors = (orderStatus: OrderStateEnum) => {
-    if (colorMode === 'dark') {
-      switch (orderStatus) {
-        case OrderStateEnum.READY_TO_PICK:
-          return { bg: 'green.800', color: 'green.100' }
-        case OrderStateEnum.IN_PREPARATION:
-          return { bg: 'blue.800', color: 'blue.100' }
-        case OrderStateEnum.SCHEDULED:
-          return { bg: 'darkMode.bg.tertiary', color: 'darkMode.text.primary' }
-        default:
-          return { bg: 'transparent', color: 'darkMode.text.primary' }
-      }
-    } else {
-      switch (orderStatus) {
-        case OrderStateEnum.READY_TO_PICK:
-          return { bg: '#E1FFD9', color: 'inherit' }
-        case OrderStateEnum.IN_PREPARATION:
-          return { bg: '#A0AAFF4D', color: 'inherit' }
-        case OrderStateEnum.SCHEDULED:
-          return { bg: '#F6F6F6', color: 'inherit' }
-        default:
-          return { bg: 'transparent', color: 'inherit' }
-      }
+  const getStatusColor = (stateId: number) => {
+    switch (stateId) {
+      case OrderStateEnum.BASKET_ASSIGNMENT: return { text: Colors.mainBlue }
+      case OrderStateEnum.IN_PREPARATION: return { text: Colors.mainBlue }
+      case OrderStateEnum.PACKING: return { text: Colors.mainBlue }
+      case OrderStateEnum.DELIVERING: return { text: Colors.mainBlue }
+      case OrderStateEnum.FINISHED: return { text: Colors.warningYellow }
+      case OrderStateEnum.DELETED: return { text: Colors.red }
+      default: return null
     }
   }
 
-  const status = ORDER_STATES?.find((state) => state.id === order.state_id)
+  const getStatusText = (stateId: number) => {
+    switch (stateId) {
+      case OrderStateEnum.BASKET_ASSIGNMENT: return 'En preparación'
+      case OrderStateEnum.IN_PREPARATION: return 'En preparación'
+      case OrderStateEnum.PACKING: return 'En preparación'
+      case OrderStateEnum.DELIVERING: return 'En preparación'
+      case OrderStateEnum.FINISHED: return 'Incompleto'
+      case OrderStateEnum.DELETED: return 'Cancelado'
+      default: return null
+    }
+  }
 
   const handleCheckboxChange = (orderNumber: number) => {
     onSelect(orderNumber)
   }
 
   const displayStatusBadge = () => {
-    if (order.state_id === OrderStateEnum.FINISHED && order.state_picking_id === PickingStateEnum.INCOMPLETE) {
+    const statusColor = getStatusColor(order.state_id ?? 1)
+    const statusText = getStatusText(order.state_id ?? 1)
+
+    if (statusColor && statusText) {
       return (
         <Flex alignItems='center'>
-          <Icon
-            as={GrCircleAlert}
-            w={6}
-            h={6}
-            fontWeight={600}
-            color={colorMode === 'dark' ? 'yellow.200' : '#DEAE34'}
-          />
+          <InfoSvg color={statusColor.text} width={18} height={18} />
           <Text
             ml={2}
             fontSize={16}
             fontWeight={600}
-            color={colorMode === 'dark' ? 'yellow.200' : '#DEAE34'}
+            color={statusColor.text}
           >
-            Incompleto
+            {statusText}
           </Text>
         </Flex>
       )
     }
-    if (order.state_id !== OrderStateEnum.NEW && order.state_id !== OrderStateEnum.FINISHED) {
-      const { bg, color } = getStatusColors(order.state_id as OrderStateEnum)
-      return (
-        <Badge
-          bg={bg}
-          color={color}
-          sx={styles.badge}
-        >
-          {status?.description}
-        </Badge>
-      )
-    }
+
     return null
   }
 

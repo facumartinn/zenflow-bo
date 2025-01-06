@@ -1,115 +1,75 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 'use client'
-import { Grid, Skeleton, SimpleGrid, Box, HStack, useColorMode } from '@chakra-ui/react'
+import { Grid, GridItem, Box, Skeleton, SkeletonText } from '@chakra-ui/react'
 
 export const DashboardSkeleton = () => {
-  const { colorMode } = useColorMode()
-
   return (
-    <Grid
-      h="100vh"
-      rowGap={4}
-      templateAreas={`"title"
-                      "tabs"
-                      "filters"
-                      "main"`}
-      gridTemplateRows={'55px 142px 55px 1fr'}
-      gridTemplateColumns={'1fr'}
-    >
-      <Box m={4} gridArea="title">
-        <Skeleton
-          height="40px"
-          width="300px"
-          borderRadius="md"
-          startColor={colorMode === 'dark' ? 'gray.700' : 'gray.50'}
-          endColor={colorMode === 'dark' ? 'gray.600' : 'gray.200'}
-        />
+    <Box h="100vh" px={{ base: 4, md: 8 }} py={{ base: 4, md: 6 }} mt="24px">
+      <Box mb={6}>
+        <Skeleton height="32px" width="150px" />
       </Box>
-      <Box m={4} gridArea="tabs">
-        <SimpleGrid columns={{ sm: 1, md: 2, lg: 4 }} spacing={4} mb={8}>
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Box
-              key={`stat-skeleton-${i}`}
-              p={6}
-              bg={colorMode === 'dark' ? 'darkMode.bg.secondary' : 'white'}
-              borderRadius="lg"
-              boxShadow="sm"
-              borderWidth="1px"
-              borderColor={colorMode === 'dark' ? 'darkMode.border.primary' : 'gray.200'}
-            >
-              <Skeleton
-                height="14px"
-                width="100px"
-                mb={2}
-                startColor={colorMode === 'dark' ? 'gray.700' : 'gray.50'}
-                endColor={colorMode === 'dark' ? 'gray.600' : 'gray.200'}
-              />
-              <Skeleton
-                height="42px"
-                width="80px"
-                startColor={colorMode === 'dark' ? 'gray.700' : 'gray.50'}
-                endColor={colorMode === 'dark' ? 'gray.600' : 'gray.200'}
-              />
+
+      <Grid
+        mt={6}
+        templateRows="auto 1fr"
+        templateColumns="450px 1fr"
+        gap={6}
+        h="calc(100% - 100px)"
+        overflow="scroll"
+      >
+        <GridItem>
+          <Box bg="white" p={6} borderRadius="lg" shadow="sm" h="100%" maxH="calc(100vh - 200px)">
+            <Skeleton height="24px" width="200px" mb={4} />
+
+            <Box mb={8}>
+              <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+                <Box p={4} borderRadius="md" bg="gray.50">
+                  <SkeletonText noOfLines={2} spacing={2} />
+                </Box>
+                <Box p={4} borderRadius="md" bg="gray.50">
+                  <SkeletonText noOfLines={2} spacing={2} />
+                </Box>
+              </Grid>
             </Box>
-          ))}
-        </SimpleGrid>
-      </Box>
-      <Box m={4} gridArea="filters">
-        <HStack spacing={4}>
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton
-              key={`filter-skeleton-${i}`}
-              height="54px"
-              width="180px"
-              borderRadius="full"
-              startColor={colorMode === 'dark' ? 'gray.700' : 'gray.50'}
-              endColor={colorMode === 'dark' ? 'gray.600' : 'gray.200'}
-            />
-          ))}
-        </HStack>
-      </Box>
-      <Box m={4} gridArea="main" overflowY="auto">
-        <SimpleGrid spacing={4} pb={16}>
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Box
-              key={`order-skeleton-${i}`}
-              p={6}
-              bg={colorMode === 'dark' ? 'darkMode.bg.secondary' : 'white'}
-              borderRadius="lg"
-              boxShadow="sm"
-              borderWidth="1px"
-              borderColor={colorMode === 'dark' ? 'darkMode.border.primary' : 'gray.200'}
-            >
-              <HStack spacing={8}>
-                <Skeleton
-                  height="20px"
-                  width="120px"
-                  startColor={colorMode === 'dark' ? 'gray.700' : 'gray.50'}
-                  endColor={colorMode === 'dark' ? 'gray.600' : 'gray.200'}
-                />
-                <Skeleton
-                  height="20px"
-                  width="100px"
-                  startColor={colorMode === 'dark' ? 'gray.700' : 'gray.50'}
-                  endColor={colorMode === 'dark' ? 'gray.600' : 'gray.200'}
-                />
-                <Skeleton
-                  height="20px"
-                  width="80px"
-                  startColor={colorMode === 'dark' ? 'gray.700' : 'gray.50'}
-                  endColor={colorMode === 'dark' ? 'gray.600' : 'gray.200'}
-                />
-                <Skeleton
-                  height="20px"
-                  width="150px"
-                  startColor={colorMode === 'dark' ? 'gray.700' : 'gray.50'}
-                  endColor={colorMode === 'dark' ? 'gray.600' : 'gray.200'}
-                />
-              </HStack>
-            </Box>
-          ))}
-        </SimpleGrid>
-      </Box>
-    </Grid>
+
+            {[1, 2, 3].map((_, index) => (
+              <Box key={index} mb={4}>
+                <Skeleton height="20px" width="150px" mb={2} />
+                <Skeleton height="8px" />
+              </Box>
+            ))}
+          </Box>
+        </GridItem>
+
+        <GridItem>
+          <Grid
+            templateRows="repeat(2, 1fr)"
+            gap={6}
+            h="100%"
+            maxH="calc(100vh - 200px)"
+          >
+            <GridItem>
+              <Box bg="white" p={6} borderRadius="lg" shadow="sm" h="100%">
+                <Skeleton height="24px" width="200px" mb={4} />
+                <Skeleton height="200px" />
+              </Box>
+            </GridItem>
+
+            <GridItem>
+              <Box bg="white" p={6} borderRadius="lg" shadow="sm" h="100%">
+                <Skeleton height="24px" width="200px" mb={4} />
+                <Grid templateColumns="repeat(3, 1fr)" gap={4}>
+                  {[1, 2, 3].map((_, index) => (
+                    <Box key={index}>
+                      <SkeletonText noOfLines={3} spacing={2} />
+                    </Box>
+                  ))}
+                </Grid>
+              </Box>
+            </GridItem>
+          </Grid>
+        </GridItem>
+      </Grid>
+    </Box>
   )
 }

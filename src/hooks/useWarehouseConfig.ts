@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { useAtom } from 'jotai'
-import { warehouseConfigAtom } from '@/src/store/configAtom'
-import { localWarehouseConfigAtom } from '../store/configAtom'
+import { localWarehouseConfigAtom, warehouseConfigAtom } from '../store/configAtom'
 import { type Config } from '../types/warehouse'
 
 export const useWarehouseConfig = () => {

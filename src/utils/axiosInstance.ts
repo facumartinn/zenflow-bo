@@ -10,8 +10,8 @@ interface JWTPayload {
 }
 
 const axiosInstance = axios.create({
-  // baseURL: 'https://zenflow-api-daq3y.ondigitalocean.app',
-  baseURL: 'http://192.168.68.51:4000', // Reemplaza con la URL base de tu API
+  baseURL: 'https://zenflow-api-daq3y.ondigitalocean.app',
+  // baseURL: 'http://localhost:4000', // Reemplaza con la URL base de tu API
   timeout: 100000
 })
 

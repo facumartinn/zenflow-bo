@@ -30,7 +30,7 @@ export const DynamicChakraContent: React.FC<DynamicChakraContentProps> = ({ cont
     const childrenMatch = componentString.match(/>([^<]+)</)
     if (childrenMatch) {
       const childrenString = childrenMatch[1]
-      const childComponents = childrenString.match(/<.+?>.*?<\/.+?>/g) || []
+      const childComponents = childrenString.match(/<.+?>.*?<\/.+?>/g) ?? []
       return childComponents.map((child, index) => (
         <React.Fragment key={index}>
           {renderChakraComponent(child)}

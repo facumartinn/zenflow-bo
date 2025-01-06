@@ -11,7 +11,7 @@ import { UserModal } from '@/src/components/Modal/Users/UserModal'
 import { type UserCardProps } from '@/src/components/Users/Card'
 import { UsersSkeleton } from '@/src/components/Skeleton/Users'
 
-const headerSubtitle = 'Podés dar de alta y de baja usuarios. También asociarlo a los dispositivos con lector.'
+// const headerSubtitle = 'Podés dar de alta y de baja usuarios. También asociarlo a los dispositivos con lector.'
 
 export default function UsersPage () {
   useSystemPreferences()
@@ -25,19 +25,21 @@ export default function UsersPage () {
   return (
     <Grid
       h="100vh"
-      rowGap={4}
+      px={{ base: 4, md: 8 }}
+      py={{ base: 4, md: 6 }}
+      gap={{ base: 4, md: 6 }}
       templateAreas={`"title"
                       "main"`}
       gridTemplateRows={'70px 1fr'}
       gridTemplateColumns={'1fr'}
       bg={colorMode === 'dark' ? 'darkMode.bg.primary' : 'gray.50'}
     >
-      <GridItem m={4} area="title">
+      <GridItem mt="24px" area="title">
         <Header
-          title="Gestión de usuarios"
-          subtitle={headerSubtitle}
+          title="Pickers"
+          // subtitle={headerSubtitle}
           showButton={true}
-          buttonLabel='NUEVO USUARIO'
+          buttonLabel='CREAR PICKER'
           onClick={onCreateUserModalOpen}
         />
       </GridItem>

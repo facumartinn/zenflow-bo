@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
+import Colors from '@/src/theme/Colors'
 import { Box, Text, Table, Thead, Tbody, Tr, Th, Td, Tabs, TabList, TabPanels, TabPanel, Tab } from '@chakra-ui/react'
 
 interface Product {
@@ -21,8 +22,8 @@ export const TopProducts = ({ products }: TopProductsProps) => {
 
       <Tabs h="calc(100% - 50px)">
         <TabList>
-          <Tab>Por cantidad</Tab>
-          <Tab>Por precio</Tab>
+          <Tab _selected={{ color: Colors.mainBlue }}>Por cantidad</Tab>
+          <Tab _selected={{ color: Colors.mainBlue }}>Por precio</Tab>
         </TabList>
 
         <TabPanels>

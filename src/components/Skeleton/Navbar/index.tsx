@@ -9,6 +9,7 @@ export const NavbarSkeleton = () => {
     <Flex
       style={{
         ...styles.container,
+        position: 'relative',
         backgroundColor: colorMode === 'dark' ? 'var(--chakra-colors-darkMode-bg-secondary)' : 'white',
         borderBottomColor: colorMode === 'dark' ? 'var(--chakra-colors-darkMode-border-primary)' : '#B7B7B7'
       }}

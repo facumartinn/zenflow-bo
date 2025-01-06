@@ -10,7 +10,7 @@ import { type ChangeEvent } from 'react'
 export const Pagination = () => {
   const [filters, setFilters] = useAtom(filtersAtom)
   const [, setSelectedOrders] = useAtom(selectedOrdersAtom)
-  const currentDate = filters?.assemblyDate || getFormattedDay()
+  const currentDate = filters?.assemblyDate ?? getFormattedDay()
 
   const handleDateChange = (newDate: string) => {
     setFilters((prev) => ({ ...prev, assemblyDate: getFormattedDay(newDate) }))

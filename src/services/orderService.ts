@@ -10,7 +10,8 @@ export const fetchAllOrders = async () => {
 }
 
 export const fetchFilteredOrders = async (params: FilterParamTypes) => {
-  const response = await axiosInstance.get(`/orders/filtered?${objectToQueryString(params as QueryParams)}`)
+  const queryString = objectToQueryString(params as QueryParams)
+  const response = await axiosInstance.get(`/orders/filtered?${queryString}`)
   return response.data.data
 }
 
@@ -30,8 +31,8 @@ export const assignOrders = async (data: any) => {
   return await axiosInstance.put('/orders/assign', data)
 }
 
-export const deleteOrder = async (orderId: number) => {
-  return await axiosInstance.delete(`/orders/${orderId}`)
+export const deleteOrders = async (orderIds: number[]) => {
+  return await axiosInstance.delete('/orders/delete', { data: { orderIds } })
 }
 
 export const fetchOrderStates = async () => {
@@ -40,4 +41,8 @@ export const fetchOrderStates = async () => {
 
 export const fetchOrderStats = async () => {
   return await axiosInstance.get('/orders/order-stats')
+}
+
+export const fetchDailyStats = async () => {
+  return await axiosInstance.get('/orders/daily-stats')
 }

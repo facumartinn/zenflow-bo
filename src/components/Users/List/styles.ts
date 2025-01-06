@@ -1,7 +1,7 @@
 // styles.ts
 export const userListStyles = {
   headerContainer: {
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     alignItems: 'center',
     width: '100%',
     paddingBottom: '16px'

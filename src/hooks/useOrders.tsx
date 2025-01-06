@@ -1,10 +1,19 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { useAtom } from 'jotai'
-import { activeTabAtom, filtersAtom, orderCounterAtom, selectedOrdersAtom } from '@/src/store/navigationAtom'
+import {
+  activeTabAtom,
+  filtersAtom,
+  orderCounterAtom,
+  selectedOrdersAtom,
+  unpreparedOrdersAtom,
+  inProcessOrdersAtom,
+  readyOrdersAtom,
+  currentOrdersAtom
+} from '@/src/store/navigationAtom'
 import { useDisclosure, useToast } from '@chakra-ui/react'
-import { OrderStateEnum } from '@/src/types/order'
+import { OrderStateEnum, type Order } from '@/src/types/order'
 import { useEffect, useState, useCallback } from 'react'
-import { assignOrders as assignOrdersService, fetchFilteredOrders, updateOrderStatus as updateOrderStatusService } from '../services/orderService'
+import { assignOrders as assignOrdersService, fetchFilteredOrders, updateOrderStatus as updateOrderStatusService, deleteOrders as deleteOrdersService } from '../services/orderService'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { ToastMessage } from '@/src/components/Toast'
 import { type FilterParamTypes } from '@/src/types'
@@ -17,6 +26,10 @@ export const useOrders = (params?: FilterParamTypes) => {
   const [activeTab, setActiveTab] = useAtom(activeTabAtom)
   const [orderCounter, setOrderCounter] = useAtom(orderCounterAtom)
   const [filters, setFilters] = useAtom(filtersAtom)
+  const [, setUnpreparedOrders] = useAtom(unpreparedOrdersAtom)
+  const [, setInProcessOrders] = useAtom(inProcessOrdersAtom)
+  const [, setReadyOrders] = useAtom(readyOrdersAtom)
+  const [currentOrders] = useAtom(currentOrdersAtom)
   const { warehouseConfig } = useWarehouseConfig()
   const { data: stats, refetch: refetchStats } = useOrderStats()
   const [searchTerm, setSearchTerm] = useState('')
@@ -28,18 +41,36 @@ export const useOrders = (params?: FilterParamTypes) => {
   const deleteModal = useDisclosure()
   const expiredModal = useDisclosure()
 
-  const { data: orders, refetch: refetchOrders, isLoading } = useQuery({
-    queryKey: ['orders', params || filters],
-    queryFn: async () => await fetchFilteredOrders(params || filters),
+  const { refetch: refetchOrders, isLoading } = useQuery({
+    queryKey: ['orders', params ?? filters],
+    queryFn: async () => {
+      const response = await fetchFilteredOrders(params ?? filters)
+      const newOrders = response || []
+
+      // Solo actualizar el caché de la tab activa con los nuevos datos
+      switch (activeTab) {
+        case 'unprepared':
+          setUnpreparedOrders([...newOrders] as Order[])
+          break
+        case 'in_process':
+          setInProcessOrders([...newOrders] as Order[])
+          break
+        case 'ready':
+          setReadyOrders([...newOrders] as Order[])
+          break
+      }
+
+      return newOrders
+    },
     refetchOnWindowFocus: false,
-    refetchOnMount: true
+    refetchOnMount: false,
+    enabled: true
   })
 
+  // Limpiar selección cuando cambia la tab
   useEffect(() => {
-    if (orders?.data && activeTab === 'new') {
-      setOrderCounter(orders?.data?.data?.length as number)
-    }
-  }, [orders, activeTab, setOrderCounter])
+    setSelectedOrders([])
+  }, [activeTab, setSelectedOrders])
 
   const assignOrdersMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -75,28 +106,52 @@ export const useOrders = (params?: FilterParamTypes) => {
     }
   })
 
-  const handleSelectAll = () => {
-    if (!orders) return
-    const filteredOrders = orders?.filter((order: any) => order.state_id !== OrderStateEnum.IN_PREPARATION)
-    const selectedOrderIds = filteredOrders.map((order: any) => order.id)
-    setSelectedOrders(selectedOrderIds as number[])
-  }
+  const deleteOrdersMutation = useMutation({
+    mutationFn: async (orderIds: number[]) => {
+      const response = await deleteOrdersService(orderIds)
+      return response
+    },
+    onSuccess: async () => {
+      await refetchOrders()
+      toast({
+        isClosable: true,
+        duration: 2000,
+        position: 'top-right',
+        render: () => <ToastMessage title="Pedidos eliminados" description={`${selectedOrders.length} pedidos fueron eliminados`} status='success' />
+      })
+      setSelectedOrders([])
+    }
+  })
+
+  useEffect(() => {
+    if (currentOrders && activeTab === 'unprepared') {
+      setOrderCounter(currentOrders.length)
+    }
+  }, [currentOrders, activeTab, setOrderCounter])
 
   const handleTabSelection = async () => {
-    await Promise.all([refetchOrders(), refetchStats()])
+    // Solo refrescar las estadísticas
+    await refetchStats()
   }
 
-  const expiredOrders = stats?.data?.data?.data?.find((stat: any) => stat.name === 'expired_orders')?.orders
+  const handleSelectAll = () => {
+    if (!currentOrders) return
+    const filteredOrders = currentOrders.filter((order: Order) => order.state_id !== OrderStateEnum.IN_PREPARATION)
+    const selectedOrderIds = filteredOrders.map((order: Order) => order.id)
+    setSelectedOrders(selectedOrderIds)
+  }
 
   const handleSearch = useCallback((term: string) => {
     setSearchTerm(term)
   }, [])
 
   // Filtrar los pedidos basados en el término de búsqueda
-  const filteredOrders = orders?.filter((order: any) => {
+  const filteredOrders = currentOrders?.filter((order: Order) => {
     if (!searchTerm) return true
     return order.id.toString().includes(searchTerm)
-  })
+  }) || []
+
+  const expiredOrders = stats?.data?.data?.data?.find((stat: any) => stat.name === 'expired_orders')?.orders
 
   return {
     // Data
@@ -131,6 +186,7 @@ export const useOrders = (params?: FilterParamTypes) => {
       delete: deleteModal,
       expired: expiredModal
     },
-    handleSearch
+    handleSearch,
+    deleteOrders: deleteOrdersMutation.mutate
   }
 }

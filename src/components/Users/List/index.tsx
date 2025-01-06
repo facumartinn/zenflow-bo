@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { Flex, Heading, List, Select, Text, useColorMode } from '@chakra-ui/react'
+import { Flex, List } from '@chakra-ui/react'
 import { UserCard } from '../Card'
-import { userListStyles } from './styles'
+// import { userListStyles } from './styles'
 import { SkeletonList } from '../../Skeleton/List'
 import { useMemo, useState } from 'react'
 
 export const UserList = ({ users = [], isLoading }: { users: any, isLoading: boolean }) => {
-  const [sortCriteria, setSortCriteria] = useState('')
-  const { colorMode } = useColorMode()
+  const [sortCriteria] = useState('')
+  // const { colorMode } = useColorMode()
 
   const sortedUsers = useMemo(() => {
     return [...users.data].sort((a, b) => {
@@ -24,15 +24,8 @@ export const UserList = ({ users = [], isLoading }: { users: any, isLoading: boo
 
   return (
     <Flex direction="column" sx={{ height: '100%' }}>
-      <Flex style={userListStyles.headerContainer}>
-        <Heading
-          as='h3'
-          style={userListStyles.heading}
-          color={colorMode === 'dark' ? 'darkMode.text.primary' : 'inherit'}
-        >
-          {sortedUsers?.length} Usuarios
-        </Heading>
-        <Flex style={userListStyles.sortContainer}>
+      {/* <Flex style={userListStyles.headerContainer}> */}
+        {/* <Flex style={userListStyles.sortContainer}>
           <Text
             style={userListStyles.sortText}
             color={colorMode === 'dark' ? 'darkMode.text.primary' : 'inherit'}
@@ -54,8 +47,8 @@ export const UserList = ({ users = [], isLoading }: { users: any, isLoading: boo
             <option value='barcode'>Codigo</option>
             <option value='role_id'>Rol</option>
           </Select>
-        </Flex>
-      </Flex>
+        </Flex> */}
+      {/* </Flex> */}
       <List overflowY="auto" flex="1" pb={16}>
         {isLoading ? <SkeletonList /> : sortedUsers?.map((user, index) => <UserCard key={index} user={user} />)}
       </List>

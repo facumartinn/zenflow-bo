@@ -1,19 +1,19 @@
+import Colors from '@/src/theme/Colors'
+
 export const userCardStyles = {
   container: {
     padding: '16px', // 4*4px
     marginTop: '16px', // 4*4px
     marginBottom: '16px', // 4*4px
-    background: 'white',
-    boxShadow: 'sm',
     borderRadius: 'lg',
-    border: '1px solid #E2E8F0',
+    borderBottom: '1px solid #E2E8F0',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-between'
-    // cursor: 'pointer'
+    justifyContent: 'space-between',
+    backgroundColor: 'transparent'
   },
   avatar: {
-    size: 'sm'
+    size: 'md'
   },
   infoText: {
     fontSize: 'sm',
@@ -32,15 +32,12 @@ export const userCardStyles = {
   speedIcon: {
     marginLeft: '4px' // 1*4px
   },
-  speedIconColor: (trend: 'increasing' | 'decreasing') => {
-    return trend === 'increasing' ? 'green.500' : 'red.500'
-  },
   button: {
     size: 'md',
     colorScheme: 'blue',
     style: {
-      color: '#2D41FC',
-      fontWeight: 400
+      color: Colors.mainBlue,
+      fontWeight: 'bold'
     }
   }
 }

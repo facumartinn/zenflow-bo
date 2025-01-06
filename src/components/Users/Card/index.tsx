@@ -29,11 +29,8 @@ export const UserCard = ({ user }: { user: UserCardProps }) => {
   return (
     <Box
       style={{
-        ...userCardStyles.container,
-        backgroundColor: useColorModeValue('white', 'darkMode.bg.secondary'),
-        borderColor: useColorModeValue('#E2E8F0', 'darkMode.border.primary')
+        ...userCardStyles.container
       }}
-      onClick={() => { console.log('User Card clicked') }}
     >
       <Flex align="center">
         <Avatar size={userCardStyles.avatar.size} name={user.name} src="/path-to-image" />
@@ -125,12 +122,8 @@ export const UserCard = ({ user }: { user: UserCardProps }) => {
           variant="none"
           colorScheme={userCardStyles.button.colorScheme}
           onClick={onEditUserModalOpen}
-          color={useColorModeValue('brand.500', 'brand.200')}
-          _hover={{
-            color: useColorModeValue('brand.600', 'brand.100')
-          }}
         >
-          Editar
+          EDITAR
         </Button>
       </VStack>
       <UserModal isOpen={isEditUserModalOpen} onClose={onEditUserModalClose} userData={user} isNewUser={false} />

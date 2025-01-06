@@ -1,13 +1,18 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import NextLink from 'next/link'
-import { Link, Text, useColorMode } from '@chakra-ui/react'
-import { styles } from '../styles'
+import { Link, Text } from '@chakra-ui/react'
 import { cloneElement } from 'react'
+import Colors from '@/src/theme/Colors'
 
 interface SidebarItemProps {
-  button: any
+  button: {
+    icon: React.ReactElement
+    text: string
+    link?: string
+    action?: () => void
+  }
   index: number
-  isActive: any
+  isActive: Record<string, unknown>
   onClick?: () => void
 }
 
@@ -17,10 +22,10 @@ export const SidebarItem = ({
   isActive,
   onClick
 }: SidebarItemProps) => {
-  const { colorMode } = useColorMode()
+  const isActiveStyle = Object.keys(isActive).length > 0
 
-  const icon = cloneElement(button.icon as React.ReactElement, {
-    color: colorMode === 'dark' ? 'white' : 'black'
+  const icon = cloneElement(button.icon, {
+    color: isActiveStyle ? Colors.mainBlue : 'black'
   })
 
   return (
@@ -29,21 +34,33 @@ export const SidebarItem = ({
       as={NextLink}
       href={button?.link}
       style={{
-        ...isActive,
-        color: colorMode === 'dark' ? 'var(--chakra-colors-darkMode-text-primary)' : 'inherit'
+        display: 'flex',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        margin: '16px 8px 0px 8px',
+        padding: '8px 16px',
+        fontWeight: '400',
+        color: isActiveStyle ? Colors.mainBlue : 'black',
+        ...(isActiveStyle && {
+          backgroundColor: Colors.mainLightBlue3,
+          borderRadius: '8px',
+          fontWeight: 'bold'
+        })
       }}
       onClick={onClick}
       _hover={{
-        ...styles.button.hover,
-        backgroundColor: colorMode === 'dark' ? 'whiteAlpha.200' : 'rgba(160, 170, 255, 0.3)',
-        color: colorMode === 'dark' ? 'white' : 'rgba(45, 65, 252, 1)'
+        backgroundColor: Colors.mainLightBlue3,
+        color: Colors.mainBlue,
+        borderRadius: '8px',
+        fontWeight: 'bold'
       }}
     >
       {icon}
       <Text
-        _selected={styles.button.selected}
-        style={styles.button.description}
-        color={colorMode === 'dark' ? 'darkMode.text.primary' : 'inherit'}
+        style={{
+          marginLeft: '8px',
+          color: 'inherit'
+        }}
       >
         {button.text}
       </Text>

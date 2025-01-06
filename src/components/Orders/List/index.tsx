@@ -1,113 +1,172 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { ListCard } from '@/src/components/Orders/ListCard'
+import { List, VStack, Text, Box } from '@chakra-ui/react'
+import { OrderCard } from '../Card'
 import { type Order } from '@/src/types/order'
-import { Box, Flex, List, Text, VStack, useColorMode } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { SkeletonList } from '../../Skeleton/List'
+import { useMemo } from 'react'
+import { selectedOrdersAtom } from '@/src/store/navigationAtom'
 import { useAtom } from 'jotai'
-import { activeTabAtom, selectedOrdersAtom } from '@/src/store/navigationAtom'
-import { groupOrdersByAssignedUser, groupOrdersByShift } from '@/src/utils/order.utils'
+import { formatDateToLocal } from '@/src/utils/date'
 import { type Config } from '@/src/types/warehouse'
-import { SimpleOrderCard } from '../SimpleCard'
-import { OrderListSkeleton } from '../../Skeleton/Orders/List'
+import { OrderStateEnum } from '@/src/types/order'
 
 interface OrderListProps {
   orders: Order[]
-  warehouseConfig: Config
   isLoading: boolean
-  isHomePage?: boolean
+  activeTab?: string
+  warehouseConfig: Config
 }
 
-export default function OrderList ({ orders, warehouseConfig, isLoading, isHomePage }: OrderListProps) {
+type GroupedOrders = Record<string, {
+  date: string
+  dateObj: Date
+  shifts: Record<string, Order[]>
+}>
+
+export const OrderList = ({ orders = [], isLoading, activeTab, warehouseConfig }: OrderListProps) => {
   const [selectedOrders, setSelectedOrders] = useAtom(selectedOrdersAtom)
-  const [activeTab] = useAtom(activeTabAtom)
-  const { colorMode } = useColorMode()
-  const isChecked = (orderId: number) => selectedOrders ? selectedOrders.includes(orderId) : false
-  const [showLoading, setShowLoading] = useState(isLoading)
-  const shouldShowPagination = activeTab === 'new' || activeTab === 'pending' || activeTab === 'completed'
-  const groupedOrders = () => {
-    if (orders) {
-      if (activeTab === 'pending' && warehouseConfig?.use_shifts?.status) {
-        return groupOrdersByShift(orders, warehouseConfig)
-      }
-      if (activeTab === 'doing') {
-        return groupOrdersByAssignedUser(orders)
-      }
-      return { default: orders }
-    }
-    return { default: [] }
-  }
-  const showCheckbox = activeTab === 'new' || activeTab === 'pending'
 
-  useEffect(() => {
-    if (isLoading) {
-      setShowLoading(true)
-      setTimeout(() => {
-        setShowLoading(false)
-      }, 1000)
-    }
-  }, [isLoading])
-
-  const toggleOrderSelection = (orderNumber: number) => {
-    setSelectedOrders(prev => (
-      prev.includes(orderNumber) ? prev.filter(id => id !== orderNumber) : [...prev, orderNumber]
-    ))
+  const handleSelectOrder = (orderId: number) => {
+    setSelectedOrders((prev) => {
+      if (prev.includes(orderId)) {
+        return prev.filter(id => id !== orderId)
+      } else {
+        return [...prev, orderId]
+      }
+    })
   }
 
-  if (showLoading) {
-    return <OrderListSkeleton />
+  const getShiftName = (scheduleId: number | null | undefined) => {
+    if (!scheduleId || !warehouseConfig?.use_shifts?.status) return 'Sin turno'
+
+    const shift = warehouseConfig.use_shifts.shifts.find(s => s.id === scheduleId)
+    if (!shift) return 'Sin turno'
+
+    return `Turno de ${shift.name}`
+  }
+
+  const filteredAndGroupedOrders = useMemo(() => {
+    // Primero filtramos los pedidos según el tab activo
+    const filteredOrders = orders.filter(order => {
+      if (!activeTab) return true
+      if (activeTab === 'unprepared') {
+        return [
+          OrderStateEnum.NEW,
+          OrderStateEnum.READY_TO_PICK,
+          OrderStateEnum.SCHEDULED,
+          OrderStateEnum.IN_PREPARATION,
+          OrderStateEnum.PACKING,
+          OrderStateEnum.DELIVERING
+        ].includes(order.state_id ?? 0)
+      } else if (activeTab === 'ready') {
+        return [OrderStateEnum.FINISHED, OrderStateEnum.DELETED].includes(order.state_id ?? 0)
+      }
+      return true
+    })
+
+    // Luego agrupamos por fecha y turno
+    const grouped: GroupedOrders = {}
+
+    filteredOrders.forEach(order => {
+      const date = order.assembly_date ? formatDateToLocal(order.assembly_date) : 'Sin fecha'
+      const dateObj = order.assembly_date ? new Date(order.assembly_date) : new Date(0)
+      const shift = getShiftName(order.assembly_schedule)
+
+      if (!grouped[date]) {
+        grouped[date] = {
+          date,
+          dateObj,
+          shifts: {}
+        }
+      }
+
+      if (!grouped[date].shifts[shift]) {
+        grouped[date].shifts[shift] = []
+      }
+
+      grouped[date].shifts[shift].push(order)
+    })
+
+    // Ordenar las fechas de más reciente a más antigua
+    const sortedDates = Object.entries(grouped)
+      .sort(([, a], [, b]) => b.dateObj.getTime() - a.dateObj.getTime())
+
+    // Ordenar los turnos según el orden en warehouseConfig
+    const sortedGrouped = sortedDates.reduce<GroupedOrders>((acc, [date, group]) => {
+      const sortedShifts = Object.entries(group.shifts)
+        .sort(([a], [b]) => {
+          // Si no hay turnos configurados, mantener el orden actual
+          if (!warehouseConfig?.use_shifts?.status) return 0
+
+          // Encontrar los IDs de los turnos
+          const shiftA = warehouseConfig.use_shifts.shifts.find(s => s.name === a)
+          const shiftB = warehouseConfig.use_shifts.shifts.find(s => s.name === b)
+
+          // Si alguno no tiene turno, ponerlo al final
+          if (!shiftA) return 1
+          if (!shiftB) return -1
+
+          return shiftA.id - shiftB.id
+        })
+        .reduce((shiftAcc, [shift, orders]) => ({
+          ...shiftAcc,
+          [shift]: orders
+        }), {})
+
+      acc[date] = {
+        ...group,
+        shifts: sortedShifts
+      }
+      return acc
+    }, {})
+
+    return sortedGrouped
+  }, [orders, activeTab, warehouseConfig])
+
+  if (isLoading) {
+    return <SkeletonList />
   }
 
   return (
     <Box
-      flex="1"
+      height="calc(100vh - 250px)"
       overflowY="auto"
-      pr={{ base: 0, md: 4 }}
+      sx={{
+        '&::-webkit-scrollbar': {
+          width: '8px',
+          borderRadius: '8px',
+          backgroundColor: '#F5F5F5'
+        },
+        '&::-webkit-scrollbar-thumb': {
+          backgroundColor: '#DEE2E6',
+          borderRadius: '8px'
+        }
+      }}
     >
-      {(!orders || orders.length === 0)
-        ? (
-        <VStack flex="1" justify="center" spacing={4}>
-          <Text
-            fontSize="xl"
-            color={colorMode === 'dark' ? 'darkMode.text.secondary' : 'gray.500'}
-          >
-            No hay pedidos disponibles
-          </Text>
-        </VStack>
-          )
-        : (
-        <List overflowY='scroll' pb={shouldShowPagination ? 4 : 24} flex="1">
-          {Object.entries(groupedOrders()).map(([shift, shiftOrders], shiftIndex) => (
-            <Box key={`${shift}-${shiftIndex}`}>
-              {shift !== 'default' && (
-                <Text
-                  fontSize="md"
-                  fontWeight='700'
-                  py={4}
-                  color={colorMode === 'dark' ? 'darkMode.text.primary' : 'inherit'}
-                >
-                  {shift}
-                </Text>
-              )}
-              <Flex flexDirection={activeTab === 'doing' ? 'row' : 'column'} flexWrap='wrap'>
-                {shiftOrders?.map((order: Order, orderIndex: number) => (
-                  activeTab === 'doing'
-                    ? <SimpleOrderCard
-                        key={`${shift}-${order.id}-${orderIndex}`}
+      <VStack spacing={8} align="stretch" pb={8}>
+        {Object.entries(filteredAndGroupedOrders).map(([date, dateGroup]) => (
+          <Box key={date}>
+            <Text fontSize="16px" fontWeight="bold" mb={4}>{date}</Text>
+            <VStack spacing={6} align="stretch">
+              {Object.entries(dateGroup.shifts).map(([shift, shiftOrders]) => (
+                <Box key={shift}>
+                  <Text fontSize="16px" fontWeight="medium" mb={4}>{shift}</Text>
+                  <List spacing={0}>
+                    {shiftOrders.map((order) => (
+                      <OrderCard
+                        key={order.id}
                         order={order}
+                        onSelect={handleSelectOrder}
+                        isSelected={selectedOrders.includes(order.id)}
                       />
-                    : <ListCard
-                        key={`${shift}-${order.id}-${orderIndex}`}
-                        order={order}
-                        onSelect={() => { toggleOrderSelection(order.id) }}
-                        isChecked={isChecked(order.id)}
-                        showCheckbox={showCheckbox}
-                      />
-                ))}
-              </Flex>
-            </Box>
-          ))}
-        </List>
-          )}
+                    ))}
+                  </List>
+                </Box>
+              ))}
+            </VStack>
+          </Box>
+        ))}
+      </VStack>
     </Box>
   )
 }

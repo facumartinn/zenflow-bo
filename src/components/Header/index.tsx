@@ -23,7 +23,7 @@ export const Header = ({
   return (
     <Flex sx={styles.container}>
       <Box>
-        <Heading as="h1" fontSize={40}>{title}</Heading>
+        <Heading as="h1" fontSize={32}>{title}</Heading>
         {subtitle && <Text sx={styles.subtitle}>{subtitle}</Text>}
       </Box>
       {(showButton && buttonLabel && onClick) && (

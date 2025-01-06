@@ -3,7 +3,9 @@
 import { DefaultButton } from '@/src/components/Button'
 import { useOrderStats } from '@/src/hooks/useOrderStats'
 import { useUsers } from '@/src/hooks/useUser'
+import Colors from '@/src/theme/Colors'
 import { OrderStateEnum } from '@/src/types/order'
+import { UserRoleEnum } from '@/src/types/user'
 import { getFormattedDay } from '@/src/utils/queryParams'
 import {
   Modal,
@@ -33,7 +35,7 @@ interface AssignModalProps {
 }
 
 export const MountOrdersModal = ({ title, description, buttonLabel = 'SUBIR PEDIDO', selectedOrders, warehouseConfig, assignOrders, isOpen, onClose, onExpiredModalClose }: AssignModalProps) => {
-  const { data: users } = useUsers(2)
+  const { data: users } = useUsers(UserRoleEnum.PICKER)
   const [assignedTo, setAssignedTo] = useState(0)
   const [preparationDate, setPreparationDate] = useState('')
   const [shiftId, setShiftId] = useState(0)
@@ -51,6 +53,7 @@ export const MountOrdersModal = ({ title, description, buttonLabel = 'SUBIR PEDI
     onClose()
     onExpiredModalClose && onExpiredModalClose()
   }
+
   return (
     <Modal onClose={onClose} isOpen={isOpen} isCentered>
     <ModalOverlay />
@@ -64,7 +67,7 @@ export const MountOrdersModal = ({ title, description, buttonLabel = 'SUBIR PEDI
             value={assignedTo}
             onChange={(e) => { setAssignedTo(Number(e.target.value)) }} mb={4}>
                 <option value={0}>Todos</option>
-            {Array.isArray(users?.data?.data) && users.data.data.map((user: any) => (
+            {Array.isArray(users?.data) && users.data.map((user: any) => (
                 <option key={user.id} value={user.id}>{user.name}</option>
             ))}
             </Select>
@@ -93,7 +96,7 @@ export const MountOrdersModal = ({ title, description, buttonLabel = 'SUBIR PEDI
       </ModalBody>
       <ModalFooter display='flex' flexDirection='column' >
         <DefaultButton type='primary' label={buttonLabel} onClick={onAssign} />
-        <Button mt={4} variant='none' onClick={onClose}>ATRÁS</Button>
+        <Button mt={4} color={Colors.white} variant='none' onClick={onClose}>ATRÁS</Button>
       </ModalFooter>
     </ModalContent>
   </Modal>

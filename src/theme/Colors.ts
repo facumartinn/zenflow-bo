@@ -5,6 +5,7 @@ const Colors = {
   mainBlue: '#2D41FC',
   mainLightBlue: '#A0AAFF',
   mainLightBlue2: '#A0AAFF4D',
+  mainLightBlue3: '#DDEBF9',
 
   // Neutros
   black: '#000000',
@@ -21,6 +22,7 @@ const Colors = {
   lightRed: '#EC00001A', // Asegúrate de usar el color correcto
   yellow: '#F1C34F',
   lightYellow: '#F1C34F', // Asegúrate de usar el color correcto
+  warningYellow: '#E09F05',
   green: '#3EBC59',
   lightGreen: '#E1FFD9',
   orange: '#DEAE34',

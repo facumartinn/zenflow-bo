@@ -1,143 +1,82 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 'use client'
-
-import { Grid, GridItem } from '@chakra-ui/react'
+import { Box, useDisclosure } from '@chakra-ui/react'
+import { useOrders } from '@/src/hooks/useOrders'
+import { OrderList } from '@/src/components/Orders/List'
+import { OrdersActions } from '@/src/components/Orders/Actions'
+import { useAtom } from 'jotai'
+import { activeTabAtom, selectedOrdersAtom } from '@/src/store/navigationAtom'
+import { useWarehouseConfig } from '@/src/hooks/useWarehouseConfig'
 import { Header } from '@/src/components/Header'
 import { TabButtons } from '@/src/components/Tabs'
-import { Filters } from '@/src/components/Filters'
-import OrderList from '@/src/components/Orders/List'
-import { ToastMessage } from '@/src/components/Toast'
 import { MountOrdersModal } from '@/src/components/Modal/Orders/MountOrders'
-import { AssignOrdersModal } from '@/src/components/Modal/Orders/AssignOrders'
-import { ScheduleOrdersModal } from '@/src/components/Modal/Orders/ScheduleOrders'
 import { DeleteModal } from '@/src/components/Modal/DeleteModal'
-import { ExpiredOrdersDrawer } from '@/src/components/Modal/Orders/ExpiredOrders'
-import { useOrders } from '@/src/hooks/useOrders'
-import { Pagination } from '@/src/components/Orders/List/Pagination'
+import { EmptyState } from '@/src/components/EmptyState'
 
 export default function OrdersPage () {
-  const {
-    selectedOrders,
-    orders,
-    warehouseConfig,
-    assignOrders,
-    updateOrderStatus,
-    isLoading,
-    handleSelectAll,
-    handleTabSelection,
-    expiredOrders,
-    handleSearch,
-    modals: {
-      mount: { isOpen: isMountModalOpen, onOpen: onMountModalOpen, onClose: onMountModalClose },
-      assign: { isOpen: isAssignModalOpen, onOpen: onAssignModalOpen, onClose: onAssignModalClose },
-      schedule: { isOpen: isScheduleModalOpen, onOpen: onScheduleModalOpen, onClose: onScheduleModalClose },
-      delete: { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose },
-      expired: { isOpen: isExpiredOrdersModalOpen, onOpen: onExpiredOrdersModalOpen, onClose: onExpiredOrdersModalClose }
-    }
-  } = useOrders()
+  const { orders, isLoading, handleSearch, handleTabSelection, assignOrders, deleteOrders } = useOrders()
+  const { warehouseConfig } = useWarehouseConfig()
+  const [activeTab] = useAtom(activeTabAtom)
+  const [selectedOrders] = useAtom(selectedOrdersAtom)
+  const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose } = useDisclosure()
+  const { isOpen: isScheduleModalOpen, onOpen: onScheduleModalOpen, onClose: onScheduleModalClose } = useDisclosure()
+
+  const handleDelete = () => {
+    deleteOrders(selectedOrders)
+    onDeleteModalClose()
+  }
 
   return (
-    <Grid
-      h="100vh"
-      px={{ base: 4, md: 8 }}
-      py={{ base: 4, md: 6 }}
-      gap={{ base: 4, md: 6 }}
-      templateRows={{
-        base: 'auto auto auto 1fr',
-        md: 'auto auto auto 1fr'
-      }}
-      templateColumns="1fr"
-      overflow="hidden"
-    >
-      <GridItem>
+    <>
+      <Box p={8}>
         <Header
           title="Pedidos"
           showButton={false}
         />
-      </GridItem>
-
-      <GridItem>
-        <TabButtons
-          urlPathName="ordersPage"
-          ordersLength={orders?.length ?? 0}
-          onClick={handleTabSelection}
-        />
-      </GridItem>
-
-      <GridItem>
-        <Filters
-          onSelectAll={handleSelectAll}
-          onMountOrders={onMountModalOpen}
-          onAssignOrders={onAssignModalOpen}
-          onScheduleOrders={onScheduleModalOpen}
-          onDeleteOrders={onDeleteModalOpen}
-          ordersLength={orders?.length ?? 0}
-          onSearch={handleSearch}
-        />
-        {expiredOrders?.length > 0 && (
-          <ToastMessage
-            title={`${expiredOrders?.length} pedidos atrasados`}
-            description='Para que se preparen tenés que reprogramarlos.'
-            status='warning'
-            onClick={onExpiredOrdersModalOpen}
+        <Box display="flex" flexDirection="row" justifyContent="space-between" gap={4} my={8}>
+          <TabButtons
+            urlPathName="ordersPage"
+            ordersLength={orders?.length ?? 0}
+            onClick={handleTabSelection}
           />
-        )}
-      </GridItem>
-
-      <GridItem
-        position="relative"
-        display="flex"
-        flexDirection="column"
-        h="100%"
-        overflowY="hidden"
-      >
-        <OrderList
-          orders={orders}
-          warehouseConfig={warehouseConfig}
-          isLoading={isLoading}
-          isHomePage={false}
-        />
-        <Pagination />
-      </GridItem>
+          <OrdersActions
+            selectedOrders={selectedOrders}
+            onDelete={onDeleteModalOpen}
+            onEdit={onScheduleModalOpen}
+            onSearch={handleSearch}
+          />
+        </Box>
+        <Box mt={4}>
+          {!isLoading && orders?.length === 0
+            ? <EmptyState message="No hay pedidos para enviar" />
+            : <OrderList
+                orders={orders ?? []}
+                isLoading={isLoading}
+                activeTab={activeTab}
+                warehouseConfig={warehouseConfig}
+              />
+          }
+        </Box>
+      </Box>
 
       <MountOrdersModal
-        title='Subir pedidos'
-        description='Los cambios se aplicarán a todos los pedidos seleccionados.'
-        buttonLabel='SUBIR PEDIDO'
-        warehouseConfig={warehouseConfig}
+        title="Editar pedidos"
+        description="Los cambios se aplicarán a los pedidos seleccionados."
+        buttonLabel="GUARDAR"
         selectedOrders={selectedOrders}
-        assignOrders={assignOrders}
-        isOpen={isMountModalOpen}
-        onClose={onMountModalClose}
-      />
-
-      <AssignOrdersModal
-        assignOrders={assignOrders}
-        isOpen={isAssignModalOpen}
-        onClose={onAssignModalClose}
-      />
-
-      <DeleteModal
-        type='order'
-        updateOrderStatus={updateOrderStatus}
-        isOpen={isDeleteModalOpen}
-        onClose={onDeleteModalClose}
-      />
-
-      <ScheduleOrdersModal
         warehouseConfig={warehouseConfig}
         assignOrders={assignOrders}
         isOpen={isScheduleModalOpen}
         onClose={onScheduleModalClose}
       />
 
-      <ExpiredOrdersDrawer
-        warehouseConfig={warehouseConfig}
-        assignOrders={assignOrders}
-        isOpen={isExpiredOrdersModalOpen}
-        onClose={onExpiredOrdersModalClose}
-        orders={expiredOrders}
+      <DeleteModal
+        title="¿Eliminar pedidos seleccionados?"
+        subtitle="No vas a poder recuperar los pedidos"
+        onDelete={handleDelete}
+        isOpen={isDeleteModalOpen}
+        onClose={onDeleteModalClose}
       />
-    </Grid>
+    </>
   )
 }

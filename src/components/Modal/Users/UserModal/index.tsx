@@ -39,10 +39,7 @@ export const UserModal = ({ isOpen, onClose, userData, isNewUser }: UserModalPro
         barcode: undefined,
         password: '',
         tenant_id: userData.tenant_id,
-        warehouse_id: userData.warehouse_id,
-        device: undefined,
-        pickingSpeed: undefined,
-        speedTrend: undefined
+        warehouse_id: userData.warehouse_id
       }
     }
     return userData
@@ -82,31 +79,31 @@ export const UserModal = ({ isOpen, onClose, userData, isNewUser }: UserModalPro
 
   const isFormValid = () => {
     if (isNewUser) {
-      return user.name && user.user_email && (user.barcode || user.barcode === 0)
+      return user.name && (user.barcode ?? user.barcode === 0)
     }
-    return user.name && (user.barcode || user.barcode === 0)
+    return user.name && (user.barcode ?? user.barcode === 0)
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} size='lg' isCentered>
       <ModalOverlay />
       <ModalContent style={userModalStyles.modalContent}>
         <ModalHeader style={userModalStyles.modalHeader}>
-          {isNewUser ? 'Nuevo usuario' : userData?.name}
+          {isNewUser ? 'Crear picker' : 'Editar picker'}
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <VStack spacing={2}>
             <FormControl style={userModalStyles.inputFormControl} id="name">
-              <FormLabel>Nombre</FormLabel>
+              <FormLabel>Nombre y apellido</FormLabel>
               <Input
-                placeholder="Nombre"
+                placeholder="Nombre y apellido"
                 name="name"
                 value={user?.name ?? ''}
                 onChange={handleInputChange}
               />
             </FormControl>
-            {isNewUser && (
+            {/* {isNewUser && (
               <FormControl style={userModalStyles.inputFormControl} id="user_email">
                 <FormLabel>Email</FormLabel>
                 <Input
@@ -116,7 +113,7 @@ export const UserModal = ({ isOpen, onClose, userData, isNewUser }: UserModalPro
                   onChange={handleInputChange}
                 />
               </FormControl>
-            )}
+            )} */}
             <FormControl style={userModalStyles.inputFormControl} id="barcode">
               <FormLabel>Código</FormLabel>
               <Input
@@ -127,7 +124,7 @@ export const UserModal = ({ isOpen, onClose, userData, isNewUser }: UserModalPro
                 onChange={handleInputChange}
               />
             </FormControl>
-            {isNewUser && (
+            {/* {isNewUser && (
               <FormControl style={userModalStyles.inputFormControl} id="password">
                 <FormLabel>Contraseña</FormLabel>
                 <Input
@@ -138,22 +135,28 @@ export const UserModal = ({ isOpen, onClose, userData, isNewUser }: UserModalPro
                   onChange={handleInputChange}
                 />
               </FormControl>
-            )}
+            )} */}
           </VStack>
         </ModalBody>
         <ModalFooter style={userModalStyles.modalFooter}>
           <Flex flexDirection='column' align='center' justifyContent='center'>
             <DefaultButton
               type="primary"
-              label='GUARDAR CAMBIOS'
+              label={isNewUser ? 'CREAR PICKER' : 'GUARDAR'}
               onClick={handleSaveChanges}
               isDisabled={!isFormValid()}
             />
-            {!isNewUser && (
+            {!isNewUser
+              ? (
               <Button style={userModalStyles.deleteButton} variant="ghost">
-                ELIMINAR USUARIO
+                ELIMINAR PICKER
               </Button>
-            )}
+                )
+              : (
+              <Button style={userModalStyles.cancelButton} variant="ghost">
+                CANCELAR
+              </Button>
+                )}
           </Flex>
         </ModalFooter>
       </ModalContent>

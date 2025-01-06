@@ -2,8 +2,11 @@ export const styles = {
   container: {
     width: '100%',
     height: '100%',
-    borderRight: '1px solid',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    position: 'relative',
+    paddingTop: '24px',
+    zIndex: 1,
+    boxShadow: '0px 4px 40px 24px #D8D8E959'
   },
   buttonContainer: {
     width: '100%',
