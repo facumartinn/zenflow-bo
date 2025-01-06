@@ -37,7 +37,6 @@ export default function UsersPage () {
       <GridItem mt="24px" area="title">
         <Header
           title="Pickers"
-          // subtitle={headerSubtitle}
           showButton={true}
           buttonLabel='CREAR PICKER'
           onClick={onCreateUserModalOpen}
@@ -49,8 +48,7 @@ export default function UsersPage () {
       <UserModal
         isOpen={isCreateUserModalOpen}
         onClose={onCreateUserModalClose}
-        isNewUser={true}
-        userData={users as any}
+        initialData={{ name: '', barcode: 0 }}
       />
     </Grid>
   )

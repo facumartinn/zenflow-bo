@@ -126,7 +126,7 @@ export const UserCard = ({ user }: { user: UserCardProps }) => {
           EDITAR
         </Button>
       </VStack>
-      <UserModal isOpen={isEditUserModalOpen} onClose={onEditUserModalClose} userData={user} isNewUser={false} />
+      <UserModal isOpen={isEditUserModalOpen} onClose={onEditUserModalClose} userId={user.id} initialData={user} />
     </Box>
   )
 }

@@ -7,7 +7,7 @@ import { NavbarSkeleton } from '../Skeleton/Navbar'
 import { useSystemPreferences } from '@/src/hooks/useConfig'
 import { HamburgerIcon } from '@chakra-ui/icons'
 import { Sibebar } from '../Sidebar'
-import { ColorModeToggle } from '../ColorModeToggle'
+// import { ColorModeToggle } from '../ColorModeToggle'
 import { useAuthStore } from '@/src/store/authStore'
 
 export const NavBar = () => {
@@ -33,7 +33,7 @@ export const NavBar = () => {
         <Heading as='h1' style={styles.clientLogo.title}>{user?.Tenants?.name}</Heading>
       </Box>
       <Flex alignItems="center" gap={4}>
-        <ColorModeToggle />
+        {/* <ColorModeToggle /> */}
         <Box display={{ base: 'none', md: 'block' }}>
           <Heading as='h3' style={styles.poweredBy.h3}>Powered by</Heading>
           <Heading as='h2' style={styles.poweredBy.h2}>ZenFlow</Heading>
