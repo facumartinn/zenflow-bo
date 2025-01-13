@@ -3,7 +3,7 @@ import axiosInstance from '../utils/axiosInstance'
 
 export const signInService = async (userEmail: string | undefined, password: string | undefined) => {
   try {
-    const response = await axiosInstance.post('/auth/login', {
+    const response = await axiosInstance.post('/auth/admin/login', {
       userEmail,
       password
     })
