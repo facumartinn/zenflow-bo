@@ -139,4 +139,4 @@ export interface OrderDetailResponseDTO {
       total_products: number
     }
   }
-} 
+}
