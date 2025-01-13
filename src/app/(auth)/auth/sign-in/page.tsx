@@ -10,7 +10,7 @@ export default function SignIn () {
     <Flex height="100vh" alignItems="center" justifyContent="center" position="relative">
       <Box position="absolute" top="0" left="0" height="100%" width="100%" overflow="hidden">
         <Image
-          src="https://zenflowimg.nyc3.cdn.digitaloceanspaces.com/login-bg.png"
+          src="https://zenflowimg.nyc3.cdn.digitaloceanspaces.com/Large-modern-warehouse-with-storage-area.webp"
           alt="Login Background"
           fill
           priority
