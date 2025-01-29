@@ -32,4 +32,5 @@ export interface Config {
   multi_picking_packing: MultiPickingPacking
   use_shifts: UseShifts
   use_resources: UseResources
+  api_key?: string
 }

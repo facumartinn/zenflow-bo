@@ -35,15 +35,10 @@ export const ExpiredOrdersDrawer = ({ warehouseConfig, assignOrders, isOpen, onC
   const { isOpen: isMountModalOpen, onOpen: onMountModalOpen, onClose: onMountModalClose } = useDisclosure()
 
   useEffect(() => {
-    const initializeTab = async () => {
-      try {
-        await refetchStats()
-      } catch (error) {
-        console.error('Failed to refetch stats:', error)
-      }
+    if (isOpen) {
+      void refetchStats()
     }
-    void initializeTab()
-  }, [isOpen, onClose])
+  }, [isOpen, refetchStats])
 
   const handleSelectOrder = (orderId: number) => {
     setSelectedOrders((prevSelected) => {

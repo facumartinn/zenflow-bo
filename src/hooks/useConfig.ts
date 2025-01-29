@@ -28,6 +28,12 @@ export const useSystemPreferences = () => {
     }
   }, [data, setWarehouseConfig])
 
+  useEffect(() => {
+    if (data) {
+      setLocalWarehouseConfig(data)
+    }
+  }, [data, setLocalWarehouseConfig])
+
   const mutation = useMutation({
     mutationFn: async (config: Config) => {
       const response = await updateConfigByWarehouseId(config)

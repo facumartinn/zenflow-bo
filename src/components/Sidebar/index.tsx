@@ -60,7 +60,7 @@ export const Sibebar = () => {
               key={index}
               button={button}
               index={index}
-              onClick={handleLogout}
+              onClick={button.link === '/config' ? undefined : handleLogout}
               isActive={isActive(button.link)}
             />
           ))}
