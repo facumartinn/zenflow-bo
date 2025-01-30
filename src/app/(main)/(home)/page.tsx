@@ -38,10 +38,10 @@ export default function Home () {
 
         <GridItem>
           <Grid
-            templateRows="repeat(2, 1fr)"
+            templateRows="55% 45%"
             gap={6}
             h="100%"
-            maxH="calc(100vh - 200px)"
+            maxH="calc(100vh - 230px)"
           >
             <GridItem>
               <WeeklyOrders data={weeklyOrders} />
