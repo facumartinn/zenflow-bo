@@ -89,7 +89,7 @@ export const OrderCard = ({ order, onSelect, isSelected }: OrderCardProps) => {
           </Box>
           <Box>
             <Text color="gray.500" fontSize="14px">Número de pedido</Text>
-            <Text fontSize="16px" fontWeight="bold">{String(order.id).padStart(6, '0')}</Text>
+            <Text fontSize="16px" fontWeight="bold">{String(order.order_tenant_id).padStart(6, '0')}</Text>
           </Box>
 
           <Box>

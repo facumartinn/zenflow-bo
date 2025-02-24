@@ -22,6 +22,7 @@ export interface Product {
 // Order Model
 export interface Order {
   id: number
+  order_tenant_id?: number | null
   state_id?: number | null
   state_picking_id?: number | null
   amount?: number // Decimal type might need to be handled as string or number depending on your setup

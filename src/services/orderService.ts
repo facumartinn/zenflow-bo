@@ -9,10 +9,26 @@ export const fetchAllOrders = async () => {
   return await axiosInstance.get('/orders/')
 }
 
-export const fetchFilteredOrders = async (params: FilterParamTypes) => {
-  const queryString = objectToQueryString(params as QueryParams)
+export const fetchFilteredOrders = async (params: FilterParamTypes & { page?: number, limit?: number }) => {
+  const { startDate, endDate, assemblyDate, ...restParams } = params
+
+  const queryParams: QueryParams = {
+    ...restParams,
+    page: params.page ?? 1,
+    limit: params.limit ?? 20,
+    assemblyDate: assemblyDate ?? ''
+  }
+
+  const queryString = objectToQueryString(queryParams)
+
   const response = await axiosInstance.get(`/orders/filtered?${queryString}`)
-  return response.data.data
+
+  return {
+    orders: response.data.data.orders ?? [],
+    total: response.data.data.pagination.total ?? 0,
+    currentPage: response.data.data.pagination.page ?? 1,
+    totalPages: response.data.data.pagination.totalPages ?? 1
+  }
 }
 
 export const fetchOrderById = async (orderId: number) => {

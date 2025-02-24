@@ -241,7 +241,7 @@ interface OrderDrawerProps {
 }
 
 export const OrderDrawer: FC<OrderDrawerProps> = ({ isOpen, onClose, orderId }) => {
-  const { data: orderDetail, isLoading } = useOrderDetail(orderId)
+  const { data: orderDetail, isLoading } = useOrderDetail(orderId, isOpen)
   const { warehouseConfig } = useWarehouseConfig()
   const { assignOrders, deleteOrders } = useOrders()
   const { isOpen: isMountModalOpen, onOpen: onMountModalOpen, onClose: onMountModalClose } = useDisclosure()
@@ -269,7 +269,7 @@ export const OrderDrawer: FC<OrderDrawerProps> = ({ isOpen, onClose, orderId }) 
               <Text color="#6C757D" fontSize="14px">Número de pedido</Text>
               {isLoading
                 ? <Skeleton height="12" width="200px" />
-                : <Text fontSize="32px" fontWeight="600">{String(orderId).padStart(6, '0')}</Text>
+                : <Text fontSize="32px" fontWeight="600">{String(orderDetail?.order?.order_tenant_id).padStart(6, '0')}</Text>
               }
             </VStack>
           </DrawerHeader>

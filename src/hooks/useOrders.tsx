@@ -6,13 +6,12 @@ import {
   orderCounterAtom,
   selectedOrdersAtom,
   unpreparedOrdersAtom,
-  inProcessOrdersAtom,
   readyOrdersAtom,
   currentOrdersAtom
 } from '@/src/store/navigationAtom'
 import { useDisclosure, useToast } from '@chakra-ui/react'
 import { OrderStateEnum, type Order } from '@/src/types/order'
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import { assignOrders as assignOrdersService, fetchFilteredOrders, updateOrderStatus as updateOrderStatusService, deleteOrders as deleteOrdersService } from '../services/orderService'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { ToastMessage } from '@/src/components/Toast'
@@ -27,12 +26,19 @@ export const useOrders = (params?: FilterParamTypes) => {
   const [orderCounter, setOrderCounter] = useAtom(orderCounterAtom)
   const [filters, setFilters] = useAtom(filtersAtom)
   const [, setUnpreparedOrders] = useAtom(unpreparedOrdersAtom)
-  const [, setInProcessOrders] = useAtom(inProcessOrdersAtom)
   const [, setReadyOrders] = useAtom(readyOrdersAtom)
   const [currentOrders] = useAtom(currentOrdersAtom)
   const { warehouseConfig } = useWarehouseConfig()
   const { data: stats, refetch: refetchStats } = useOrderStats()
   const [searchTerm, setSearchTerm] = useState('')
+  const [page, setPage] = useState(1)
+
+  // Memoizar los filtros
+  const currentFilters = useMemo(() => ({
+    ...params ?? filters,
+    page,
+    limit: 20
+  }), [params, filters, page])
 
   // Modal controls
   const mountModal = useDisclosure()
@@ -41,36 +47,40 @@ export const useOrders = (params?: FilterParamTypes) => {
   const deleteModal = useDisclosure()
   const expiredModal = useDisclosure()
 
-  const { refetch: refetchOrders, isLoading } = useQuery({
-    queryKey: ['orders', params ?? filters],
+  const { data, refetch: refetchOrders, isLoading } = useQuery({
+    queryKey: ['orders', currentFilters],
     queryFn: async () => {
-      const response = await fetchFilteredOrders(params ?? filters)
-      const newOrders = response || []
+      const response = await fetchFilteredOrders(currentFilters)
+      const newOrders = response.orders
 
       // Solo actualizar el caché de la tab activa con los nuevos datos
       switch (activeTab) {
         case 'unprepared':
           setUnpreparedOrders([...newOrders] as Order[])
           break
-        case 'in_process':
-          setInProcessOrders([...newOrders] as Order[])
-          break
         case 'ready':
           setReadyOrders([...newOrders] as Order[])
           break
       }
 
-      return newOrders
+      return response
     },
     refetchOnWindowFocus: false,
     refetchOnMount: false,
+    staleTime: 30000,
+    gcTime: 60000,
     enabled: true
   })
 
   // Limpiar selección cuando cambia la tab
   useEffect(() => {
     setSelectedOrders([])
+    setPage(1) // Reset page when tab changes
   }, [activeTab, setSelectedOrders])
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage)
+  }
 
   const assignOrdersMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -146,12 +156,16 @@ export const useOrders = (params?: FilterParamTypes) => {
   }, [])
 
   // Filtrar los pedidos basados en el término de búsqueda
-  const filteredOrders = currentOrders?.filter((order: Order) => {
-    if (!searchTerm) return true
-    return order.id.toString().includes(searchTerm)
-  }) || []
+  const filteredOrders = useMemo(() => {
+    return data?.orders?.filter((order: Order) => {
+      if (!searchTerm) return true
+      return order.id.toString().includes(searchTerm)
+    }) || []
+  }, [data?.orders, searchTerm])
 
-  const expiredOrders = stats?.data?.data?.data?.find((stat: any) => stat.name === 'expired_orders')?.orders
+  const expiredOrders = useMemo(() => {
+    return stats?.data?.data?.data?.find((stat: any) => stat.name === 'expired_orders')?.orders
+  }, [stats])
 
   return {
     // Data
@@ -163,6 +177,13 @@ export const useOrders = (params?: FilterParamTypes) => {
     activeTab,
     orderCounter,
     expiredOrders,
+    pagination: {
+      currentPage: data?.currentPage ?? 1,
+      totalItems: data?.total ?? 0,
+      itemsPerPage: 20,
+      onPageChange: handlePageChange,
+      totalPages: data?.totalPages ?? 1
+    },
 
     // Loading state
     isLoading,

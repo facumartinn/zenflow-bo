@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { List, VStack, Text, Box } from '@chakra-ui/react'
+import { List, VStack, Text, Box, Flex } from '@chakra-ui/react'
 import { OrderCard } from '../Card'
 import { type Order } from '@/src/types/order'
 import { SkeletonList } from '../../Skeleton/List'
@@ -9,12 +9,20 @@ import { useAtom } from 'jotai'
 import { formatDateToLocal } from '@/src/utils/date'
 import { type Config } from '@/src/types/warehouse'
 import { OrderStateEnum } from '@/src/types/order'
+import { Pagination } from '@/src/components/Pagination'
 
 interface OrderListProps {
   orders: Order[]
   isLoading: boolean
   activeTab?: string
   warehouseConfig: Config
+  pagination: {
+    currentPage: number
+    totalItems: number
+    itemsPerPage: number
+    onPageChange: (page: number) => void
+    totalPages: number
+  }
 }
 
 type GroupedOrders = Record<string, {
@@ -23,7 +31,7 @@ type GroupedOrders = Record<string, {
   shifts: Record<string, Order[]>
 }>
 
-export const OrderList = ({ orders = [], isLoading, activeTab, warehouseConfig }: OrderListProps) => {
+export const OrderList = ({ orders = [], isLoading, activeTab, warehouseConfig, pagination }: OrderListProps) => {
   const [selectedOrders, setSelectedOrders] = useAtom(selectedOrdersAtom)
 
   const handleSelectOrder = (orderId: number) => {
@@ -47,7 +55,7 @@ export const OrderList = ({ orders = [], isLoading, activeTab, warehouseConfig }
 
   const filteredAndGroupedOrders = useMemo(() => {
     // Primero filtramos los pedidos según el tab activo
-    const filteredOrders = orders.filter(order => {
+    const filteredOrders = orders?.filter(order => {
       if (!activeTab) return true
       if (activeTab === 'unprepared') {
         return [
@@ -123,50 +131,61 @@ export const OrderList = ({ orders = [], isLoading, activeTab, warehouseConfig }
     return sortedGrouped
   }, [orders, activeTab, warehouseConfig])
 
-  if (isLoading) {
-    return <SkeletonList />
-  }
-
   return (
-    <Box
-      height="calc(100vh - 250px)"
-      overflowY="auto"
-      sx={{
-        '&::-webkit-scrollbar': {
-          width: '8px',
-          borderRadius: '8px',
-          backgroundColor: '#F5F5F5'
-        },
-        '&::-webkit-scrollbar-thumb': {
-          backgroundColor: '#DEE2E6',
-          borderRadius: '8px'
+    <VStack spacing={8} align="stretch">
+      <Box
+        height="calc(100vh - 350px)"
+        overflowY="auto"
+        sx={{
+          '&::-webkit-scrollbar': {
+            width: '8px',
+            borderRadius: '8px',
+            backgroundColor: '#F5F5F5'
+          },
+          '&::-webkit-scrollbar-thumb': {
+            backgroundColor: '#DEE2E6',
+            borderRadius: '8px'
+          }
+        }}
+      >
+        <VStack spacing={8} align="stretch" pb={8}>
+          {isLoading
+            ? <SkeletonList />
+            : Object.entries(filteredAndGroupedOrders).map(([date, dateGroup]) => (
+            <Box key={date}>
+              <Text fontSize="16px" fontWeight="bold" mb={4}>{date}</Text>
+              <VStack spacing={6} align="stretch">
+                {Object.entries(dateGroup.shifts).map(([shift, shiftOrders]) => (
+                  <Box key={shift}>
+                    <Text fontSize="16px" fontWeight="medium" mb={4}>{shift}</Text>
+                    <List spacing={0}>
+                      {shiftOrders.map((order) => (
+                        <OrderCard
+                          key={order.id}
+                          order={order}
+                          onSelect={handleSelectOrder}
+                          isSelected={selectedOrders.includes(order.id)}
+                        />
+                      ))}
+                    </List>
+                  </Box>
+                ))}
+              </VStack>
+            </Box>
+            ))
         }
-      }}
-    >
-      <VStack spacing={8} align="stretch" pb={8}>
-        {Object.entries(filteredAndGroupedOrders).map(([date, dateGroup]) => (
-          <Box key={date}>
-            <Text fontSize="16px" fontWeight="bold" mb={4}>{date}</Text>
-            <VStack spacing={6} align="stretch">
-              {Object.entries(dateGroup.shifts).map(([shift, shiftOrders]) => (
-                <Box key={shift}>
-                  <Text fontSize="16px" fontWeight="medium" mb={4}>{shift}</Text>
-                  <List spacing={0}>
-                    {shiftOrders.map((order) => (
-                      <OrderCard
-                        key={order.id}
-                        order={order}
-                        onSelect={handleSelectOrder}
-                        isSelected={selectedOrders.includes(order.id)}
-                      />
-                    ))}
-                  </List>
-                </Box>
-              ))}
-            </VStack>
-          </Box>
-        ))}
-      </VStack>
-    </Box>
+        </VStack>
+      </Box>
+
+      <Flex justify="center">
+        <Pagination
+          currentPage={pagination.currentPage}
+          totalItems={pagination.totalItems}
+          itemsPerPage={pagination.itemsPerPage}
+          onPageChange={pagination.onPageChange}
+          totalPages={pagination.totalPages}
+        />
+      </Flex>
+    </VStack>
   )
 }
